@@ -142,7 +142,7 @@ break;
 switch (this.shape) {
 case 23:
 var map =  new java.util.Hashtable();
-map.put("mesh_width", Double.$valueOf(pymolScene.getDefaultDouble(90)));
+map.put("mesh_width", Double.$valueOf(pymolScene.getDoubleOrDefault(90)));
 map.put("info", this.info);
 sm.vwr.setCGO(map);
 break;
@@ -156,7 +156,7 @@ case 10:
 case 24:
 if (Clazz.instanceOf(this.info,Array)) {
 sm.loadShape(this.shape);
-sm.setShapePropertyBs(this.shape, "params", this.info, this.bsAtoms);
+sm.setShapePropertyBs(this.shape, "pymolparams", this.info, this.bsAtoms);
 }break;
 case 6:
 if (this.modelIndex < 0) return;
@@ -271,4 +271,4 @@ function(){
 return "[JmolObject " + this.shape + " " + (this.bsAtoms == null ? "" : this.bsAtoms.cardinality() + " atoms") + "]";
 });
 });
-;//5.0.1-v7 Fri Aug 08 04:30:51 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

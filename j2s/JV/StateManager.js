@@ -162,9 +162,9 @@ return true;
 Clazz.defineMethod(c$, "saveUnitCell", 
 function(saveName){
 if (saveName.equalsIgnoreCase("DELETE")) {
-this.deleteSavedType("Unitcell_");
+this.deleteSavedType("unitcell_");
 return;
-}saveName = this.lastUnitcell = "Unitcell_" + saveName;
+}saveName = this.lastUnitcell = "unitcell_" + saveName;
 var uc = this.vwr.getCurrentUnitCell();
 if (uc != null) {
 var state = "UNITCELL " + JU.Escape.e(uc.getUnitCellVectors());
@@ -172,7 +172,7 @@ this.saved.put(saveName, "unitcell reset;" + state);
 }}, "~S");
 Clazz.defineMethod(c$, "getSavedUnitCell", 
 function(saveName){
-var name = (saveName.length > 0 ? "Unitcell_" + saveName : this.lastUnitcell);
+var name = (saveName.length > 0 ? "unitcell_" + saveName : this.lastUnitcell);
 var ucstate = JV.StateManager.getNoCase(this.saved, name);
 return ucstate;
 }, "~S");
@@ -446,4 +446,4 @@ this.energy = energy;
 this.shapeVisibilityFlags = shapeVisibilityFlags;
 }, "~N,~N,~N,~N,~N,~N,~N");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

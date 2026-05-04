@@ -166,7 +166,7 @@ Clazz.defineMethod(c$, "getAtomPropertyAsString",
 function(a, tok){
 switch (tok & 1136656384) {
 case 1094713344:
-var i = a.atomPropertyInt(tok);
+var i = a.atomPropertyInt(this.vwr, tok);
 return (tok == 1765808134 ? JU.PT.trim(JU.Escape.escapeColor(i), "[x]").toUpperCase() : "" + i);
 case 1086324736:
 return a.atomPropertyString(this.vwr, tok);
@@ -257,4 +257,4 @@ mol.append("\n");
 }
 }, "JU.SB,~S,~N");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

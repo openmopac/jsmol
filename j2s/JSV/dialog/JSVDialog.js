@@ -32,7 +32,6 @@ this.unitOptions = null;
 this.formatOptions = null;
 this.unitPtr = null;
 this.isON = true;
-this.lastNorm = 1;
 this.iRowColSelected = -1;
 this.iSelected = -1;
 this.skipCreate = false;
@@ -188,10 +187,6 @@ Clazz.defineMethod(c$, "setThreshold",
 function(y){
 this.dialog.setText(this.txt1, this.getThreasholdText(y));
 }, "~N");
-Clazz.defineMethod(c$, "setComboSelected", 
-function(i){
-this.dialog.setSelectedIndex(this.combo1, i);
-}, "~N");
 Clazz.defineMethod(c$, "applyFromFields", 
 function(){
 this.apply(null);
@@ -233,7 +228,7 @@ break;
 case JSV.common.Annotation.AType.PeakList:
 this.myParams = this.xyData.getParameters();
 this.setThreshold(this.myParams.peakListThreshold);
-this.setComboSelected(this.myParams.peakListInterpolation.equals("none") ? 1 : 0);
+this.dialog.setSelectedIndex(this.combo1, this.myParams.peakListInterpolation.equals("none") ? 1 : 0);
 this.createData();
 break;
 case JSV.common.Annotation.AType.OverlayLegend:
@@ -284,13 +279,6 @@ case JSV.common.Annotation.AType.Views:
 break;
 }
 }, "JSV.common.Coordinate,~N,~N");
-Clazz.defineMethod(c$, "getPeakData", 
-function(){
-var md =  new JSV.common.PeakData(JSV.common.Annotation.AType.PeakList, this.$spec);
-md.setPeakList(this.myParams, this.precision, this.jsvp.getPanelData().getView());
-this.xyData = md;
-return null;
-});
 Clazz.overrideMethod(c$, "getData", 
 function(){
 if (this.xyData == null) this.createData();
@@ -305,25 +293,6 @@ Clazz.overrideMethod(c$, "setSpecShift",
 function(dx){
 if (this.xyData != null) this.xyData.setSpecShift(dx);
 }, "~N");
-Clazz.defineMethod(c$, "setType", 
-function(type){
-this.type = type;
-switch (type) {
-case JSV.common.Annotation.AType.Measurements:
-this.addUnits = true;
-break;
-case JSV.common.Annotation.AType.Integration:
-break;
-case JSV.common.Annotation.AType.PeakList:
-break;
-case JSV.common.Annotation.AType.OverlayLegend:
-break;
-case JSV.common.Annotation.AType.Views:
-break;
-case JSV.common.Annotation.AType.NONE:
-break;
-}
-}, "JSV.common.Annotation.AType");
 Clazz.defineMethod(c$, "apply", 
 function(objects){
 try {
@@ -374,11 +343,11 @@ Clazz.defineMethod(c$, "restoreDialogPosition",
 function(panel, posXY){
 if (panel != null) {
 if (posXY[0] == -2147483648) {
-posXY[0] = 0;
-posXY[1] = -20;
+posXY[0] = 50;
+posXY[1] = 50;
 }var pt = this.manager.getLocationOnScreen(panel);
 var height = panel.getHeight();
-this.loc =  Clazz.newIntArray(-1, [Math.max(0, pt[0] + posXY[0]), Math.max(0, pt[1] + height + posXY[1])]);
+this.loc =  Clazz.newIntArray(-1, [Math.max(0, pt[0] + posXY[0]), Math.max(0, pt[1] + posXY[1])]);
 this.dialog.setIntLocation(this.loc);
 }}, "JSV.api.JSVPanel,~A");
 Clazz.defineMethod(c$, "saveDialogPosition", 
@@ -661,4 +630,4 @@ var pt = url.indexOf(key);
 return (pt < 0 ? null : url.substring(pt + key.length, url.indexOf("&", pt + 1)));
 }, "~S,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

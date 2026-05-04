@@ -61,9 +61,9 @@
 ){
 var $t$;
 //var c$;
-Jmol.___JmolDate="$Date: 2025-08-08 04:46:51 -0500 (Fri, 08 Aug 2025) $"
+Jmol.___JmolDate="$Date: 2026-03-20 10:03:31 -0500 (Fri, 20 Mar 2026) $"
 Jmol.___fullJmolProperties="src/org/jmol/viewer/Jmol.properties"
-Jmol.___JmolVersion="16.3.33" // (legacy) also 16.3.34 (swingJS) 
+Jmol.___JmolVersion="16.3.53" // (legacy) also 16.3.54 (swingJS) 
 // JSmolJavaExt.js
  
 // contains class declarations for 
@@ -79,6 +79,7 @@ Jmol.___JmolVersion="16.3.33" // (legacy) also 16.3.34 (swingJS)
 // (local scope) Clazz_xxx, allowing them to be further compressed using
 // Google Closure Compiler in that same ANT task.
 
+// BH 2025.11.10 removing override of String.prototype.concat
 // BH 2023.07.08 NaN.0 fix
 // BH 10/16/2017 6:51:20 AM fixing range error for MSIE in prepareCallback setting arguments.length < 0
 // BH 10/13/2017 7:03:28 AM fix for String.initialize(bytes) applying bytes as arguments
@@ -1458,13 +1459,13 @@ for(var i=0;i<srcEnd-srcBegin;i++){
 dst[dstBegin+i]=this.charAt(srcBegin+i);
 }
 };
-sp.$concat=sp.concat;
-sp.concat=function(s){
-if(s==null){
-throw new NullPointerException();
-}
-return this.$concat(s);
-};
+//sp.$concat=sp.concat;
+//sp.concat=function(s){
+//if(s==null){
+//throw new NullPointerException();
+//}
+//return this.$concat(s);
+//};
 
 sp.$lastIndexOf=sp.lastIndexOf;
 sp.lastIndexOf=function(s,last){
@@ -9393,45 +9394,45 @@ return this.string.substring(i);
 ;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
 Clazz_declarePackage("javajs.api");
 Clazz_declareInterface(javajs.api, "BytePoster");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("javajs.api");
 Clazz_declareInterface(javajs.api, "GenericColor");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "GenericFileInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("javajs.api");
 Clazz_declareInterface(javajs.api, "GenericOutputChannel");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("javajs.api");
 Clazz_declareInterface(javajs.api, "JSInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("javajs.api");
 Clazz_declareInterface(javajs.api, "JSONEncodable");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("javajs.api");
 Clazz_declareInterface(javajs.api, "ZInputStream");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("javajs.api.js");
 Clazz_declareInterface(javajs.api.js, "J2SObjectInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "GenericMouseInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_load(["J.api.FontManager"], "J.api.GenericPlatform", null, function(){
 var c$ = Clazz_declareInterface(J.api, "GenericPlatform", J.api.FontManager);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "PlatformViewer");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "EventManager");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "FontManager");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(null, "JU.Font", ["JU.AU"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -9536,12 +9537,19 @@ c$.font3ds =  new Array(8);
 c$.fontFaces =  Clazz_newArray(-1, ["SansSerif", "Serif", "Monospaced", ""]);
 c$.fontStyles =  Clazz_newArray(-1, ["Plain", "Bold", "Italic", "BoldItalic"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["javajs.api.GenericColor"], "JS.Color", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.argb = 0;
 Clazz_instantialize(this, arguments);}, JS, "Color", null, javajs.api.GenericColor);
+Clazz_overrideMethod(c$, "addAlpha", 
+function(a){
+if (this.getOpacity255() != 0xFF) return this;
+var c =  new JS.Color();
+c.argb = (this.argb & 0xFFFFFF) | (a << 24);
+return c;
+}, "~N");
 Clazz_overrideMethod(c$, "getRGB", 
 function(){
 return this.argb & 0x00FFFFFF;
@@ -9550,10 +9558,6 @@ Clazz_overrideMethod(c$, "getOpacity255",
 function(){
 return ((this.argb >> 24) & 0xFF);
 });
-Clazz_overrideMethod(c$, "setOpacity255", 
-function(a){
-this.argb = this.argb & 0xFFFFFF | ((a & 0xFF) << 24);
-}, "~N");
 c$.get1 = Clazz_defineMethod(c$, "get1", 
 function(rgb){
 var c =  new JS.Color();
@@ -9579,7 +9583,7 @@ var s = ("00000000" + Integer.toHexString(this.argb));
 return "[0x" + s.substring(s.length - 8, s.length) + "]";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -9597,15 +9601,15 @@ this.height = h;
 return this;
 }, "~N,~N");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.awtjs");
 (function(){
 var c$ = Clazz_declareType(J.awtjs, "Event", null);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "GenericMenuInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.P3"], "JU.A4", ["JU.T3"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -9692,7 +9696,7 @@ function(){
 return "[" + this.x + "," + this.y + "," + this.z + "," + (this.angle * 180.0 / 3.141592653589793) + "]";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.net.URLConnection"], "JU.AjaxURLConnection", ["JU.AU", "$.Rdr"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -9731,7 +9735,7 @@ function(){
 return this.doAjax();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.net.URLStreamHandler"], "JU.AjaxURLStreamHandler", ["JU.AjaxURLConnection", "$.SB"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -9765,7 +9769,7 @@ result.append(u.getRef());
 }return result.toString();
 }, "java.net.URL");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.net.URLStreamHandlerFactory", "java.util.Hashtable"], "JU.AjaxURLStreamHandlerFactory", ["JU.AjaxURLStreamHandler"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -9781,7 +9785,7 @@ if (fac == null) this.htFactories.put(protocol, fac =  new JU.AjaxURLStreamHandl
 return (fac.protocol == null ? null : fac);
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(null, "JU.AU", ["java.lang.reflect.Array", "java.util.Arrays", "JU.Lst"], function(){
 var c$ = Clazz_declareType(JU, "AU", null);
@@ -10145,7 +10149,7 @@ for (var i = b.length; --i >= 0;) { var j = b[i] & 0xFF; if
 }}return b;
 }, "~A");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(null, "JU.Base64", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JU, "Base64", null);
@@ -10199,7 +10203,7 @@ return bytes;
 c$.base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 c$.decode64 =  Clazz_newIntArray(-1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 62, 0, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 0, 0, 0, 0, 63, 0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 0, 0, 0, 0, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["javajs.api.JSONEncodable"], "JU.BS", ["JU.PT", "$.SB"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -10558,7 +10562,7 @@ return (iPrev >= 0 ? null : bs);
 }, "~S");
 c$.emptyBitmap =  Clazz_newIntArray (0, 0);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.util.Hashtable"], "JU.CU", ["JU.P3", "$.PT"], function(){
 var c$ = Clazz_declareType(JU, "CU", null);
@@ -10694,7 +10698,7 @@ c$.mapJavaScriptColors =  new java.util.Hashtable();
 for (var i = JU.CU.colorNames.length; --i >= 0; ) JU.CU.mapJavaScriptColors.put(JU.CU.colorNames[i], Integer.$valueOf(JU.CU.colorArgbs[i]));
 
 }});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(null, "JU.DF", ["JU.PT", "$.SB"], function(){
 var c$ = Clazz_declareType(JU, "DF", null);
@@ -10790,7 +10794,7 @@ c$.formattingStrings =  Clazz_newArray(-1, ["0", "0.0", "0.00", "0.000", "0.0000
 c$.formatAdds =  Clazz_newDoubleArray(-1, [0.5, 0.05, 0.005, 0.0005, 0.00005, 0.000005, 0.0000005, 0.00000005, 0.000000005, 0.0000000005, 0.00000000005, 0.000000000005, 0.0000000000005]);
 c$.useNumberLocalization =  Clazz_newArray(-1, [Boolean.TRUE]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.lang.Enum"], "JU.Encoding", null, function(){
 var c$ = Clazz_declareType(JU, "Encoding", Enum);
@@ -10801,7 +10805,7 @@ Clazz_defineEnumConstant(c$, "UTF_16LE", 3, []);
 Clazz_defineEnumConstant(c$, "UTF_32BE", 4, []);
 Clazz_defineEnumConstant(c$, "UTF_32LE", 5, []);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.util.ArrayList"], "JU.Lst", null, function(){
 var c$ = Clazz_declareType(JU, "Lst", java.util.ArrayList);
@@ -10826,7 +10830,7 @@ function(v){
 return this._removeObject(v);
 }}, "~O");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -11162,7 +11166,7 @@ function(){
 throw  new ArrayIndexOutOfBoundsException("matrix column/row out of bounds");
 });
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.M34"], "JU.M3", ["JU.T3"], function(){
 var c$ = Clazz_declareType(JU, "M3", JU.M34, java.io.Serializable);
@@ -11461,7 +11465,7 @@ function(){
 return (Math.abs(this.determinant3() - 1) < 0.001);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.M34"], "JU.M4", ["JU.T3"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -11953,7 +11957,7 @@ function(n, f){
 return (Math.abs(n) < f ? 0 : n);
 }, "~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["java.io.OutputStream", "javajs.api.GenericOutputChannel"], "JU.OC", ["java.io.BufferedWriter", "$.ByteArrayOutputStream", "$.OutputStreamWriter", "JU.Base64", "$.SB"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -12249,7 +12253,7 @@ this.writeInt(x == 0 ? 0 : Float.floatToIntBits(x));
 }, "~N");
 c$.urlPrefixes =  Clazz_newArray(-1, ["http:", "https:", "sftp:", "ftp:", "file:", "cache:"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.T3"], "JU.P3", null, function(){
 var c$ = Clazz_declareType(JU, "P3", JU.T3);
@@ -12279,7 +12283,7 @@ return JU.P3.new3(a[0], a[1], a[2]);
 }, "~A");
 c$.unlikely = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.T3i"], "JU.P3i", null, function(){
 var c$ = Clazz_declareType(JU, "P3i", JU.T3i);
@@ -12292,7 +12296,7 @@ pt.z = z;
 return pt;
 }, "~N,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.T4"], "JU.P4", null, function(){
 var c$ = Clazz_declareType(JU, "P4", JU.T4);
@@ -12317,7 +12321,7 @@ var dw = this.w - p1.w;
 return Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 }, "JU.P4");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(null, "JU.PT", ["java.util.Arrays", "JU.AU", "$.DF", "$.SB"], function(){
 var c$ = Clazz_declareType(JU, "PT", null);
@@ -13296,7 +13300,7 @@ return (pt < 0 ? JU.PT.parseFloat(s) : JU.PT.parseFloat(s.substring(0, pt)) / JU
 c$.tensScale =  Clazz_newFloatArray(-1, [10, 100, 1000, 10000, 100000, 1000000]);
 c$.decimalScale =  Clazz_newFloatArray(-1, [0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001, 0.000000001, 0.0000000001, 0.00000000001, 0.000000000001, 0.0000000000001, 0.00000000000001, 0.000000000000001]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -13448,7 +13452,7 @@ function(offset, str){
 this.replace(offset, offset, str);
 }, "~N,~S");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["javajs.api.JSONEncodable"], "JU.T3", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -13599,7 +13603,7 @@ t.set(this.x, this.y, this.z);
 return t;
 }, "JU.T3");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -13650,7 +13654,7 @@ function(){
 return this.asString();
 });
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.T3"], "JU.T4", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -13687,7 +13691,7 @@ function(){
 return "[" + this.x + ", " + this.y + ", " + this.z + ", " + this.w + "]";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JU");
 Clazz_load(["JU.T3"], "JU.V3", null, function(){
 var c$ = Clazz_declareType(JU, "V3", JU.T3);
@@ -13716,268 +13720,1047 @@ var cross = Math.sqrt(xx * xx + yy * yy + zz * zz);
 return Math.abs(Math.atan2(cross, this.dot(v1)));
 }, "JU.V3");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["JU.LoggerInterface"], "JU.DefaultLogger", ["JU.Logger"], function(){
-var c$ = Clazz_declareType(JU, "DefaultLogger", null, JU.LoggerInterface);
-Clazz_defineMethod(c$, "log", 
-function(out, level, txt, e){
-if (out === System.err) System.out.flush();
-if ((out != null) && ((txt != null) || (e != null))) {
-txt = (txt != null ? txt : "");
-txt = (JU.Logger.logLevel() ? "[" + JU.Logger.getLevel(level) + "] " : "") + txt + (e != null ? ": " + e.toString() : "");
-out.println(txt);
-if (e != null) {
-var elements = e.getStackTrace();
-if (elements != null) {
-for (var i = 0; i < elements.length; i++) {
-out.println(elements[i].getClassName() + " - " + elements[i].getLineNumber() + " - " + elements[i].getMethodName());
-}
-}}}if (out === System.err) System.err.flush();
-return txt;
-}, "java.io.PrintStream,~N,~S,Throwable");
-Clazz_overrideMethod(c$, "debug", 
-function(txt){
-this.log(System.out, 5, txt, null);
-}, "~S");
-Clazz_overrideMethod(c$, "info", 
-function(txt){
-this.log(System.out, 4, txt, null);
-}, "~S");
-Clazz_overrideMethod(c$, "warn", 
-function(txt){
-this.log(System.out, 3, txt, null);
-}, "~S");
-Clazz_overrideMethod(c$, "warnEx", 
-function(txt, e){
-this.log(System.out, 3, txt, e);
-}, "~S,Throwable");
-Clazz_overrideMethod(c$, "error", 
-function(txt){
-this.log(System.err, 2, txt, null);
-}, "~S");
-Clazz_overrideMethod(c$, "errorEx", 
-function(txt, e){
-this.log(System.err, 2, txt, e);
-}, "~S,Throwable");
-Clazz_overrideMethod(c$, "fatal", 
-function(txt){
-this.log(System.err, 1, txt, null);
-}, "~S");
-Clazz_overrideMethod(c$, "fatalEx", 
-function(txt, e){
-this.log(System.err, 1, txt, e);
-}, "~S,Throwable");
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
+Clazz_load(["java.util.AbstractMap", "$.AbstractSet", "$.Iterator", "$.Map", "$.MapEntry"], "java.util.HashMap", ["java.util.AbstractCollection", "$.Arrays", "java.util.MapEntry.Type"], function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.elementCount = 0;
+this.elementData = null;
+this.loadFactor = 0;
+this.threshold = 0;
+this.modCount = 0;
+this.$entrySet = null;
+this.__m = null;
+this.__allowJS = false;
+Clazz_instantialize(this, arguments);}, java.util, "HashMap", java.util.AbstractMap, [java.util.Map, Cloneable, java.io.Serializable]);
+Clazz_makeConstructor(c$, 
+function(){
+var size = 16;
+var loadFactor = 0.75;
+{
+size = (arguments[0] || size); loadFactor = (arguments[1] ||
+0.75);
+}this.initHM(size, loadFactor);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["java.util.Hashtable", "JU.DefaultLogger"], "JU.Logger", null, function(){
-var c$ = Clazz_declareType(JU, "Logger", null);
-c$.getProperty = Clazz_defineMethod(c$, "getProperty", 
-function(level, defaultValue){
+Clazz_defineMethod(c$, "newElementArray", 
+function(s){
+return  new Array(s);
+}, "~N");
+Clazz_defineMethod(c$, "initHM", 
+function(capacity, loadFactor){
+var map = null;
+{
+if (typeof capacity == "object") { map = capacity; this.__allowJS =
+map.__allowJS; capacity = (map.size() < 6 ? 11 : map.size() * 2); }
+else { this.__allowJS = true; } !capacity && (capacity = 0);
+!loadFactor && (loadFactor = 0.75);
+}if (capacity == 0) capacity = 16;
+if (capacity >= 0) {
+this.elementCount = 0;
+this.elementData = this.newElementArray(capacity == 0 ? 1 : capacity);
+this.loadFactor = loadFactor;
+this.computeMaxSize();
+} else {
+throw  new IllegalArgumentException();
+}this.__setJS();
+if (map != null) {
+this.putAll(map);
+}}, "~N,~N");
+Clazz_defineMethod(c$, "putMapEntries", 
+function(mOriginal, evict){
+var n = mOriginal.size();
+if (n == 0) return;
+var key = null;
+var value = null;
+if (java.util.HashMap.__isSimple(this) && java.util.HashMap.__isSimple(mOriginal)) {
+var me = this;
+var hash = 0;
+var mode = java.util.HashMap.__hasKey(me, key);
+{
+mOriginal.__m.forEach(function(value, key) {
+me.putJSVal(hash, key, value, false, evict, mode);
+});
+}return;
+}if (java.util.HashMap.__isSimple(mOriginal)) {
+var me = this;
+{
+mOriginal.__m.forEach(function(value, key) {
+me.putJavaValue(key, value);
+});
+}return;
+}this.__m = null;
+for (var e, $e = mOriginal.entrySet().iterator (); $e.hasNext()&& ((e = $e.next ()) || true);) {
+key = e.getKey();
+value = e.getValue();
+this.putJavaValue(key, value);
+}
+}, "java.util.Map,~B");
+Clazz_defineMethod(c$, "reinitialize", 
+function(){
+this.elementData = null;
+this.$entrySet = null;
+this.$keySet = null;
+this.$values = null;
+this.modCount = 0;
+this.threshold = 0;
+this.elementCount = 0;
+this.__setJS();
+});
+Clazz_overrideMethod(c$, "clear", 
+function(){
+this.modCount++;
+if (java.util.HashMap.__isSimple(this)) {
+{
+this.__m.clear();
+}}this.__setJS();
+if (this.elementCount > 0) {
+this.elementCount = 0;
+java.util.Arrays.fill(this.elementData, null);
+this.modCount++;
+}});
+Clazz_defineMethod(c$, "clone", 
+function(){
+var result;
 try {
-var property = System.getProperty("jmol.logger." + level, null);
-if (property != null) {
-return (property.equalsIgnoreCase("true"));
-}} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
+result = Clazz_superCall(this, java.util.HashMap, "clone", []);
+} catch (e) {
+if (Clazz_exceptionOf(e,"CloneNotSupportedException")){
+return null;
 } else {
 throw e;
 }
 }
-return defaultValue;
-}, "~S,~B");
-c$.setLogger = Clazz_defineMethod(c$, "setLogger", 
-function(logger){
-JU.Logger._logger = logger;
-JU.Logger.debugging = JU.Logger.isActiveLevel(5) || JU.Logger.isActiveLevel(6);
-JU.Logger.debuggingHigh = (JU.Logger.debugging && JU.Logger._activeLevels[6]);
-}, "JU.LoggerInterface");
-c$.isActiveLevel = Clazz_defineMethod(c$, "isActiveLevel", 
-function(level){
-return JU.Logger._logger != null && level >= 0 && level < 7 && JU.Logger._activeLevels[level];
-}, "~N");
-c$.setActiveLevel = Clazz_defineMethod(c$, "setActiveLevel", 
-function(level, active){
-if (level < 0) level = 0;
-if (level >= 7) level = 6;
-JU.Logger._activeLevels[level] = active;
-JU.Logger.debugging = JU.Logger.isActiveLevel(5) || JU.Logger.isActiveLevel(6);
-JU.Logger.debuggingHigh = (JU.Logger.debugging && JU.Logger._activeLevels[6]);
-}, "~N,~B");
-c$.setLogLevel = Clazz_defineMethod(c$, "setLogLevel", 
-function(level){
-for (var i = 7; --i >= 0; ) JU.Logger.setActiveLevel(i, i <= level);
-
-}, "~N");
-c$.getLevel = Clazz_defineMethod(c$, "getLevel", 
-function(level){
-switch (level) {
-case 6:
-return "DEBUGHIGH";
-case 5:
-return "DEBUG";
-case 4:
-return "INFO";
-case 3:
-return "WARN";
-case 2:
-return "ERROR";
+result.reinitialize();
+result.putMapEntries(this, false);
+return result;
+});
+Clazz_defineMethod(c$, "computeMaxSize", 
+function(){
+this.threshold = Clazz_floatToInt(this.elementData.length * this.loadFactor);
+});
+Clazz_overrideMethod(c$, "containsKey", 
+function(key){
+switch (java.util.HashMap.__hasKey(this, key)) {
+case 0:
+break;
 case 1:
-return "FATAL";
+java.util.HashMap.__ensureJavaMap(this);
+break;
+case 2:
+return false;
+case 3:
+return true;
 }
-return "????";
-}, "~N");
-c$.logLevel = Clazz_defineMethod(c$, "logLevel", 
+return (this.getJavaEntry(key) != null);
+}, "~O");
+Clazz_defineMethod(c$, "keysEqual", 
+function(k1, entry){
+var k1Hash = k1 == null ? 0 : k1.hashCode();
+if (k1Hash != entry.origKeyHash) {
+return false;
+}if (k1 == null && entry.key == null) {
+return true;
+}return k1.equals(entry.key);
+}, "~O,java.util.HashMap.Entry");
+Clazz_overrideMethod(c$, "containsValue", 
+function(value){
+if (java.util.HashMap.__isSimple(this)) {
+var m = this.__m;
+{
+var iter = m.values();
+for (var n = iter.next(); !n.done; n = iter.next()) {
+if (n.value == value || n.value.equals$O(value)) {
+return true;
+}
+}
+}} else if (value != null) {
+for (var i = this.elementData.length; --i >= 0; ) {
+var entry = this.elementData[i];
+while (entry != null) {
+if (value.equals(entry.value)) {
+return true;
+}entry = entry.next;
+}
+}
+} else {
+for (var i = this.elementData.length; --i >= 0; ) {
+var entry = this.elementData[i];
+while (entry != null) {
+if (entry.value == null) {
+return true;
+}entry = entry.next;
+}
+}
+}return false;
+}, "~O");
+Clazz_overrideMethod(c$, "entrySet", 
 function(){
-return JU.Logger._logLevel;
+var es;
+return (es = this.$entrySet) == null ? (this.$entrySet =  new java.util.HashMap.HashMapEntrySet(this)) : es;
 });
-c$.doLogLevel = Clazz_defineMethod(c$, "doLogLevel", 
-function(log){
-JU.Logger._logLevel = log;
-}, "~B");
-c$.debug = Clazz_defineMethod(c$, "debug", 
-function(txt){
-if (!JU.Logger.debugging) return;
-try {
-JU.Logger._logger.debug(txt);
-} catch (t) {
+Clazz_overrideMethod(c$, "get", 
+function(key){
+switch (java.util.HashMap.__hasKey(this, key)) {
+case 0:
+break;
+case 1:
+java.util.HashMap.__ensureJavaMap(this);
+break;
+case 2:
+return null;
+case 3:
+var v = null;
+{
+v = this.__m.get(key);
+}return v;
 }
-}, "~S");
-c$.info = Clazz_defineMethod(c$, "info", 
-function(txt){
-try {
-if (JU.Logger.isActiveLevel(4)) {
-JU.Logger._logger.info(txt);
-}} catch (t) {
-}
-}, "~S");
-c$.warn = Clazz_defineMethod(c$, "warn", 
-function(txt){
-try {
-if (JU.Logger.isActiveLevel(3)) {
-JU.Logger._logger.warn(txt);
-}} catch (t) {
-}
-}, "~S");
-c$.warnEx = Clazz_defineMethod(c$, "warnEx", 
-function(txt, e){
-try {
-if (JU.Logger.isActiveLevel(3)) {
-JU.Logger._logger.warnEx(txt, e);
-}} catch (t) {
-}
-}, "~S,Throwable");
-c$.error = Clazz_defineMethod(c$, "error", 
-function(txt){
-try {
-if (JU.Logger.isActiveLevel(2)) {
-JU.Logger._logger.error(txt);
-}} catch (t) {
-}
-}, "~S");
-c$.errorEx = Clazz_defineMethod(c$, "errorEx", 
-function(txt, e){
-try {
-if (JU.Logger.isActiveLevel(2)) {
-JU.Logger._logger.errorEx(txt, e);
-}} catch (t) {
-}
-}, "~S,Throwable");
-c$.getLogLevel = Clazz_defineMethod(c$, "getLogLevel", 
-function(){
-for (var i = 7; --i >= 0; ) if (JU.Logger.isActiveLevel(i)) return i;
-
+var m = this.getJavaEntry(key);
+return (m == null ? null : m.value);
+}, "~O");
+Clazz_defineMethod(c$, "getJavaEntry", 
+function(key){
+var index = this.getModuloHash(key);
+return this.findJavaEntry(key, index);
+}, "~O");
+Clazz_defineMethod(c$, "getModuloHash", 
+function(key){
+if (key == null) {
 return 0;
-});
-c$.fatal = Clazz_defineMethod(c$, "fatal", 
-function(txt){
-try {
-if (JU.Logger.isActiveLevel(1)) {
-JU.Logger._logger.fatal(txt);
-}} catch (t) {
+}return (key.hashCode() & 0x7FFFFFFF) % this.elementData.length;
+}, "~O");
+Clazz_defineMethod(c$, "findJavaEntry", 
+function(key, index){
+var m;
+m = this.elementData[index];
+if (key != null) {
+while (m != null && !this.keysEqual(key, m)) {
+m = m.next;
 }
-}, "~S");
-c$.fatalEx = Clazz_defineMethod(c$, "fatalEx", 
-function(txt, e){
-try {
-if (JU.Logger.isActiveLevel(1)) {
-JU.Logger._logger.fatalEx(txt, e);
-}} catch (t) {
+} else {
+while (m != null && m.key != null) {
+m = m.next;
 }
-}, "~S,Throwable");
-c$.startTimer = Clazz_defineMethod(c$, "startTimer", 
-function(msg){
-if (msg != null) JU.Logger.htTiming.put(msg, Long.$valueOf(System.currentTimeMillis()));
-}, "~S");
-c$.getTimerMsg = Clazz_defineMethod(c$, "getTimerMsg", 
-function(msg, time){
-if (time == 0) time = JU.Logger.getTimeFrom(msg);
-return "Time for " + msg + ": " + (time) + " ms";
-}, "~S,~N");
-c$.getTimeFrom = Clazz_defineMethod(c$, "getTimeFrom", 
-function(msg){
-var t;
-return (msg == null || (t = JU.Logger.htTiming.get(msg)) == null ? -1 : System.currentTimeMillis() - t.longValue());
-}, "~S");
-c$.checkTimer = Clazz_defineMethod(c$, "checkTimer", 
-function(msg, andReset){
-var time = JU.Logger.getTimeFrom(msg);
-if (time >= 0 && !msg.startsWith("(")) JU.Logger.info(JU.Logger.getTimerMsg(msg, time));
-if (andReset) JU.Logger.startTimer(msg);
-return time;
-}, "~S,~B");
-c$.checkMemory = Clazz_defineMethod(c$, "checkMemory", 
+}return m;
+}, "~O,~N");
+Clazz_overrideMethod(c$, "isEmpty", 
 function(){
-var bTotal = 0;
-var bFree = 0;
-var bMax = 0;
-{
-}JU.Logger.info("Memory: Total-Free=" + (bTotal - bFree) + "; Total=" + bTotal + "; Free=" + bFree + "; Max=" + bMax);
+return this.size() == 0;
 });
-c$._logger =  new JU.DefaultLogger();
-c$._activeLevels =  Clazz_newBooleanArray(7, false);
-c$._logLevel = false;
-c$.debugging = false;
-c$.debuggingHigh = false;
-{
-JU.Logger._activeLevels[6] = JU.Logger.getProperty("debugHigh", false);
-JU.Logger._activeLevels[5] = JU.Logger.getProperty("debug", false);
-JU.Logger._activeLevels[4] = JU.Logger.getProperty("info", true);
-JU.Logger._activeLevels[3] = JU.Logger.getProperty("warn", true);
-JU.Logger._activeLevels[2] = JU.Logger.getProperty("error", true);
-JU.Logger._activeLevels[1] = JU.Logger.getProperty("fatal", true);
-JU.Logger._logLevel = JU.Logger.getProperty("logLevel", false);
-JU.Logger.debugging = (JU.Logger._logger != null && (JU.Logger._activeLevels[5] || JU.Logger._activeLevels[6]));
-JU.Logger.debuggingHigh = (JU.Logger.debugging && JU.Logger._activeLevels[6]);
-}c$.htTiming =  new java.util.Hashtable();
+Clazz_overrideMethod(c$, "keySet", 
+function(){
+if (this.$keySet == null) {
+this.$keySet = ((Clazz_isClassDefined("java.util.HashMap$1") ? 0 : java.util.HashMap.$HashMap$1$ ()), Clazz_innerTypeInstance(java.util.HashMap$1, this, null));
+}return this.$keySet;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_declareInterface(JU, "LoggerInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+Clazz_overrideMethod(c$, "put", 
+function(key, value){
+var type = java.util.HashMap.__hasKey(this, key);
+switch (type) {
+case 0:
+break;
+case 1:
+java.util.HashMap.__ensureJavaMap(this);
+break;
+case 2:
+case 3:
+return this.putJSVal(1, key, value, false, true, type);
+}
+return this.putJavaValue(key, value);
+}, "~O,~O");
+Clazz_defineMethod(c$, "putJavaValue", 
+function(key, value){
+var index = this.getModuloHash(key);
+var entry = this.findJavaEntry(key, index);
+if (entry == null) {
+this.modCount++;
+if (++this.elementCount > this.threshold) {
+this.rehash();
+index = key == null ? 0 : (key.hashCode() & 0x7FFFFFFF) % this.elementData.length;
+}entry = this.createEntry(key, index, value);
+return null;
+}var result = entry.value;
+entry.value = value;
+return result;
+}, "~O,~O");
+Clazz_defineMethod(c$, "createEntry", 
+function(key, index, value){
+var entry =  new java.util.HashMap.Entry(key, value);
+entry.next = this.elementData[index];
+this.elementData[index] = entry;
+return entry;
+}, "~O,~N,~O");
+Clazz_overrideMethod(c$, "putAll", 
+function(map){
+if (!map.isEmpty()) for (var entry, $entry = map.entrySet().iterator (); $entry.hasNext()&& ((entry = $entry.next ()) || true);) {
+this.put(entry.getKey(), entry.getValue());
+}
+}, "java.util.Map");
+Clazz_defineMethod(c$, "putJSVal", 
+function(hash, key, value, onlyIfAbsent, evict, mode){
+var v0 = null;
+switch (mode) {
+case 2:
+{
+this.__m.set(key, value);
+}++this.modCount;
+break;
+case 3:
+if (hash != 0) {
+{
+v0 = this.__m.get(key) || null;
+}}if (!onlyIfAbsent || v0 == null) {
+{
+this.__m.set(key, value);
+}}break;
+}
+return v0;
+}, "~N,~O,~O,~B,~B,~N");
+Clazz_defineMethod(c$, "rehashImpl", 
+function(capacity){
+var length = (capacity == 0 ? 1 : capacity << 1);
+var newData = this.newElementArray(length);
+for (var i = 0; i < this.elementData.length; i++) {
+var entry = this.elementData[i];
+while (entry != null) {
+var key = entry.key;
+var index = key == null ? 0 : (key.hashCode() & 0x7FFFFFFF) % length;
+var next = entry.next;
+entry.next = newData[index];
+newData[index] = entry;
+entry = next;
+}
+}
+this.elementData = newData;
+this.computeMaxSize();
+}, "~N");
+Clazz_defineMethod(c$, "rehash", 
+function(){
+this.rehashImpl(this.elementData.length);
+});
+Clazz_overrideMethod(c$, "remove", 
+function(key){
+switch (java.util.HashMap.__hasKey(this, key)) {
+case 0:
+break;
+case 1:
+java.util.HashMap.__ensureJavaMap(this);
+break;
+case 2:
+return null;
+case 3:
+return this.removeJSNode(1, key, null, false, true);
+}
+var entry = this.removeJavaEntry(key);
+return (entry == null ? null : entry.value);
+}, "~O");
+Clazz_defineMethod(c$, "removeJSNode", 
+function(hash, key, value, matchValue, movable){
+var v = null;
+if (hash == 1 || matchValue) {
+{
+v = this.__m.get(key) || null;
+}}if (!matchValue || v === value || (value != null && value.equals(v))) {
+{
+this.__m["delete"](key);
+}++this.modCount;
+switch (hash) {
+case 1:
+return v;
+case 3:
+return "true";
+}
+}return null;
+}, "~N,~O,~O,~B,~B");
+Clazz_defineMethod(c$, "removeJavaEntry", 
+function(key){
+var index = 0;
+var entry;
+var last = null;
+if (key != null) {
+index = (key.hashCode() & 0x7FFFFFFF) % this.elementData.length;
+entry = this.elementData[index];
+while (entry != null && !this.keysEqual(key, entry)) {
+last = entry;
+entry = entry.next;
+}
+} else {
+entry = this.elementData[0];
+while (entry != null && entry.key != null) {
+last = entry;
+entry = entry.next;
+}
+}if (entry == null) {
+return null;
+}if (last == null) {
+this.elementData[index] = entry.next;
+} else {
+last.next = entry.next;
+}this.modCount++;
+this.elementCount--;
+return entry;
+}, "~O");
+Clazz_overrideMethod(c$, "size", 
+function(){
+{
+if (this.__m)
+return this.__m.size;
+}return this.elementCount;
+});
+Clazz_overrideMethod(c$, "values", 
+function(){
+if (this.$values == null) {
+this.$values = ((Clazz_isClassDefined("java.util.HashMap$2") ? 0 : java.util.HashMap.$HashMap$2$ ()), Clazz_innerTypeInstance(java.util.HashMap$2, this, null));
+}return this.$values;
+});
+Clazz_defineMethod(c$, "__setJS", 
+function(){
+if (this.__allowJS && java.util.HashMap.USE_SIMPLE) {
+var m = null;
+{
+m = new Map();
+}this.__m = m;
+} else {
+this.__m = null;
+}});
+c$.__get = Clazz_defineMethod(c$, "__get", 
+function(map, key){
+{
+return map.__m.get(key == null ? null : key + "");
+}}, "~O,~O");
+c$.__set = Clazz_defineMethod(c$, "__set", 
+function(map, key, value){
+{
+map.__m.set(key == null ? null : key + "", value);
+}}, "java.util.Map,~O,~O");
+c$.__hasKey = Clazz_defineMethod(c$, "__hasKey", 
+function(map, key){
+{
+return (!map.__m ? 0 : key != null && typeof key != "string" ? 1 :
+map.__m.has(key) ? 3 : 2);
+}}, "java.util.Map,~O");
+c$.__isSimple = Clazz_defineMethod(c$, "__isSimple", 
+function(map){
+{
+return !!map.__m;
+}}, "java.util.Map");
+c$.__ensureJavaMap = Clazz_defineMethod(c$, "__ensureJavaMap", 
+function(map){
+{
+if (map.__m) { var m = map.__m; map.__m = null;
+m.forEach(function(value, key){map.put(key, value);}); m.clear();
+}
+}}, "java.util.Map");
+c$.$HashMap$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "HashMap$1", java.util.AbstractSet);
+Clazz_overrideMethod(c$, "contains", 
+function(object){
+return this.b$["java.util.HashMap"].containsKey(object);
+}, "~O");
+Clazz_overrideMethod(c$, "size", 
+function(){
+return this.b$["java.util.HashMap"].size();
+});
+Clazz_overrideMethod(c$, "clear", 
+function(){
+this.b$["java.util.HashMap"].clear();
+});
+Clazz_overrideMethod(c$, "remove", 
+function(key){
+if (!this.b$["java.util.HashMap"].containsKey(key)) return false;
+this.b$["java.util.HashMap"].remove(key);
+return true;
+}, "~O");
+Clazz_overrideMethod(c$, "iterator", 
+function(){
+return  new java.util.HashMap.HashMapIterator(((Clazz_isClassDefined("java.util.HashMap$1$1") ? 0 : java.util.HashMap.$HashMap$1$1$ ()), Clazz_innerTypeInstance(java.util.HashMap$1$1, this, null)), this.b$["java.util.HashMap"]);
+});
+/*eoif5*/})();
+};
+c$.$HashMap$1$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "HashMap$1$1", null, java.util.MapEntry.Type);
+Clazz_overrideMethod(c$, "get", 
+function(entry){
+if (java.util.HashMap.__isSimple(this.b$["java.util.HashMap"])) {
+{
+return (entry == null ? null : entry.value[0]);
+}}return entry.key;
+}, "java.util.MapEntry");
+/*eoif5*/})();
+};
+c$.$HashMap$2$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "HashMap$2", java.util.AbstractCollection);
+Clazz_overrideMethod(c$, "contains", 
+function(object){
+return this.b$["java.util.HashMap"].containsValue(object);
+}, "~O");
+Clazz_overrideMethod(c$, "size", 
+function(){
+return this.b$["java.util.HashMap"].size();
+});
+Clazz_overrideMethod(c$, "clear", 
+function(){
+this.b$["java.util.HashMap"].clear();
+});
+Clazz_overrideMethod(c$, "iterator", 
+function(){
+return  new java.util.HashMap.HashMapIterator(((Clazz_isClassDefined("java.util.HashMap$2$1") ? 0 : java.util.HashMap.$HashMap$2$1$ ()), Clazz_innerTypeInstance(java.util.HashMap$2$1, this, null)), this.b$["java.util.HashMap"]);
+});
+/*eoif5*/})();
+};
+c$.$HashMap$2$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "HashMap$2$1", null, java.util.MapEntry.Type);
+Clazz_overrideMethod(c$, "get", 
+function(entry){
+if (java.util.HashMap.__isSimple(this.b$["java.util.HashMap"])) {
+{
+return (entry == null ? null : entry.value[1]);
+}}return entry.value;
+}, "java.util.MapEntry");
+/*eoif5*/})();
+};
+/*if3*/;(function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.origKeyHash = 0;
+this.next = null;
+Clazz_instantialize(this, arguments);}, java.util.HashMap, "Entry", java.util.MapEntry);
+Clazz_makeConstructor(c$, 
+function(theKey, theValue){
+Clazz_superConstructor(this, java.util.HashMap.Entry, [theKey, theValue]);
+this.origKeyHash = (theKey == null ? 0 : theKey.hashCode());
+}, "~O,~O");
+Clazz_defineMethod(c$, "clone", 
+function(){
+var entry = Clazz_superCall(this, java.util.HashMap.Entry, "clone", []);
+if (this.next != null) {
+entry.next = this.next.clone();
+}return entry;
+});
+/*eoif3*/})();
+/*if3*/;(function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.jsMapIterator = null;
+this.isSimple = false;
+this.index = 0;
+this.expectedModCount = 0;
+this.type = null;
+this.canRemove = false;
+this.entry = null;
+this.lastEntry = null;
+this.associatedMap = null;
+Clazz_instantialize(this, arguments);}, java.util.HashMap, "HashMapIterator", null, java.util.Iterator);
+Clazz_makeConstructor(c$, 
+function(value, hm){
+this.associatedMap = hm;
+this.type = value;
+this.expectedModCount = hm.modCount;
+this.lastEntry = this.entry = null;
+this.isSimple = java.util.HashMap.__isSimple(this.associatedMap);
+if (this.isSimple) {
+var m = this.associatedMap.__m;
+{
+this.jsMapIterator = m.entries();
+this.entry = this.jsMapIterator.next();
+}}}, "java.util.MapEntry.Type,java.util.HashMap");
+Clazz_overrideMethod(c$, "hasNext", 
+function(){
+if (this.isSimple) {
+if (this.entry == null) {
+return false;
+}var isDone = false;
+{
+isDone = this.entry.done;
+}return !isDone;
+}if (this.entry != null) {
+return true;
+}while (this.index < this.associatedMap.elementData.length) {
+if (this.associatedMap.elementData[this.index] == null) {
+this.index++;
+} else {
+return true;
+}}
+return false;
+});
+Clazz_defineMethod(c$, "checkConcurrentMod", 
+function(){
+if (this.expectedModCount != this.associatedMap.modCount) {
+throw  new java.util.ConcurrentModificationException();
+}});
+Clazz_overrideMethod(c$, "next", 
+function(){
+this.checkConcurrentMod();
+if (!this.hasNext()) {
+throw  new java.util.NoSuchElementException();
+}var result = null;
+if (this.isSimple) {
+{
+result = this.entry;
+this.entry = this.jsMapIterator.next() || null;
+}} else if (this.entry == null) {
+result = this.lastEntry = this.associatedMap.elementData[this.index++];
+this.entry = this.lastEntry.next;
+} else {
+if (this.lastEntry.next !== this.entry) {
+this.lastEntry = this.lastEntry.next;
+}result = this.entry;
+this.entry = this.entry.next;
+}this.canRemove = true;
+return this.type.get(result);
+});
+Clazz_overrideMethod(c$, "remove", 
+function(){
+this.checkConcurrentMod();
+if (!this.canRemove) {
+throw  new IllegalStateException();
+}this.canRemove = false;
+this.associatedMap.modCount++;
+if (this.lastEntry.next === this.entry) {
+while (this.associatedMap.elementData[--this.index] == null) {
+;}
+this.associatedMap.elementData[this.index] = this.associatedMap.elementData[this.index].next;
+this.entry = null;
+} else {
+this.lastEntry.next = this.entry;
+}this.associatedMap.elementCount--;
+this.expectedModCount++;
+});
+/*eoif3*/})();
+/*if3*/;(function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.associatedMap = null;
+Clazz_instantialize(this, arguments);}, java.util.HashMap, "HashMapEntrySet", java.util.AbstractSet);
+Clazz_makeConstructor(c$, 
+function(hm){
+Clazz_superConstructor (this, java.util.HashMap.HashMapEntrySet, []);
+this.associatedMap = hm;
+}, "java.util.HashMap");
+Clazz_defineMethod(c$, "hashMap", 
+function(){
+return this.associatedMap;
+});
+Clazz_overrideMethod(c$, "size", 
+function(){
+return this.associatedMap.elementCount;
+});
+Clazz_overrideMethod(c$, "clear", 
+function(){
+this.associatedMap.clear();
+});
+Clazz_overrideMethod(c$, "remove", 
+function(object){
+if (this.contains(object)) {
+this.associatedMap.remove((object).getKey());
+return true;
+}return false;
+}, "~O");
+Clazz_overrideMethod(c$, "contains", 
+function(object){
+if (!(Clazz_instanceOf(object,"java.util.Map.Entry"))) return false;
+var key = (object).getKey();
+if (!this.associatedMap.containsKey(key)) return false;
+if (java.util.HashMap.__isSimple(this.associatedMap)) {
+var value = (object).getValue();
+var v = this.associatedMap.get(key);
+return (value === v || value != null && value.equals(v));
+}var entry = this.associatedMap.getJavaEntry((object).getKey());
+return object.equals(entry);
+}, "~O");
+Clazz_overrideMethod(c$, "iterator", 
+function(){
+return  new java.util.HashMap.HashMapIterator(((Clazz_isClassDefined("java.util.HashMap$HashMapEntrySet$1") ? 0 : java.util.HashMap.HashMapEntrySet.$HashMap$HashMapEntrySet$1$ ()), Clazz_innerTypeInstance(java.util.HashMap$HashMapEntrySet$1, this, null)), this.associatedMap);
+});
+c$.$HashMap$HashMapEntrySet$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "HashMap$HashMapEntrySet$1", null, java.util.MapEntry.Type);
+Clazz_overrideMethod(c$, "get", 
+function(entry){
+if (java.util.HashMap.__isSimple(this.b$["java.util.HashMap.HashMapEntrySet"].associatedMap)) {
+var key = null;
+var value = null;
+{
+key = entry.value[0];
+value = entry.value[1];
+}return  new java.util.HashMap.Entry(key, value);
+}return entry;
+}, "java.util.MapEntry");
+/*eoif5*/})();
+};
+/*eoif3*/})();
+c$.USE_SIMPLE = true;
+});
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_load(["java.util.HashMap"], "java.util.LinkedHashMap", ["java.util.AbstractCollection", "$.AbstractSet", "java.util.MapEntry.Type"], function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.accessOrder = false;
+this.head = null;
+this.tail = null;
+Clazz_instantialize(this, arguments);}, java.util, "LinkedHashMap", java.util.HashMap);
+Clazz_makeConstructor(c$, 
+function(){
+this.construct (16, 0.75, false);
+});
+Clazz_makeConstructor(c$, 
+function(s){
+this.construct (s, 0.75, false);
+}, "~N");
+Clazz_makeConstructor(c$, 
+function(s, lf){
+this.construct (s, lf, false);
+}, "~N,~N");
+Clazz_makeConstructor(c$, 
+function(s, lf, order){
+Clazz_superConstructor(this, java.util.LinkedHashMap, [s, lf]);
+this.accessOrder = order;
+this.head = null;
+this.tail = null;
+}, "~N,~N,~B");
+Clazz_makeConstructor(c$, 
+function(m){
+Clazz_superConstructor (this, java.util.LinkedHashMap, []);
+this.accessOrder = false;
+this.head = null;
+this.tail = null;
+this.putAll(m);
+}, "java.util.Map");
+Clazz_overrideMethod(c$, "newElementArray", 
+function(s){
+return  new Array(s);
+}, "~N");
+Clazz_overrideMethod(c$, "get", 
+function(key){
+var m = this.getJavaEntry(key);
+if (m == null) {
+return null;
+}if (this.accessOrder && this.tail !== m) {
+var p = m.chainBackward;
+var n = m.chainForward;
+n.chainBackward = p;
+if (p != null) {
+p.chainForward = n;
+} else {
+this.head = n;
+}m.chainForward = null;
+m.chainBackward = this.tail;
+this.tail.chainForward = m;
+this.tail = m;
+}return m.value;
+}, "~O");
+Clazz_overrideMethod(c$, "createEntry", 
+function(key, index, value){
+var m =  new java.util.LinkedHashMap.LinkedHashMapEntry(key, value);
+m.next = this.elementData[index];
+this.elementData[index] = m;
+this.linkEntry(m);
+return m;
+}, "~O,~N,~O");
+Clazz_overrideMethod(c$, "put", 
+function(key, value){
+var index = this.getModuloHash(key);
+var m = this.findJavaEntry(key, index);
+if (m == null) {
+this.modCount++;
+if (++this.elementCount > this.threshold) {
+this.rehash();
+index = key == null ? 0 : (key.hashCode() & 0x7FFFFFFF) % this.elementData.length;
+}m = this.createEntry(key, index, null);
+} else {
+this.linkEntry(m);
+}var result = m.value;
+m.value = value;
+if (this.removeEldestEntry(this.head)) {
+this.remove(this.head.key);
+}return result;
+}, "~O,~O");
+Clazz_defineMethod(c$, "linkEntry", 
+function(m){
+if (this.tail === m) {
+return;
+}if (this.head == null) {
+this.head = this.tail = m;
+return;
+}var p = m.chainBackward;
+var n = m.chainForward;
+if (p == null) {
+if (n != null) {
+if (this.accessOrder) {
+this.head = n;
+n.chainBackward = null;
+m.chainBackward = this.tail;
+m.chainForward = null;
+this.tail.chainForward = m;
+this.tail = m;
+}} else {
+m.chainBackward = this.tail;
+m.chainForward = null;
+this.tail.chainForward = m;
+this.tail = m;
+}return;
+}if (n == null) {
+return;
+}if (this.accessOrder) {
+p.chainForward = n;
+n.chainBackward = p;
+m.chainForward = null;
+m.chainBackward = this.tail;
+this.tail.chainForward = m;
+this.tail = m;
+}}, "java.util.LinkedHashMap.LinkedHashMapEntry");
+Clazz_overrideMethod(c$, "entrySet", 
+function(){
+return  new java.util.LinkedHashMap.LinkedHashMapEntrySet(this);
+});
+Clazz_overrideMethod(c$, "keySet", 
+function(){
+if (this.$keySet == null) {
+this.$keySet = ((Clazz_isClassDefined("java.util.LinkedHashMap$1") ? 0 : java.util.LinkedHashMap.$LinkedHashMap$1$ ()), Clazz_innerTypeInstance(java.util.LinkedHashMap$1, this, null));
+}return this.$keySet;
+});
+Clazz_overrideMethod(c$, "values", 
+function(){
+if (this.$values == null) {
+this.$values = ((Clazz_isClassDefined("java.util.LinkedHashMap$2") ? 0 : java.util.LinkedHashMap.$LinkedHashMap$2$ ()), Clazz_innerTypeInstance(java.util.LinkedHashMap$2, this, null));
+}return this.$values;
+});
+Clazz_overrideMethod(c$, "remove", 
+function(key){
+var m = this.removeJavaEntry(key);
+if (m == null) {
+return null;
+}var p = m.chainBackward;
+var n = m.chainForward;
+if (p != null) {
+p.chainForward = n;
+} else {
+this.head = n;
+}if (n != null) {
+n.chainBackward = p;
+} else {
+this.tail = p;
+}return m.value;
+}, "~O");
+Clazz_defineMethod(c$, "removeEldestEntry", 
+function(eldest){
+return false;
+}, "java.util.Map.Entry");
+Clazz_defineMethod(c$, "clear", 
+function(){
+Clazz_superCall(this, java.util.LinkedHashMap, "clear", []);
+this.head = this.tail = null;
+});
+Clazz_defineMethod(c$, "clone", 
+function(){
+var map = Clazz_superCall(this, java.util.LinkedHashMap, "clone", []);
+map.clear();
+for (var entry, $entry = this.entrySet().iterator (); $entry.hasNext()&& ((entry = $entry.next ()) || true);) {
+map.put(entry.getKey(), entry.getValue());
+}
+return map;
+});
+Clazz_overrideMethod(c$, "__setJS", 
+function(){
+this.__m = null;
+});
+c$.$LinkedHashMap$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "LinkedHashMap$1", java.util.AbstractSet);
+Clazz_overrideMethod(c$, "contains", 
+function(object){
+return this.b$["java.util.LinkedHashMap"].containsKey(object);
+}, "~O");
+Clazz_overrideMethod(c$, "size", 
+function(){
+return this.b$["java.util.LinkedHashMap"].size();
+});
+Clazz_overrideMethod(c$, "clear", 
+function(){
+this.b$["java.util.LinkedHashMap"].clear();
+});
+Clazz_overrideMethod(c$, "remove", 
+function(key){
+if (this.b$["java.util.LinkedHashMap"].containsKey(key)) {
+this.b$["java.util.LinkedHashMap"].remove(key);
+return true;
+}return false;
+}, "~O");
+Clazz_overrideMethod(c$, "iterator", 
+function(){
+return  new java.util.LinkedHashMap.LinkedHashIterator(((Clazz_isClassDefined("java.util.LinkedHashMap$1$1") ? 0 : java.util.LinkedHashMap.$LinkedHashMap$1$1$ ()), Clazz_innerTypeInstance(java.util.LinkedHashMap$1$1, this, null)), this.b$["java.util.LinkedHashMap"]);
+});
+/*eoif5*/})();
+};
+c$.$LinkedHashMap$1$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "LinkedHashMap$1$1", null, java.util.MapEntry.Type);
+Clazz_overrideMethod(c$, "get", 
+function(entry){
+return entry.key;
+}, "java.util.MapEntry");
+/*eoif5*/})();
+};
+c$.$LinkedHashMap$2$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "LinkedHashMap$2", java.util.AbstractCollection);
+Clazz_overrideMethod(c$, "contains", 
+function(object){
+return this.b$["java.util.LinkedHashMap"].containsValue(object);
+}, "~O");
+Clazz_overrideMethod(c$, "size", 
+function(){
+return this.b$["java.util.LinkedHashMap"].size();
+});
+Clazz_overrideMethod(c$, "clear", 
+function(){
+this.b$["java.util.LinkedHashMap"].clear();
+});
+Clazz_overrideMethod(c$, "iterator", 
+function(){
+return  new java.util.LinkedHashMap.LinkedHashIterator(((Clazz_isClassDefined("java.util.LinkedHashMap$2$1") ? 0 : java.util.LinkedHashMap.$LinkedHashMap$2$1$ ()), Clazz_innerTypeInstance(java.util.LinkedHashMap$2$1, this, null)), this.b$["java.util.LinkedHashMap"]);
+});
+/*eoif5*/})();
+};
+c$.$LinkedHashMap$2$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "LinkedHashMap$2$1", null, java.util.MapEntry.Type);
+Clazz_overrideMethod(c$, "get", 
+function(entry){
+return entry.value;
+}, "java.util.MapEntry");
+/*eoif5*/})();
+};
+/*if3*/;(function(){
+var c$ = Clazz_declareType(java.util.LinkedHashMap, "LinkedHashIterator", java.util.HashMap.HashMapIterator);
+Clazz_makeConstructor(c$, 
+function(value, hm){
+Clazz_superConstructor(this, java.util.LinkedHashMap.LinkedHashIterator, [value, hm]);
+this.entry = hm.head;
+}, "java.util.MapEntry.Type,java.util.LinkedHashMap");
+Clazz_overrideMethod(c$, "hasNext", 
+function(){
+return (this.entry != null);
+});
+Clazz_overrideMethod(c$, "next", 
+function(){
+this.checkConcurrentMod();
+if (!this.hasNext()) {
+throw  new java.util.NoSuchElementException();
+}var result = this.type.get(this.entry);
+this.lastEntry = this.entry;
+this.entry = (this.entry).chainForward;
+this.canRemove = true;
+return result;
+});
+Clazz_overrideMethod(c$, "remove", 
+function(){
+this.checkConcurrentMod();
+if (!this.canRemove) {
+throw  new IllegalStateException();
+}this.canRemove = false;
+this.associatedMap.modCount++;
+var index = this.associatedMap.getModuloHash(this.lastEntry.key);
+var m = this.associatedMap.elementData[index];
+if (m === this.lastEntry) {
+this.associatedMap.elementData[index] = this.lastEntry.next;
+} else {
+while (m.next != null) {
+if (m.next === this.lastEntry) {
+break;
+}m = m.next;
+}
+m.next = this.lastEntry.next;
+}var lhme = this.lastEntry;
+var p = lhme.chainBackward;
+var n = lhme.chainForward;
+var lhm = this.associatedMap;
+if (p != null) {
+p.chainForward = n;
+if (n != null) {
+n.chainBackward = p;
+} else {
+lhm.tail = p;
+}} else {
+lhm.head = n;
+if (n != null) {
+n.chainBackward = null;
+} else {
+lhm.tail = null;
+}}this.associatedMap.elementCount--;
+this.expectedModCount++;
+});
+/*eoif3*/})();
+/*if3*/;(function(){
+var c$ = Clazz_declareType(java.util.LinkedHashMap, "LinkedHashMapEntrySet", java.util.HashMap.HashMapEntrySet);
+Clazz_overrideMethod(c$, "iterator", 
+function(){
+return  new java.util.LinkedHashMap.LinkedHashIterator(((Clazz_isClassDefined("java.util.LinkedHashMap$LinkedHashMapEntrySet$1") ? 0 : java.util.LinkedHashMap.LinkedHashMapEntrySet.$LinkedHashMap$LinkedHashMapEntrySet$1$ ()), Clazz_innerTypeInstance(java.util.LinkedHashMap$LinkedHashMapEntrySet$1, this, null)), this.hashMap());
+});
+c$.$LinkedHashMap$LinkedHashMapEntrySet$1$=function(){
+/*if5*/;(function(){
+var c$ = Clazz_declareAnonymous(java.util, "LinkedHashMap$LinkedHashMapEntrySet$1", null, java.util.MapEntry.Type);
+Clazz_overrideMethod(c$, "get", 
+function(entry){
+return entry;
+}, "java.util.MapEntry");
+/*eoif5*/})();
+};
+/*eoif3*/})();
+/*if3*/;(function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.chainForward = null;
+this.chainBackward = null;
+Clazz_instantialize(this, arguments);}, java.util.LinkedHashMap, "LinkedHashMapEntry", java.util.HashMap.Entry);
+Clazz_makeConstructor(c$, 
+function(theKey, theValue){
+Clazz_superConstructor(this, java.util.LinkedHashMap.LinkedHashMapEntry, [theKey, theValue]);
+this.chainForward = null;
+this.chainBackward = null;
+}, "~O,~O");
+Clazz_defineMethod(c$, "clone", 
+function(){
+var entry = Clazz_superCall(this, java.util.LinkedHashMap.LinkedHashMapEntry, "clone", []);
+entry.chainBackward = this.chainBackward;
+entry.chainForward = this.chainForward;
+var lnext = entry.next;
+if (lnext != null) {
+entry.next = lnext.clone();
+}return entry;
+});
+/*eoif3*/})();
+});
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "JmolJDXMOLParser");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "JmolJDXMOLReader");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
+Clazz_declarePackage("J.api");
+Clazz_declareInterface(J.api, "GenericGraphics");
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.jsv");
-Clazz_load(["J.api.JmolJDXMOLParser"], "J.jsv.JDXMOLParser", ["java.util.Hashtable", "JU.BS", "$.Lst", "$.PT", "$.SB", "JU.Logger"], function(){
+Clazz_load(["J.api.JmolJDXMOLParser", "java.util.Hashtable"], "J.jsv.JDXMOLParser", ["JU.BS", "$.Lst", "$.PT", "$.SB", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.line = null;
 this.lastModel = "";
 this.thisModelID = null;
 this.baseModel = null;
 this.vibScale = 0;
-this.piUnitsX = null;
-this.piUnitsY = null;
+this.peakXLabel = null;
+this.peakYLabel = null;
 this.loader = null;
-this.modelIdList = "";
 this.peakIndex = null;
 this.peakFilePath = null;
+this.firstModelWithPeaks = null;
+this.mapDup = null;
 Clazz_instantialize(this, arguments);}, J.jsv, "JDXMOLParser", null, J.api.JmolJDXMOLParser);
-/*LV!1824 unnec constructor*/Clazz_overrideMethod(c$, "set", 
+Clazz_prepareFields (c$, function(){
+this.mapDup =  new java.util.Hashtable();
+});
+Clazz_makeConstructor(c$, 
+function(){
+});
+Clazz_overrideMethod(c$, "set", 
 function(loader, filePath, htParams){
 this.loader = loader;
 this.peakFilePath = filePath;
@@ -14028,15 +14811,17 @@ while (this.readLine() != null && !this.line.contains("$$$$")) sb.append(this.li
 return JU.PT.rep(sb.toString(), "  $$ Empty String", "");
 });
 Clazz_overrideMethod(c$, "readACDAssignments", 
-function(nPoints, isPeakAssignment){
-var list =  new JU.Lst();
+function(nPoints, isPeakAssignment, list){
+var overflow = false;
 try {
-this.readLine();
+if (this.line == null || this.line.indexOf("#") >= 0) this.readLine();
 if (nPoints < 0) nPoints = 2147483647;
 for (var i = 0; i < nPoints; i++) {
 var s = this.readLine();
-if (s == null || s.indexOf("#") == 0) break;
-if (isPeakAssignment) {
+if (s == null || s.indexOf("#") == 0) {
+overflow = true;
+break;
+}if (isPeakAssignment) {
 while (s.indexOf(">") < 0) s += " " + this.readLine();
 
 s = s.trim();
@@ -14057,8 +14842,8 @@ JU.Logger.error("Error reading peak assignments at " + this.line + ": " + e);
 throw e;
 }
 }
-return list;
-}, "~N,~B");
+return !overflow;
+}, "~N,~B,JU.Lst");
 Clazz_overrideMethod(c$, "setACDAssignments", 
 function(model, mytype, peakCount, acdlist, molFile){
 try {
@@ -14066,8 +14851,8 @@ if (peakCount >= 0) this.peakIndex =  Clazz_newIntArray(-1, [peakCount]);
 var isMS = (mytype.indexOf("MASS") == 0);
 var file = " file=" + JU.PT.esc(this.peakFilePath.$replace('\\', '/'));
 model = " model=" + JU.PT.esc(model + " (assigned)");
-this.piUnitsX = "";
-this.piUnitsY = "";
+this.peakXLabel = "";
+this.peakYLabel = "";
 var dx = this.getACDPeakWidth(mytype) / 2;
 var htSets =  new java.util.Hashtable();
 var list =  new JU.Lst();
@@ -14150,10 +14935,11 @@ var tag2 = (isSignals ? "<Signal" : "<PeakData");
 if (!this.findRecord(tag1)) return 0;
 var file = " file=" + JU.PT.esc(this.peakFilePath.$replace('\\', '/'));
 var model = JU.PT.getQuotedAttribute(this.line, "model");
+model = this.fixModel(model, true);
 model = " model=" + JU.PT.esc(model == null ? this.thisModelID : model);
 var mytype = JU.PT.getQuotedAttribute(this.line, "type");
-this.piUnitsX = JU.PT.getQuotedAttribute(this.line, "xLabel");
-this.piUnitsY = JU.PT.getQuotedAttribute(this.line, "yLabel");
+this.peakXLabel = JU.PT.getQuotedAttribute(this.line, "xLabel");
+this.peakYLabel = JU.PT.getQuotedAttribute(this.line, "yLabel");
 var htSets =  new java.util.Hashtable();
 var list =  new JU.Lst();
 while (this.readLine() != null && !(this.line = this.line.trim()).startsWith("</" + tag1)) {
@@ -14164,7 +14950,14 @@ var title = JU.PT.getQuotedAttribute(this.line, "title");
 if (mytype == null) mytype = JU.PT.getQuotedAttribute(this.line, "type");
 var atoms = JU.PT.getQuotedAttribute(this.line, "atoms");
 var key = (Clazz_floatToInt(JU.PT.parseFloat(JU.PT.getQuotedAttribute(this.line, "xMin")) * 100)) + "_" + (Clazz_floatToInt(JU.PT.parseFloat(JU.PT.getQuotedAttribute(this.line, "xMax")) * 100));
-this.getStringInfo(file, title, mytype, (JU.PT.getQuotedAttribute(this.line, "model") == null ? model : ""), atoms, htSets, key, list, this.line.substring(tag2.length).trim());
+var peakModel = JU.PT.getQuotedAttribute(this.line, "model");
+var newID = this.fixModel(peakModel, true);
+if (this.firstModelWithPeaks == null) this.firstModelWithPeaks = newID;
+if (newID != null && !newID.equals(peakModel)) {
+this.line = JU.PT.rep(this.line, "model=\"" + peakModel + "\"", "model=\"" + newID + "\"");
+JU.Logger.error("peak model changed from " + peakModel + " for " + this.line);
+}var more = this.line.substring(tag2.length).trim();
+this.getStringInfo(file, title, mytype, (peakModel == null ? model : ""), atoms, htSets, key, list, more);
 }}
 return this.setPeakData(list, offset);
 } catch (e) {
@@ -14175,6 +14968,28 @@ throw e;
 }
 }
 }, "~B,~N");
+Clazz_defineMethod(c$, "checkDuplicateModelID", 
+function(){
+if (false) return;
+var idup = this.mapDup.get(this.thisModelID);
+if (idup == null) {
+this.mapDup.put(this.thisModelID, Integer.$valueOf(1));
+} else {
+idup = Integer.$valueOf(idup.intValue() + 1);
+var newID = this.thisModelID + idup;
+JU.Logger.error("duplicate model id " + this.thisModelID + " now " + newID);
+this.mapDup.put(this.thisModelID, idup);
+this.thisModelID = newID;
+}});
+Clazz_defineMethod(c$, "fixModel", 
+function(model, andIncrement){
+if (model != null && JU.PT.parseInt(model) != -2147483648) model = "_" + model;
+if (false) return model;
+var idup = (model == null || !andIncrement ? null : this.mapDup.get(model));
+if (idup != null && idup.intValue() > 1) {
+model = this.thisModelID;
+}return model;
+}, "~S,~B");
 Clazz_defineMethod(c$, "setPeakData", 
 function(list, offset){
 var nH = 0;
@@ -14195,7 +15010,7 @@ info = JU.PT.rep(info, "%NATOMS%", "" + na);
 }JU.Logger.info("adding PeakData " + info);
 this.loader.addPeakData(info);
 }
-this.loader.setSpectrumPeaks(nH, this.piUnitsX, this.piUnitsY);
+this.loader.setSpectrumPeaks(nH, this.peakXLabel, this.peakYLabel);
 return n;
 }, "JU.Lst,~N");
 Clazz_defineMethod(c$, "getStringInfo", 
@@ -14220,14 +15035,10 @@ bs.or(JU.BS.unescape("({" + atoms + "})"));
 }}, "~S,~S,~S,~S,~S,java.util.Map,~S,JU.Lst,~S");
 Clazz_defineMethod(c$, "getModelData", 
 function(isFirst){
+this.baseModel = this.fixModel(this.getAttribute(this.line, "baseModel"), true);
 this.lastModel = this.thisModelID;
-this.thisModelID = this.getAttribute(this.line, "id");
-var key = ";" + this.thisModelID + ";";
-if (this.modelIdList.indexOf(key) >= 0) {
-this.line = this.loader.discardLinesUntilContains("</ModelData>");
-return;
-}this.modelIdList += key;
-this.baseModel = this.getAttribute(this.line, "baseModel");
+this.thisModelID = this.fixModel(this.getAttribute(this.line, "id"), false);
+this.checkDuplicateModelID();
 while (this.line.indexOf(">") < 0 && this.line.indexOf("type") < 0) this.readLine();
 
 var modelType = this.getAttribute(this.line, "type").toLowerCase();
@@ -14253,50 +15064,193 @@ Clazz_overrideMethod(c$, "setLine",
 function(s){
 this.line = s;
 }, "~S");
+Clazz_overrideMethod(c$, "getFirstModelWithPeaks", 
+function(){
+return this.firstModelWithPeaks;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+});
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
+Clazz_declarePackage("J.jsv");
+Clazz_load(["J.api.JmolJSpecView"], "J.jsv.JSV", ["java.util.Hashtable", "JU.BS", "$.Lst", "$.PT", "JU.Escape", "$.Logger", "JV.FileManager"], function(){
+var c$ = Clazz_decorateAsClass(function(){
+this.vwr = null;
+Clazz_instantialize(this, arguments);}, J.jsv, "JSV", null, J.api.JmolJSpecView);
+Clazz_overrideMethod(c$, "setViewer", 
+function(vwr){
+this.vwr = vwr;
+return this;
+}, "JV.Viewer");
+Clazz_overrideMethod(c$, "atomPicked", 
+function(atomIndex){
+if (atomIndex < 0) return;
+var peak = this.getPeakAtomRecord(atomIndex);
+if (peak != null) this.sendJSpecView(peak + " src=\"JmolAtomSelect\"");
+}, "~N");
+Clazz_defineMethod(c$, "getPeakAtomRecord", 
+function(atomIndex){
+var atoms = this.vwr.ms.at;
+var iModel = atoms[atomIndex].mi;
+var type = null;
+switch (atoms[atomIndex].getElementNumber()) {
+case 1:
+type = "1HNMR";
+break;
+case 6:
+type = "13CNMR";
+break;
+default:
+return null;
+}
+var peaks = this.vwr.ms.getInfo(iModel, "jdxAtomSelect" + "_" + type);
+if (peaks == null) return null;
+this.vwr.ms.htPeaks =  new java.util.Hashtable();
+var htPeaks = this.vwr.ms.htPeaks;
+for (var i = 0; i < peaks.size(); i++) {
+var peak = peaks.get(i);
+System.out.println("Jmol JSpecView.java peak=" + peak);
+var bsPeak = htPeaks.get(peak);
+System.out.println("Jmol JSpecView.java bspeak=" + bsPeak);
+if (bsPeak == null) {
+htPeaks.put(peak, bsPeak =  new JU.BS());
+var satoms = JU.PT.getQuotedAttribute(peak, "atoms");
+var select = JU.PT.getQuotedAttribute(peak, "select");
+System.out.println("Jmol JSpecView.java satoms select " + satoms + " " + select);
+var script = "";
+if (satoms != null) script += "visible & (atomno=" + JU.PT.rep(satoms, ",", " or atomno=") + ")";
+ else if (select != null) script += "visible & (" + select + ")";
+System.out.println("Jmol JSpecView.java script : " + script);
+bsPeak.or(this.vwr.getAtomBitSet(script));
+}System.out.println("Jmol JSpecView bsPeak now : " + bsPeak + " " + atomIndex);
+if (bsPeak.get(atomIndex)) return peak;
+}
+return null;
+}, "~N");
+Clazz_defineMethod(c$, "sendJSpecView", 
+function(peak){
+var msg = JU.PT.getQuotedAttribute(peak, "title");
+if (msg != null) this.vwr.scriptEcho(JU.Logger.debugging ? peak : msg);
+peak = this.vwr.fullName + "JSpecView:" + " " + peak;
+JU.Logger.info("Jmol>JSV " + peak);
+this.vwr.sm.syncSend(peak, ">", 0);
+}, "~S");
+Clazz_overrideMethod(c$, "setModel", 
+function(modelIndex){
+var startJSV = this.vwr.ms.getInfoM("_startJSpecView");
+var syncMode = (startJSV === Boolean.TRUE ? 1 : this.vwr.sm.getSyncMode());
+if (syncMode != 1) return;
+var peak = this.vwr.ms.getInfo(modelIndex, "jdxModelSelect");
+if (peak != null) this.sendJSpecView(peak + " src=\"Jmol\"");
+}, "~N");
+Clazz_overrideMethod(c$, "getBaseModelIndex", 
+function(modelIndex){
+var baseModel = this.vwr.ms.getInfo(modelIndex, "jdxBaseModel");
+if (baseModel != null) for (var i = this.vwr.ms.mc; --i >= 0; ) if (baseModel.equals(this.vwr.ms.getInfo(i, "jdxModelID"))) return i;
+
+return modelIndex;
+}, "~N");
+Clazz_overrideMethod(c$, "processSync", 
+function(script, jsvMode){
+if (JU.Logger.debugging) JU.Logger.info("J.jsv.JSV jsvMode=" + jsvMode + " script=" + script);
+System.out.println("JSV processSync " + script + " " + jsvMode);
+switch (jsvMode) {
+case 0:
+case 77:
+case 28:
+case 35:
+if (!script.startsWith("JSpecView:")) script = "JSpecView:" + script;
+script = this.vwr.fullName + script;
+this.vwr.sm.syncSend(script, ">", 0);
+return null;
+}
+switch (jsvMode) {
+default:
+return null;
+case 21:
+if (this.vwr.isApplet) return null;
+return null;
+case 14:
+var filename = JU.PT.getQuotedAttribute(script, "file");
+var isSimulation = (filename != null && filename.startsWith(JV.FileManager.SIMULATION_PROTOCOL));
+var id = (!isSimulation || this.vwr.isApplet ? "" : JU.PT.getQuotedAttribute(filename.$replace('\'', '"'), "id"));
+if (isSimulation && !this.vwr.isApplet && (filename.startsWith(JV.FileManager.SIMULATION_PROTOCOL + "C13/MOL=") || filename.startsWith(JV.FileManager.SIMULATION_PROTOCOL + "H1/MOL="))) filename = null;
+ else filename = JU.PT.rep(filename, "#molfile", "");
+var modelID = (isSimulation ? "molfile" : JU.PT.getQuotedAttribute(script, "model"));
+var baseModel = JU.PT.getQuotedAttribute(script, "baseModel");
+var atoms = JU.PT.getQuotedAttribute(script, "atoms");
+var select = JU.PT.getQuotedAttribute(script, "select");
+var script2 = JU.PT.getQuotedAttribute(script, "script");
+if (id == null || id.length == 0) id = (modelID == null ? null : (filename == null ? "" : filename + "#") + modelID);
+if ("".equals(baseModel)) id += ".baseModel";
+var modelIndex = (id == null ? -3 : this.vwr.getModelIndexFromId(id));
+if (modelIndex == -2) return null;
+if (modelIndex != -1 || filename == null) {
+script = "";
+} else if (isSimulation && !this.vwr.isApplet) {
+return null;
+} else {
+if (isSimulation) filename += "#molfile";
+script = (modelIndex >= 0 ? "" : "load " + JU.PT.esc(filename));
+}if (id != null) script += ";model " + JU.PT.esc(id);
+if (atoms != null) script += ";select visible & (@" + JU.PT.rep(atoms, ",", " or @") + ")";
+ else if (select != null) script += ";select visible & (" + select + ")";
+if (script2 != null) script += ";" + script2;
+return script;
+case 7:
+var list = JU.Escape.unescapeStringArray(script.substring(7));
+var peaks =  new JU.Lst();
+var type = "1HNMR";
+for (var i = 0; i < list.length; i++) {
+if (i == 0 && list[i].indexOf(JV.FileManager.SIMULATION_PROTOCOL + "C13/") >= 0) type = "13CNMR";
+peaks.addLast(list[i]);
+}
+this.vwr.ms.setInfo(this.vwr.am.cmi, "jdxAtomSelect" + "_" + type, peaks);
+return null;
+}
+}, "~S,~N");
+});
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "AnnotationData");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "AppletFrame");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVAppInterface", JSV.api.JSVAppletInterface);
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVAppletInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVFileHelper");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVMainPanel", JSV.api.JSVViewPanel);
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVPanel", JSV.api.JSVViewPanel);
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVTree");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVTreeNode");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVTreePath");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVViewPanel");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "JSVZipReader");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "PanelListener");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "ScriptInterface");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.app");
 Clazz_load(["JSV.api.JSVAppInterface", "$.PanelListener", "$.ScriptInterface"], "JSV.app.JSVApp", ["JU.Lst", "$.PT", "JSV.common.Coordinate", "$.JSVFileManager", "$.JSVersion", "$.JSViewer", "$.ScriptToken", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -14313,16 +15267,12 @@ Clazz_instantialize(this, arguments);}, JSV.app, "JSVApp", null, [JSV.api.PanelL
 Clazz_makeConstructor(c$, 
 function(appletFrame, isJS){
 this.appletFrame = appletFrame;
-this.initViewer(isJS);
+this.vwr =  new JSV.common.JSViewer(this, true, isJS, true);
+appletFrame.setDropTargetListener(this.isSigned(), this.vwr);
+var path = appletFrame.getDocumentBase();
+JSV.common.JSVFileManager.setDocumentBase(this.vwr, path);
 this.initParams(appletFrame.getParameter("script"));
 }, "JSV.api.AppletFrame,~B");
-Clazz_defineMethod(c$, "initViewer", 
-function(isJS){
-this.vwr =  new JSV.common.JSViewer(this, true, isJS);
-this.appletFrame.setDropTargetListener(this.isSigned(), this.vwr);
-var path = this.appletFrame.getDocumentBase();
-JSV.common.JSVFileManager.setDocumentBase(this.vwr, path);
-}, "~B");
 Clazz_overrideMethod(c$, "isPro", 
 function(){
 return this.isSigned();
@@ -14438,10 +15388,10 @@ this.appletFrame.createMainPanel(this.vwr);
 Clazz_overrideMethod(c$, "repaint", 
 function(){
 var applet = (this.vwr == null ? null : this.vwr.html5Applet);
-if (JSV.common.JSViewer.jmolObject == null) {
+if (JSV.common.JSViewer.jsmolObject == null) {
 this.appletFrame.repaint();
 } else if (applet != null) {
-JSV.common.JSViewer.jmolObject.repaint(applet, true);
+JSV.common.JSViewer.jsmolObject.repaint(applet, true);
 }});
 Clazz_defineMethod(c$, "updateJS", 
 function(width, height){
@@ -14479,7 +15429,7 @@ function(msg){
 var applet = this.vwr.html5Applet;
 var panel = (applet == null ? null : this.vwr.selectedPanel);
 {
-applet && applet._viewSet != null && applet._updateView(panel, msg);
+if (!applet || applet._viewSet == null) return;
 }applet._updateView(panel, msg);
 }, "~S");
 Clazz_overrideMethod(c$, "syncToJmol", 
@@ -14558,10 +15508,9 @@ this.vwr.runScriptNow(scriptItem);
 Clazz_overrideMethod(c$, "siSetSelectedPanel", 
 function(jsvp){
 this.vwr.mainPanel.setSelectedPanel(this.vwr, jsvp, this.vwr.panelNodes);
-this.vwr.selectedPanel = jsvp;
 this.vwr.spectraTree.setSelectedPanel(this, jsvp);
 if (jsvp == null) {
-this.vwr.selectedPanel = jsvp = this.appletFrame.getJSVPanel(this.vwr, null);
+jsvp = this.appletFrame.getJSVPanel(this.vwr, null);
 this.vwr.mainPanel.setSelectedPanel(this.vwr, jsvp, null);
 }this.appletFrame.validate();
 if (jsvp != null) {
@@ -14671,7 +15620,7 @@ function(){
 return "JSpecView Applet " + JSV.common.JSVersion.VERSION + "\n\n" + "Authors:\nProf. Robert M. Hanson,\nD. Facey, K. Bryan, C. Walters, Prof. Robert J. Lancashire and\nvolunteer developers through sourceforge.";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.app");
 Clazz_load(["J.api.GenericMouseInterface"], "JSV.app.GenericMouse", ["JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -14851,7 +15800,7 @@ this.jsvp = null;
 this.disposed = true;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.appletjs");
 Clazz_load(["javajs.api.JSInterface", "JSV.api.AppletFrame", "$.JSVAppletInterface"], "JSV.appletjs.JSVApplet", ["java.net.URL", "java.util.Hashtable", "JU.PT", "JSV.app.JSVApp", "JSV.js2d.JsMainPanel", "$.JsPanel", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -15057,9 +16006,6 @@ Clazz_overrideMethod(c$, "getJSVPanel",
 function(viewer, specs){
 return (specs == null ? JSV.js2d.JsPanel.getEmptyPanel(viewer) : JSV.js2d.JsPanel.getPanelMany(viewer, specs));
 }, "JSV.common.JSViewer,JU.Lst");
-Clazz_overrideMethod(c$, "setVisible", 
-function(b){
-}, "~B");
 Clazz_overrideMethod(c$, "getDocumentBase", 
 function(){
 try {
@@ -15146,7 +16092,7 @@ Clazz_overrideMethod(c$, "processKeyEvent",
 function(event){
 }, "~O");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.lang.Enum", "JSV.common.Coordinate"], "JSV.common.Annotation", ["JU.CU"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -15263,7 +16209,7 @@ Clazz_defineEnumConstant(c$, "Views", 4, []);
 Clazz_defineEnumConstant(c$, "NONE", 5, []);
 /*eoif2*/})();
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.Annotation"], "JSV.common.ColoredAnnotation", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -15284,7 +16230,7 @@ this.color = color;
 return this;
 }, "~N,~N,JSV.common.Spectrum,~S,javajs.api.GenericColor,~B,~B,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.Parameters"], "JSV.common.ColorParameters", ["java.util.Hashtable", "$.StringTokenizer", "JU.CU", "$.Lst", "JSV.common.ScriptToken"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -15314,6 +16260,7 @@ this.setColor(JSV.common.ScriptToken.PLOTAREACOLOR, JSV.common.ColorParameters.W
 this.setColor(JSV.common.ScriptToken.BACKGROUNDCOLOR, this.getColor3(192, 192, 192));
 this.setColor(JSV.common.ScriptToken.INTEGRALPLOTCOLOR, JSV.common.ColorParameters.RED);
 this.setColor(JSV.common.ScriptToken.PEAKTABCOLOR, JSV.common.ColorParameters.RED);
+this.setColor(JSV.common.ScriptToken.PEAKOVERCOLOR, JSV.common.ColorParameters.RED);
 this.setColor(JSV.common.ScriptToken.HIGHLIGHTCOLOR, JSV.common.ColorParameters.DARK_GRAY);
 for (var i = 0; i < 8; i++) JSV.common.ColorParameters.defaultPlotColors[i] = this.getColorFromString(JSV.common.ColorParameters.defaultPlotColorNames[i]);
 
@@ -15344,6 +16291,7 @@ case JSV.common.ScriptToken.COORDINATESCOLOR:
 case JSV.common.ScriptToken.GRIDCOLOR:
 case JSV.common.ScriptToken.HIGHLIGHTCOLOR:
 case JSV.common.ScriptToken.INTEGRALPLOTCOLOR:
+case JSV.common.ScriptToken.PEAKOVERCOLOR:
 case JSV.common.ScriptToken.PEAKTABCOLOR:
 case JSV.common.ScriptToken.PLOTAREACOLOR:
 case JSV.common.ScriptToken.PLOTCOLOR:
@@ -15427,7 +16375,7 @@ c$.WHITE = null;
 c$.defaultPlotColors =  new Array(8);
 c$.defaultPlotColorNames =  Clazz_newArray(-1, ["black", "darkGreen", "darkred", "orange", "magenta", "cyan", "maroon", "darkGray"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 (function(){
 var c$ = Clazz_declareType(JSV.common, "CoordComparator", null, java.util.Comparator);
@@ -15436,7 +16384,7 @@ function(c1, c2){
 return (c1.getXVal() > c2.getXVal() ? 1 : c1.getXVal() < c2.getXVal() ? -1 : 0);
 }, "JSV.common.Coordinate,JSV.common.Coordinate");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.CoordComparator"], "JSV.common.Coordinate", ["java.util.Arrays", "$.StringTokenizer", "JU.Lst"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -15693,7 +16641,7 @@ return JSV.common.Coordinate.findXForPeakNearest(xyCoords, xyCoords[pt].getXVal(
 }, "~A,~N,~N,~B,~B");
 c$.c =  new JSV.common.CoordComparator();
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.lang.Enum"], "JSV.common.ExportType", null, function(){
 var c$ = Clazz_declareType(JSV.common, "ExportType", Enum);
@@ -15726,7 +16674,7 @@ Clazz_defineEnumConstant(c$, "CML", 12, []);
 Clazz_defineEnumConstant(c$, "AML", 13, []);
 Clazz_defineEnumConstant(c$, "PDF", 14, []);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.XYScaleConverter", "java.util.Hashtable", "JU.BS", "$.Lst", "JSV.common.Coordinate"], "JSV.common.GraphSet", ["JU.DF", "$.PT", "JSV.common.Annotation", "$.ColorParameters", "$.ColoredAnnotation", "$.ImageView", "$.IntegralData", "$.Measurement", "$.MeasurementData", "$.PanelData", "$.Parameters", "$.PeakData", "$.PeakPickEvent", "$.PlotWidget", "$.ScaleData", "$.ScriptToken", "$.Spectrum", "$.ViewData", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -15747,7 +16695,7 @@ this.graphsTemp = null;
 this.widgets = null;
 this.isLinked = false;
 this.haveSingleYScale = false;
-this.iSpectrumMovedTo = 0;
+this.iSpectrumMovedTo = -1;
 this.iSpectrumClicked = 0;
 this.iSpectrumSelected = -1;
 this.stackSelected = false;
@@ -15789,18 +16737,18 @@ this.xPixel0 = 0;
 this.yPixel0 = 0;
 this.xPixel1 = 0;
 this.yPixel1 = 0;
-this.xVArrows = 0;
-this.xHArrows = 0;
-this.yHArrows = 0;
+this.xPixels = 0;
+this.yPixels = 0;
 this.xPixel00 = 0;
 this.yPixel00 = 0;
 this.xPixel11 = 0;
 this.yPixel11 = 0;
 this.yPixel000 = 0;
-this.xPixels = 0;
-this.yPixels = 0;
 this.xPixel10 = 0;
 this.xPixels0 = 0;
+this.xVArrows = 0;
+this.xHArrows = 0;
+this.yHArrows = 0;
 this.allowStackedYScale = true;
 this.drawXAxisLeftToRight = false;
 this.xAxisLeftToRight = true;
@@ -15841,6 +16789,7 @@ this.closerX = 0;
 this.closerY = 0;
 this.splitterX = 0;
 this.splitterY = 0;
+this.isPrintingOrSaving = false;
 this.mapX = null;
 if (!Clazz_isClassDefined("JSV.common.GraphSet.Highlight")) {
 JSV.common.GraphSet.$GraphSet$Highlight$ ();
@@ -15897,7 +16846,7 @@ Clazz_defineMethod(c$, "closeDialogsExcept",
 function(type){
 if (this.dialogs != null) for (var e, $e = this.dialogs.entrySet().iterator (); $e.hasNext()&& ((e = $e.next ()) || true);) {
 var ad = e.getValue();
-if (ad.isDialog() && (type === JSV.common.Annotation.AType.NONE || ad.getAType() !== type)) (ad).setVisible(false);
+if (JSV.common.GraphSet.isDialog(ad) && (type === JSV.common.Annotation.AType.NONE || ad.getAType() !== type)) (ad).setVisible(false);
 }
 }, "JSV.common.Annotation.AType");
 Clazz_defineMethod(c$, "dispose", 
@@ -15914,7 +16863,7 @@ this.widgets = null;
 this.disposeImage();
 if (this.dialogs != null) for (var e, $e = this.dialogs.entrySet().iterator (); $e.hasNext()&& ((e = $e.next ()) || true);) {
 var ad = e.getValue();
-if (ad.isDialog()) (ad).dispose();
+if (JSV.common.GraphSet.isDialog(ad)) (ad).dispose();
 }
 this.dialogs = null;
 });
@@ -15971,7 +16920,7 @@ this.xVArrows = this.xPixel11 - Clazz_doubleToInt(this.right / 2);
 this.xPixel0 = this.xPixel00 + Clazz_doubleToInt(this.left * (1 - this.fX0));
 this.xPixel10 = this.xPixel1 = this.xPixel11 - this.right;
 this.xPixels0 = this.xPixels = this.xPixel1 - this.xPixel0 + 1;
-this.yPixel000 = (this.fY0 == 0 ? 25 : 0) + Clazz_doubleToInt(this.height * this.fY0);
+this.yPixel000 = (this.pd.isPrinting ? 100 : !this.isPrintingOrSaving && this.fY0 == 0 ? 25 : 0) + Clazz_doubleToInt(this.height * this.fY0);
 this.yPixel00 = this.yPixel000 + Clazz_doubleToInt(marginalHeight * this.fracY * iSplit);
 this.yPixel11 = this.yPixel00 + Clazz_doubleToInt(marginalHeight * this.fracY) - 1;
 this.yHArrows = this.yPixel11 - 12;
@@ -15998,7 +16947,7 @@ return (xPixel >= this.xPixel0 && xPixel <= this.xPixel1 && yPixel >= this.yPixe
 }, "~N,~N");
 Clazz_defineMethod(c$, "getSplitPoint", 
 function(yPixel){
-return Math.max(0, Math.min((Clazz_doubleToInt((yPixel - this.yPixel000) / (this.yPixel11 - this.yPixel00))), this.nSplit - 1));
+return (this.yPixel1 == this.yPixel00 ? 0 : Math.max(0, Math.min(Clazz_doubleToInt((yPixel - this.yPixel000) / (this.yPixel11 - this.yPixel00)), this.nSplit - 1)));
 }, "~N");
 Clazz_defineMethod(c$, "isSplitWidget", 
 function(xPixel, yPixel){
@@ -16373,9 +17322,7 @@ function(xPixel, yPixel){
 if (this.haveLeftRightArrows) {
 var dx = (this.isArrowClick(xPixel, yPixel, 1) ? -1 : this.isArrowClick(xPixel, yPixel, 2) ? 1 : 0);
 if (dx != 0) {
-var i = this.iSpectrumSelected + dx;
-if (i < 0) i = this.nSpectra - 1;
-this.setSpectrumClicked(i % this.nSpectra);
+this.setSpectrumClicked((this.iSpectrumSelected + dx) % this.nSpectra);
 return true;
 }if (this.isArrowClick(xPixel, yPixel, 0)) {
 if (this.showAllStacked) {
@@ -16572,7 +17519,6 @@ this.cur2Dy.xPixel1 = this.imageView.xPixel1 + 5;
 }}, "~B");
 Clazz_defineMethod(c$, "setDerivedPins", 
 function(subIndex){
-this.widgetsAreSet = true;
 if (this.gs2dLinkedX != null) this.cur1D2x1.setX(this.cur1D2x1.getXVal(), this.toPixelX(this.cur1D2x1.getXVal()));
 if (this.gs2dLinkedY != null) this.cur1D2x2.setX(this.cur1D2x2.getXVal(), this.toPixelX(this.cur1D2x2.getXVal()));
 this.pin1Dx01.setX(0, Clazz_doubleToInt((this.pin1Dx0.xPixel0 + this.pin1Dx1.xPixel0) / 2));
@@ -16696,13 +17642,14 @@ for (var i = this.viewList.size(); --i >= 1; ) this.viewList.removeItemAt(i);
 });
 Clazz_defineMethod(c$, "drawAll", 
 function(gMain, gFront, gBack, iSplit, needNewPins, doAll, pointsOnly){
+this.setPositionForFrame(iSplit);
 this.g2d = this.pd.g2d;
 this.gMain = gMain;
 var spec0 = this.getSpectrumAt(0);
 var subIndex = spec0.getSubIndex();
 this.is2DSpectrum = (!spec0.is1D() && (this.isLinked || this.pd.getBoolean(JSV.common.ScriptToken.DISPLAY2D)) && (this.imageView != null || this.get2DImage(spec0)));
 if (this.imageView != null && doAll) {
-if (this.pd.isPrinting && this.g2d !== this.pd.g2d0) this.g2d.newGrayScaleImage(gMain, this.image2D, this.imageView.imageWidth, this.imageView.imageHeight, this.imageView.getBuffer());
+if (this.isPrintingOrSaving) this.g2d.newGrayScaleImage(gMain, this.image2D, this.imageView.imageWidth, this.imageView.imageHeight, this.imageView.getBuffer());
 if (this.is2DSpectrum) this.setPositionForFrame(iSplit);
 this.draw2DImage();
 }var iSelected = (this.stackSelected || !this.showAllStacked ? this.iSpectrumSelected : -1);
@@ -16722,7 +17669,7 @@ doYScale = new Boolean (doYScale & this.viewData.areYScalesSame(i - 1, i)).value
 var g2 = (gBack === gMain ? gFront : gBack);
 if (doAll) {
 var addCurrentBox = (this.pd.getCurrentGraphSet() === this && !this.isLinked && (!this.isSplittable || (this.nSplit == 1 || this.pd.currentSplitPoint == iSplit)));
-var drawUpDownArrows = (this.zoomEnabled && !this.isDrawNoSpectra() && this.pd.isCurrentGraphSet(this) && this.spectra.get(0).isScalable() && (addCurrentBox || this.nSpectra == 1) && (this.nSplit == 1 || this.pd.currentSplitPoint == this.iSpectrumMovedTo));
+var drawUpDownArrows = (this.zoomEnabled && !this.isPrintingOrSaving && !this.isDrawNoSpectra() && this.pd.isCurrentGraphSet(this) && this.spectra.get(0).isScalable() && (addCurrentBox || this.nSpectra == 1) && (this.nSplit == 1 || this.pd.currentSplitPoint == this.iSpectrumMovedTo));
 var addSplitBox = this.isSplittable;
 this.drawFrame(gMain, iSpecForFrame, addCurrentBox, addSplitBox, drawUpDownArrows);
 }if (this.pd.isCurrentGraphSet(this) && iSplit == this.pd.currentSplitPoint && (n < 2 || this.iSpectrumSelected >= 0)) this.$haveSelectedSpectrum = true;
@@ -16732,43 +17679,44 @@ var yOffsetPixels = Clazz_floatToInt(this.yPixels * (this.yStackOffsetPercent / 
 this.haveLeftRightArrows = false;
 for (var i = 0, offset = 0; i < this.nSpectra; i++) {
 if (!this.doPlot(i, iSplit)) continue;
+var spec = this.spectra.get(i);
+var isContinuous = spec.isContinuous();
+var onSpectrum = (!this.pd.isPrinting && this.iSpectrumMovedTo >= 0 && (this.nSplit > 1 ? i == this.iSpectrumMovedTo : this.isLinked || i == iSpectrumForScale));
 var isGrey = (this.stackSelected && this.iSpectrumSelected >= 0 && this.iSpectrumSelected != i);
 var ig = (!this.reversePlot && this.getShowAnnotation(JSV.common.Annotation.AType.Integration, i) && (!this.showAllStacked || this.iSpectrumSelected == i) ? this.getDialog(JSV.common.Annotation.AType.Integration, i).getData() : null);
 this.setScale(i);
-var spec = this.spectra.get(i);
 if (this.nSplit > 1) {
 iSpectrumForScale = i;
 }var doDrawWidgets = !isGrey && (this.nSplit == 1 || this.showAllStacked || this.iSpectrumSelected == iSplit);
 var doDraw1DY = (doDrawWidgets && this.$haveSelectedSpectrum && i == iSpectrumForScale);
 if (doDrawWidgets) {
+this.widgetsAreSet = true;
 this.resetPinsFromView();
 this.drawWidgets(gFront, g2, subIndex, needNewPins, doDraw1DObjects, doDraw1DY, false);
 }if (this.haveSingleYScale && i == iSpectrumForScale && doAll) {
 this.drawGrid(gMain);
-if (this.pd.isPrinting && this.nSplit > 1) this.drawSpectrumSource(gMain, i);
+if (this.pd.isPrinting && this.nSplit == 1 && this.pd.graphSets.size() == 1) this.drawSpectrumSource(gMain, i);
 }if (doDrawWidgets) this.drawWidgets(gFront, g2, subIndex, false, doDraw1DObjects, doDraw1DY, true);
-if (!this.isDrawNoSpectra() && (this.nSpectra == 1 || this.iSpectrumSelected >= 0) && (this.haveSingleYScale && i == iSpectrumForScale || this.showAllStacked && this.stackSelected && i == this.iSpectrumSelected)) this.drawHighlightsAndPeakTabs(gFront, g2, i);
+if (!this.isDrawNoSpectra() && !this.isPrintingOrSaving && (this.nSpectra == 1 || this.iSpectrumSelected >= 0) && (this.haveSingleYScale && i == iSpectrumForScale || this.showAllStacked && this.stackSelected && i == this.iSpectrumSelected)) this.drawHighlightsAndPeakTabs(gFront, g2, i);
 if (doAll) {
-if (n == 1 && this.iSpectrumSelected < 0 || this.iSpectrumSelected == i && this.pd.isCurrentGraphSet(this)) {
+if ((onSpectrum || this.isPrintingOrSaving) && !this.is2DSpectrum) {
 if (this.pd.titleOn && !this.pd.titleDrawn) {
-this.pd.drawTitle(gMain, this.height, this.width, this.pd.getDrawTitle(this.pd.isPrinting));
-this.pd.titleDrawn = true;
+this.drawTitle(i, gMain);
 }}if (this.haveSingleYScale && i == iSpectrumForScale) {
 if (this.pd.getBoolean(JSV.common.ScriptToken.YSCALEON)) this.drawYScale(gMain, this);
+}if (this.haveSingleYScale && this.yPixel00 < 30) {
 if (this.pd.getBoolean(JSV.common.ScriptToken.YUNITSON)) this.drawYUnits(gMain);
-}}var isContinuous = spec.isContinuous();
-var onSpectrum = ((this.nSplit > 1 ? i == this.iSpectrumMovedTo : this.isLinked || i == iSpectrumForScale) && !this.pd.isPrinting && isContinuous);
-var hasPendingIntegral = (!isGrey && this.pendingIntegral != null && spec === this.pendingIntegral.spec);
+}}var hasPendingIntegral = (!isGrey && this.pendingIntegral != null && spec === this.pendingIntegral.spec);
 if (doAll || hasPendingIntegral) {
 this.drawPlot(hasPendingIntegral && !doAll ? gFront : gMain, i, spec, isContinuous, offset, isGrey, null, onSpectrum, hasPendingIntegral, pointsOnly);
-}this.drawIntegration(gFront, i, offset, isGrey, ig, isContinuous, onSpectrum);
+}this.drawIntegration(gFront, i, offset, isGrey, ig, isContinuous && onSpectrum);
 this.drawMeasurements(gFront, i);
 if (this.pendingMeasurement != null && this.pendingMeasurement.spec === spec) this.drawMeasurement(gFront, this.pendingMeasurement);
-if (onSpectrum && this.xPixelMovedTo >= 0) {
+if (isContinuous && onSpectrum && this.xPixelMovedTo >= 0) {
 this.drawSpectrumPointer(gFront, spec, offset, ig);
 }if (this.nSpectra > 1 && this.nSplit == 1 && this.pd.isCurrentGraphSet(this) && doAll) {
 this.haveLeftRightArrows = true;
-if (!this.pd.isPrinting) {
+if (!this.isPrintingOrSaving) {
 this.setScale(0);
 iSpecForFrame = (this.iSpectrumSelected);
 if (this.nSpectra != 2) {
@@ -16799,10 +17747,19 @@ if (subIndex >= 0) this.draw2DUnits(gMain);
 this.drawWidgets(gFront, g2, subIndex, needNewPins, doDraw1DObjects, true, true);
 this.widgetsAreSet = true;
 }if (this.annotations != null) this.drawAnnotations(gFront, this.annotations, null);
+this.isPrintingOrSaving = false;
 }, "~O,~O,~O,~N,~B,~B,~B");
+Clazz_defineMethod(c$, "drawTitle", 
+function(i, gMain){
+var title = this.getSpectrumAt(i).getPeakTitle();
+if (title.length > 0) {
+var y = (this.isPrintingOrSaving ? this.yPixel11 + 20 : this.height);
+this.pd.drawTitle(gMain, y, this.width, title);
+this.pd.titleDrawn = !this.isPrintingOrSaving;
+}}, "~N,~O");
 Clazz_defineMethod(c$, "drawSpectrumSource", 
 function(g, i){
-this.pd.printFilePath(g, this.pd.thisWidth - this.pd.right, this.yPixel0, this.spectra.get(i).getFilePath());
+this.pd.printFilePath(g, this.pd.thisWidth - this.pd.right, this.yPixel0 - 20, this.spectra.get(i).getFilePath());
 }, "~O,~N");
 Clazz_defineMethod(c$, "doPlot", 
 function(i, iSplit){
@@ -16812,6 +17769,7 @@ return (this.nSplit > 1 ? i == iSplit : ok && (!this.pd.isPrinting || !isGrey));
 }, "~N,~N");
 Clazz_defineMethod(c$, "drawSpectrumPointer", 
 function(gFront, spec, yOffset, ig){
+if (this.isPrintingOrSaving) return;
 this.setColorFromToken(gFront, JSV.common.ScriptToken.PEAKTABCOLOR);
 var iHandle = this.pd.integralShiftMode;
 if (ig != null) {
@@ -16854,10 +17812,11 @@ this.drawUnits(g, nucleusY, this.imageView.xPixel0 - 5 * this.pd.scalingFactor, 
 }, "~O");
 Clazz_defineMethod(c$, "drawPeakTabs", 
 function(gFront, g2, spec){
+if (this.isPrintingOrSaving) return;
 var list = (this.nSpectra == 1 || this.iSpectrumSelected >= 0 ? spec.getPeakList() : null);
 if (list != null && list.size() > 0) {
 if (this.piMouseOver != null && this.piMouseOver.spectrum === spec && this.pd.isMouseUp()) {
-this.g2d.setGraphicsColor(g2, this.g2d.getColor4(240, 240, 240, 140));
+this.setColorFromToken(g2, JSV.common.ScriptToken.PEAKOVERCOLOR);
 this.drawPeak(g2, this.piMouseOver, 0);
 spec.setHighlightedPeak(this.piMouseOver);
 } else {
@@ -16870,7 +17829,7 @@ this.drawPeak(gFront, p, p === spec.getSelectedPeak() ? 14 : 7);
 }}, "~O,~O,JSV.common.Spectrum");
 Clazz_defineMethod(c$, "drawPeak", 
 function(g, pi, tickSize){
-if (this.pd.isPrinting) return;
+if (this.isPrintingOrSaving) return;
 var xMin = pi.getXMin();
 var xMax = pi.getXMax();
 if (xMin == xMax) return;
@@ -16879,7 +17838,7 @@ this.drawBar(g, pi, xMin, xMax, null, tickSize);
 Clazz_defineMethod(c$, "drawWidgets", 
 function(gFront, gBack, subIndex, needNewPins, doDraw1DObjects, doDraw1DY, postGrid){
 this.setWidgets(needNewPins, subIndex, doDraw1DObjects);
-if (this.pd.isPrinting && (this.imageView == null ? !this.cur1D2Locked : this.sticky2Dcursor)) return;
+if (this.isPrintingOrSaving && (this.imageView == null ? !this.cur1D2Locked : this.sticky2Dcursor)) return;
 if (!this.pd.isPrinting && !postGrid) {
 if (doDraw1DObjects) {
 this.fillBox(gFront, this.xPixel0, this.pin1Dx0.yPixel1, this.xPixel1, this.pin1Dx1.yPixel1 + 2, JSV.common.ScriptToken.GRIDCOLOR);
@@ -16914,14 +17873,7 @@ this.fillBox(gBack, pw.xPixel0, pw.yPixel0, pw.xPixel1, pw.yPixel1, pw === this.
 }, "~O,~O,~N,~B,~B,~B,~B");
 Clazz_defineMethod(c$, "drawBar", 
 function(g, pi, xMin, xMax, whatColor, tickSize){
-var r = xMax + xMin;
-var d = Math.abs(xMax - xMin);
-var range = Math.abs(this.toX(this.xPixel1) - this.toX(this.xPixel0));
-if (false && tickSize > 0 && d > range / 20) {
-d = range / 20;
-xMin = r / 2 - d / 2;
-xMax = r / 2 + d / 2;
-}var x1 = this.toPixelX(xMin);
+var x1 = this.toPixelX(xMin);
 var x2 = this.toPixelX(xMax);
 if (x1 > x2) {
 var tmp = x1;
@@ -16942,13 +17894,13 @@ x1 = Clazz_doubleToInt((x1 + x2) / 2);
 this.fillBox(g, x1 - 1, this.yPixel0 + 2, x1 + 1, this.yPixel0 + 2 + tickSize, whatColor);
 }}}, "~O,JSV.common.PeakInfo,~N,~N,JSV.common.ScriptToken,~N");
 Clazz_defineMethod(c$, "drawIntegration", 
-function(gFront, index, yOffset, isGrey, iData, isContinuous, isSelected){
+function(gFront, index, yOffset, isGrey, iData, isSelected){
 if (iData != null) {
 if (this.haveIntegralDisplayed(index)) this.drawPlot(gFront, index, this.spectra.get(index), true, yOffset, false, iData, true, false, false);
 this.drawIntegralValues(gFront, index, yOffset);
 }var ratios = this.getIntegrationRatios(index);
 if (ratios != null) this.drawAnnotations(gFront, ratios, JSV.common.ScriptToken.INTEGRALPLOTCOLOR);
-}, "~O,~N,~N,~B,JSV.common.IntegralData,~B,~B");
+}, "~O,~N,~N,~B,JSV.common.IntegralData,~B");
 Clazz_defineMethod(c$, "getMeasurements", 
 function(type, iSpec){
 var ad = this.getDialog(type, iSpec);
@@ -17044,10 +17996,10 @@ if (y == this.fixY(y)) this.g2d.drawLine(g, this.xPixel1, y, this.xPixel0, y);
 }}}, "~O,~N,JSV.common.Spectrum,~B,~N,~B,JSV.common.IntegralData,~B,~B,~B");
 Clazz_defineMethod(c$, "drawFrame", 
 function(g, iSpec, addCurrentBox, addSplitBox, drawUpDownArrows){
-if (!this.pd.gridOn || this.pd.isPrinting) {
+if (!this.pd.gridOn || this.isPrintingOrSaving) {
 this.setColorFromToken(g, JSV.common.ScriptToken.GRIDCOLOR);
 this.g2d.drawRect(g, this.xPixel0, this.yPixel0, this.xPixels, this.yPixels);
-if (this.pd.isPrinting) return;
+if (this.isPrintingOrSaving) return;
 }this.setCurrentBoxColor(g);
 if (drawUpDownArrows) {
 if (iSpec >= 0) {
@@ -17204,13 +18156,16 @@ this.g2d.drawString(g, s, Clazz_doubleToInt(x - this.pd.getStringWidth(s) * hOff
 Clazz_defineMethod(c$, "drawYUnits", 
 function(g){
 var units = this.spectra.get(0).getAxisLabel(false);
-if (units != null) this.drawUnits(g, units, (this.pd.isPrinting ? 30 : 5) * this.pd.scalingFactor, this.yPixel0 + (this.pd.isPrinting ? 0 : 5) * this.pd.scalingFactor, 0, -1);
+if (units === "") units = "ARBITRARY UNITS";
+if (units != null && !this.pd.unitsDrawn) {
+this.drawUnits(g, units, (this.pd.isPrinting ? 30 : 5) * this.pd.scalingFactor, this.yPixel0 + (this.pd.isPrinting ? 0 : 5) * this.pd.scalingFactor, 0, -1);
+}this.pd.unitsDrawn = true;
 }, "~O");
 Clazz_defineMethod(c$, "drawHighlightsAndPeakTabs", 
 function(gFront, gBack, iSpec){
 var md = this.getMeasurements(JSV.common.Annotation.AType.PeakList, iSpec);
 var spec = this.spectra.get(iSpec);
-if (this.pd.isPrinting) {
+if (this.isPrintingOrSaving) {
 if (md != null) {
 this.setColorFromToken(gFront, JSV.common.ScriptToken.PEAKTABCOLOR);
 this.printPeakList(gFront, spec, md);
@@ -17390,7 +18345,7 @@ function(x1, x2, isFinal){
 var ad = this.getDialog(JSV.common.Annotation.AType.Integration, -1);
 if (ad == null) return false;
 var integral = (ad.getData()).addIntegralRegion(x1, x2);
-if (isFinal && ad.isDialog()) (ad).update(null, 0, 0);
+if (isFinal && JSV.common.GraphSet.isDialog(ad)) (ad).update(null, 0, 0);
 if (Double.isNaN(x2)) return false;
 this.pendingIntegral = (isFinal ? null : integral);
 this.pd.isIntegralDrag = !isFinal;
@@ -17841,7 +18796,8 @@ return graphSets;
 Clazz_defineMethod(c$, "drawGraphSet", 
 function(gMain, gFront, gBack, width, height, left, right, top, bottom, isResized, taintedAll, pointsOnly){
 this.zoomEnabled = this.pd.getBoolean(JSV.common.ScriptToken.ENABLEZOOM);
-this.height = height * this.pd.scalingFactor;
+this.isPrintingOrSaving = this.pd.isPrinting || this.pd.creatingImage;
+this.height = (height - (this.pd.isPrinting ? 20 : this.pd.creatingImage ? 0 : 0)) * this.pd.scalingFactor;
 this.width = width * this.pd.scalingFactor;
 this.left = left * this.pd.scalingFactor;
 this.right = right * this.pd.scalingFactor;
@@ -17850,14 +18806,12 @@ this.bottom = bottom * this.pd.scalingFactor;
 this.$haveSelectedSpectrum = false;
 this.selectedSpectrumIntegrals = null;
 this.selectedSpectrumMeasurements = null;
-if (!this.pd.isPrinting && this.widgets != null) for (var j = 0; j < this.widgets.length; j++) if (this.widgets[j] != null) this.widgets[j].isVisible = false;
+if (!this.isPrintingOrSaving && this.widgets != null) for (var j = 0; j < this.widgets.length; j++) if (this.widgets[j] != null) this.widgets[j].isVisible = false;
 
 for (var iSplit = 0; iSplit < this.nSplit; iSplit++) {
-this.setPositionForFrame(iSplit);
 this.drawAll(gMain, gFront, gBack, iSplit, isResized || this.nSplit > 1, taintedAll, pointsOnly);
 }
 this.setPositionForFrame(this.nSplit > 1 ? this.pd.currentSplitPoint : 0);
-if (this.pd.isPrinting) return;
 }, "~O,~O,~O,~N,~N,~N,~N,~N,~N,~B,~B,~B");
 Clazz_defineMethod(c$, "escapeKeyPressed", 
 function(isDEL){
@@ -18005,7 +18959,7 @@ var yOffset = (this.getSpectrum().isInverted() ? this.yPixel1 - this.pd.mouseY :
 }, "JSV.common.Annotation.AType,~N");
 Clazz_defineMethod(c$, "isVisible", 
 function(ad){
-return ad != null && (ad.isDialog() && ad.isVisible());
+return (JSV.common.GraphSet.isDialog(ad) && ad.isVisible());
 }, "JSV.api.AnnotationData");
 Clazz_defineMethod(c$, "mousePressedEvent", 
 function(xPixel, yPixel, clickCount){
@@ -18046,11 +19000,17 @@ this.addCurrentZoom();
 }}, "~N,~N");
 Clazz_defineMethod(c$, "mouseMovedEvent", 
 function(xPixel, yPixel){
-if (this.nSpectra > 1) {
+if (xPixel == 2147483647) {
+this.iSpectrumMovedTo = -1;
+this.piMouseOver = null;
+return null;
+}if (this.nSpectra > 1) {
 var iFrame = this.getSplitPoint(yPixel);
 this.setPositionForFrame(iFrame);
 this.setSpectrumMovedTo(this.nSplit > 1 ? iFrame : this.iSpectrumSelected);
 if (this.iSpectrumMovedTo >= 0) this.setScale(this.iSpectrumMovedTo);
+} else {
+this.iSpectrumMovedTo = this.iSpectrumSelected = 0;
 }this.inPlotMove = this.isInPlotRegion(xPixel, yPixel);
 this.setXPixelMovedTo(1.7976931348623157E308, 1.7976931348623157E308, (this.inPlotMove ? xPixel : -1), -1);
 if (this.inPlotMove) {
@@ -18084,7 +19044,8 @@ this.piMouseOver = spec.findPeakByCoord(xPixel, this.coordTemp);
 }}} else {
 if (!this.pd.display1D && this.sticky2Dcursor) {
 this.set2DCrossHairs(xPixel, yPixel);
-}}}}, "~N,~N");
+}}}return this.piMouseOver;
+}, "~N,~N");
 Clazz_defineMethod(c$, "nextView", 
 function(){
 if (this.currentZoomIndex + 1 < this.viewList.size()) this.setZoomTo(this.currentZoomIndex + 1);
@@ -18156,19 +19117,19 @@ this.getIntegrationGraph(this.getSpectrumIndex(spec)).setSelectedIntegral(this.s
 }, "~N");
 Clazz_defineMethod(c$, "setShowAnnotation", 
 function(type, tfToggle){
-var id = this.getDialog(type, -1);
-if (id == null) {
+var ad = this.getDialog(type, -1);
+if (ad == null) {
 if (tfToggle != null && tfToggle !== Boolean.TRUE) return;
 if (type === JSV.common.Annotation.AType.PeakList || type === JSV.common.Annotation.AType.Integration || type === JSV.common.Annotation.AType.Measurements) this.pd.showDialog(type);
 return;
 }if (tfToggle == null) {
-if (id.isDialog()) (id).setVisible(!(id).isVisible());
+if (JSV.common.GraphSet.isDialog(ad)) (ad).setVisible(!(ad).isVisible());
  else this.pd.showDialog(type);
 return;
 }var isON = tfToggle.booleanValue();
-if (isON) id.setState(isON);
-if (isON || id.isDialog()) this.pd.showDialog(type);
-if (!isON && id.isDialog()) (id).setVisible(false);
+if (isON) ad.setState(isON);
+if (isON || JSV.common.GraphSet.isDialog(ad)) this.pd.showDialog(type);
+if (!isON && JSV.common.GraphSet.isDialog(ad)) (ad).setVisible(false);
 }, "JSV.common.Annotation.AType,Boolean");
 Clazz_defineMethod(c$, "checkIntegralParams", 
 function(parameters, value){
@@ -18385,18 +19346,18 @@ if (dialog == null) {
 if (!forceNew) return null;
 this.addDialog(iSpec, JSV.common.Annotation.AType.PeakList, dialog =  new JSV.common.PeakData(JSV.common.Annotation.AType.PeakList, this.getSpectrum()));
 }(dialog.getData()).setPeakList(p, -2147483648, this.viewData.getScale());
-if (dialog.isDialog()) (dialog).setFields();
+if (JSV.common.GraphSet.isDialog(dialog)) (dialog).setFields();
 return dialog.getData();
 }, "~N,JSV.common.Parameters,~B");
 Clazz_defineMethod(c$, "setPeakListing", 
 function(tfToggle){
 var dialog = this.getDialog(JSV.common.Annotation.AType.PeakList, -1);
-var ad = (dialog != null && dialog.isDialog() ? dialog : null);
+var ad = (JSV.common.GraphSet.isDialog(dialog) ? dialog : null);
 var isON = (tfToggle == null ? ad == null || !ad.isVisible() : tfToggle.booleanValue());
 if (isON) {
 this.pd.showDialog(JSV.common.Annotation.AType.PeakList);
-} else {
-if (dialog.isDialog()) (dialog).setVisible(false);
+} else if (JSV.common.GraphSet.isDialog(dialog)) {
+(dialog).setVisible(false);
 }}, "Boolean");
 Clazz_defineMethod(c$, "haveIntegralDisplayed", 
 function(i){
@@ -18706,6 +19667,10 @@ function(){
 this.viewList.get(0).init(null, 0, 0, this.getSpectrum().invertYAxis().isContinuous());
 this.resetViewCompletely();
 });
+c$.isDialog = Clazz_defineMethod(c$, "isDialog", 
+function(ad){
+return (ad != null && ad.isDialog());
+}, "JSV.api.AnnotationData");
 c$.$GraphSet$Highlight$ = function(){
 /*if4*/;(function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -18732,12 +19697,16 @@ if (!(Clazz_instanceOf(obj,"JSV.common.GraphSet.Highlight"))) return false;
 var hl = obj;
 return ((hl.x1 == this.x1) && (hl.x2 == this.x2));
 }, "~O");
+Clazz_overrideMethod(c$, "hashCode", 
+function(){
+return Clazz_doubleToInt(this.x1 * 1000 + this.x2 * 1000000);
+});
 /*eoif4*/})();
 };
 c$.RT2 = Math.sqrt(2.0);
 c$.veryLightGrey = null;
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.XYScaleConverter"], "JSV.common.ImageView", ["JSV.common.Coordinate", "$.ScaleData"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -18989,7 +19958,7 @@ function(){
 return this.xPixel0;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.Measurement"], "JSV.common.Integral", null, function(){
 var c$ = Clazz_declareType(JSV.common, "Integral", JSV.common.Measurement);
@@ -19001,7 +19970,7 @@ this.setValue(value);
 return this;
 }, "~N,~N,JSV.common.Spectrum,~N,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 (function(){
 var c$ = Clazz_declareType(JSV.common, "IntegralComparator", null, java.util.Comparator);
@@ -19010,7 +19979,7 @@ function(m1, m2){
 return (m1.getXVal() < m2.getXVal() ? -1 : m1.getXVal() > m2.getXVal() ? 1 : 0);
 }, "JSV.common.Measurement,JSV.common.Measurement");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.lang.Enum", "JSV.common.MeasurementData", "$.IntegralComparator"], "JSV.common.IntegralData", ["java.util.Collections", "$.StringTokenizer", "JU.AU", "$.BS", "$.DF", "$.Lst", "$.PT", "JSV.common.Annotation", "$.Coordinate", "$.Integral", "$.ScriptToken"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -19351,7 +20320,7 @@ Clazz_defineEnumConstant(c$, "NA", 9, []);
 c$.c =  new JSV.common.IntegralComparator();
 c$.$HEADER =  Clazz_newArray(-1, ["peak", "start/ppm", "end/ppm", "value"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.lang.Enum", "JSV.source.JDXDataObject", "JU.Lst"], "JSV.common.Spectrum", ["java.util.Hashtable", "JU.PT", "JSV.common.Coordinate", "$.Parameters", "$.PeakInfo", "JSV.source.JDXSourceStreamTokenizer", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -19421,7 +20390,7 @@ return list.size();
 Clazz_defineMethod(c$, "selectPeakByFileIndex", 
 function(filePath, index, atomKey){
 if (this.peakList != null && this.peakList.size() > 0 && (atomKey == null || this.sourceID.equals(index))) for (var i = 0; i < this.peakList.size(); i++) if (this.peakList.get(i).checkFileIndex(filePath, index, atomKey)) {
-System.out.println("selecting peak by FileIndex " + this + " " + this.peakList.get(i));
+System.out.println("JSV.Spectrum selecting peak by FileIndex " + this + " " + this.peakList.get(i));
 return (this.selectedPeak = this.peakList.get(i));
 }
 return null;
@@ -19429,7 +20398,7 @@ return null;
 Clazz_defineMethod(c$, "selectPeakByFilePathTypeModel", 
 function(filePath, type, model){
 if (this.peakList != null && this.peakList.size() > 0) for (var i = 0; i < this.peakList.size(); i++) if (this.peakList.get(i).checkFileTypeModel(filePath, type, model)) {
-System.out.println("selecting peak byFilePathTypeModel " + this + " " + this.peakList.get(i));
+System.out.println("JSV.Spectrum selecting peak byFilePathTypeModel " + this + " " + this.peakList.get(i));
 return (this.selectedPeak = this.peakList.get(i));
 }
 return null;
@@ -19481,7 +20450,11 @@ if (iBest >= 0) return this.peakList.get(iBest);
 }, "~N,JSV.common.Coordinate");
 Clazz_defineMethod(c$, "getPeakTitle", 
 function(){
-return (this.selectedPeak != null ? this.selectedPeak.getTitle() : this.highlightedPeak != null ? this.highlightedPeak.getTitle() : this.getTitleLabel());
+var s = null;
+if (this.highlightedPeak != null) s = this.highlightedPeak.getTitle();
+if ((s == null || s.length == 0) && this.selectedPeak != null) s = this.selectedPeak.getTitle();
+if (s == null || s.length == 0) s = this.getTitleLabel();
+return s;
 });
 Clazz_defineMethod(c$, "getTitleLabel", 
 function(){
@@ -19829,7 +20802,7 @@ Clazz_defineEnumConstant(c$, "TO_ABS", 2, []);
 Clazz_defineEnumConstant(c$, "TOGGLE", 3, []);
 /*eoif2*/})();
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 (function(){
 var c$ = Clazz_declareType(JSV.common, "JSVersion", null);
@@ -19879,9 +20852,9 @@ throw e;
 JSV.common.JSVersion.majorVersion = mv;
 JSV.common.JSVersion.versionInt = v;
 }})();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
-Clazz_load(["java.util.Hashtable"], "JSV.common.JSVFileManager", ["java.io.BufferedInputStream", "$.BufferedReader", "$.InputStreamReader", "$.StringReader", "java.net.URL", "JU.AU", "$.BS", "$.Encoding", "$.JSJSONParser", "$.P3", "$.PT", "$.SB", "JSV.common.JSVersion", "$.JSViewer", "JSV.exception.JSVException", "JU.Logger"], function(){
+Clazz_load(["java.util.Hashtable"], "JSV.common.JSVFileManager", ["java.io.BufferedInputStream", "$.BufferedReader", "$.File", "$.InputStreamReader", "$.StringReader", "java.net.URL", "JU.AU", "$.BS", "$.Encoding", "$.JSJSONParser", "$.P3", "$.PT", "$.SB", "JSV.common.JSVersion", "$.JSViewer", "JSV.exception.JSVException", "JU.Logger"], function(){
 var c$ = Clazz_declareType(JSV.common, "JSVFileManager", null);
 Clazz_defineMethod(c$, "isApplet", 
 function(){
@@ -20019,8 +20992,23 @@ return JSV.common.JSVFileManager.cacheGet(name.startsWith("MOL=") ? name.substri
 c$.cachePut = Clazz_defineMethod(c$, "cachePut", 
 function(name, data){
 if (JU.Logger.debugging) JU.Logger.debug("JSVFileManager cachePut " + data + " for " + name);
-if (data != null) JSV.common.JSVFileManager.htCorrelationCache.put(name, data);
-}, "~S,~S");
+if (data != null) {
+JSV.common.JSVFileManager.htCorrelationCache.put(name, data);
+if (JSV.common.JSVFileManager.cacheDir != null && name.indexOf(":") < 0) {
+try {
+ new java.io.File(JSV.common.JSVFileManager.cacheDir).mkdirs();
+var f =  new java.io.File(JSV.common.JSVFileManager.cacheDir, name);
+var fos =  new java.io.FileOutputStream(f);
+fos.write(data.getBytes());
+fos.close();
+} catch (e) {
+if (Clazz_exceptionOf(e,"java.io.IOException")){
+e.printStackTrace();
+} else {
+throw e;
+}
+}
+}}}, "~S,~S");
 c$.cacheGet = Clazz_defineMethod(c$, "cacheGet", 
 function(key){
 var data = JSV.common.JSVFileManager.htCorrelationCache.get(key);
@@ -20210,65 +21198,62 @@ if (!isInline && (molFile = JSV.common.JSVFileManager.getFileAsString(src)) == n
 JU.Logger.error("no MOL data returned by NCI");
 return null;
 }var is13C = type.equals("C13");
-var url = (is13C ? JSV.common.JSVFileManager.nmrdbServerC13 : JSV.common.JSVFileManager.nmrdbServerH1);
-var json = JSV.common.JSVFileManager.getFileAsString(url + molFile);
-if (json.indexOf("Error:") >= 0) {
+var url;
+url = (is13C ? JSV.common.JSVFileManager.nmrdbServerC13 : JSV.common.JSVFileManager.nmrdbServerH1);
+url = url.$replace("$MOLFILE", molFile);
+JSV.common.JSVFileManager.cachePut("url", url);
+var json = JSV.common.JSVFileManager.getFileAsString(url);
+if ((json == null ? (json = "Error: Error fetching simulation") : json).indexOf("Error:") >= 0) {
 return json;
 }var map = ( new JU.JSJSONParser()).parseMap(json, true);
 JSV.common.JSVFileManager.cachePut("json", json);
-if (is13C) map = map.get("result");
+return JSV.common.JSVFileManager.processJSON(key, src, url, name, type, molFile, map, is13C, isInline);
+}, "~S");
+c$.processJSON = Clazz_defineMethod(c$, "processJSON", 
+function(key, src, url, name, type, molFile, json, is13C, isInline){
+var map = json.get("data");
 var jsonMolFile = map.get("molfile");
 if (jsonMolFile == null) {
 System.out.println("JSVFileManager: no MOL file returned from EPFL");
 jsonMolFile = molFile;
-} else {
-System.out.println("JSVFileManager: MOL file hash=" + jsonMolFile.hashCode());
 }var atomMap = JSV.common.JSVFileManager.getAtomMap(jsonMolFile, molFile);
 JSV.common.JSVFileManager.cachePut("mol", molFile);
+var bytes = (isInline || !JSV.common.JSViewer.isJS ? null : molFile.getBytes());
 {
-if (!isInline) Jmol.Cache.put("http://SIMULATION/" + type +
-"/" + name + "#molfile", molFile.getBytes());
-}var xml = "<Signals src=" + JU.PT.esc(JU.PT.rep(is13C ? JSV.common.JSVFileManager.nmrdbServerC13 : JSV.common.JSVFileManager.nmrdbServerH1, "?POST?molfile=", "")) + ">\n";
-if (is13C) {
-var spec = map.get("spectrum13C");
-jcamp = (spec.get("jcamp")).get("value");
-var lst = spec.get("predCSNuc");
+if (bytes) Jmol.Cache.put("http://SIMULATION/" + type +
+"/" + name + "#molfile", bytes);
+}var xml = "<Signals src=" + JU.PT.esc(url.substring(0, url.indexOf('?'))) + ">\n";
+var jcamp;
+type = (is13C ? "13C" : "1HNMR");
+jcamp = map.get("jcamp");
+jcamp = JSV.common.JSVFileManager.hackNewNmriumSimulationJCAMP(jcamp);
+var signals = map.get("signals");
+var bf1 = JSV.common.JSVFileManager.getval(jcamp, "##$BF1");
+var freq = (bf1 == null ? (is13C ? 100 : 400) : Float.parseFloat(bf1));
 var sb =  new JU.SB();
-for (var i = lst.size(); --i >= 0; ) {
-map = lst.get(i);
+for (var i = signals.size(); --i >= 0; ) {
+var signal = signals.get(i);
 sb.append("<Signal ");
-JSV.common.JSVFileManager.setAttr(sb, "type", "nucleus", map);
-if (atomMap == null) JSV.common.JSVFileManager.setAttr(sb, "atoms", "assignment", map);
- else sb.append("atoms=\"").appendI(atomMap[JU.PT.parseInt(map.get("assignment"))]).append("\" ");
-JSV.common.JSVFileManager.setAttr(sb, "multiplicity", "multiplicity", map);
-map = map.get("integralData");
-JSV.common.JSVFileManager.setAttr(sb, "xMin", "from", map);
-JSV.common.JSVFileManager.setAttr(sb, "xMax", "to", map);
-JSV.common.JSVFileManager.setAttr(sb, "integral", "value", map);
+JSV.common.JSVFileManager.setAttr(sb, "type", type, null);
+var index = (signal.get("atoms")).get(0);
+if (atomMap == null) {
+JSV.common.JSVFileManager.setAttr(sb, "atoms", index, null);
+} else {
+sb.append("atoms=\"").appendI(atomMap[index.intValue()]).append("\" ");
+}JSV.common.JSVFileManager.setAttr(sb, "multiplicity", "multiplicity", signal);
+var delta = signal.get("delta");
+var minmax = JSV.common.JSVFileManager.getSignalMinMax(signal, delta.floatValue(), freq, is13C);
+JSV.common.JSVFileManager.setAttr(sb, "xMin", "" + minmax[0], null);
+JSV.common.JSVFileManager.setAttr(sb, "xMax", "" + minmax[1], null);
+JSV.common.JSVFileManager.setAttr(sb, "integral", "nbAtoms", signal);
 sb.append("></Signal>\n");
 }
 sb.append("</Signals>");
 xml += sb.toString();
-} else {
-xml = JU.PT.rep(map.get("xml"), "<Signals>", xml);
-if (atomMap != null) {
-var sb =  new JU.SB();
-var signals = JU.PT.split(xml, " atoms=\"");
-sb.append(signals[0]);
-for (var i = 1; i < signals.length; i++) {
-var s = signals[i];
-var a = JU.PT.parseInt(s);
-sb.append(" atoms=\"").appendI(atomMap[a]).append(s.substring(s.indexOf("\"")));
-}
-xml = sb.toString();
-}xml = JU.PT.rep(xml, "</", "\n</");
-xml = JU.PT.rep(xml, "><", ">\n<");
-xml = JU.PT.rep(xml, "\\\"", "\"");
-jcamp = map.get("jcamp");
-}if (JU.Logger.debugging) JU.Logger.info(xml);
+if (JU.Logger.debugging) JU.Logger.info(xml);
 JSV.common.JSVFileManager.cachePut("xml", xml);
 jcamp = "##TITLE=" + (isInline ? "JMOL SIMULATION/" + type : name) + "\n" + jcamp.substring(jcamp.indexOf("\n##") + 1);
-pt = molFile.indexOf("\n");
+var pt = molFile.indexOf("\n");
 pt = molFile.indexOf("\n", pt + 1);
 if (pt > 0 && pt == molFile.indexOf("\n \n")) molFile = molFile.substring(0, pt + 1) + "Created " + JSV.common.JSVFileManager.viewer.apiPlatform.getDateFormat("8824") + " by JSpecView " + JSV.common.JSVersion.VERSION + molFile.substring(pt + 1);
 pt = 0;
@@ -20276,11 +21261,70 @@ pt = jcamp.indexOf("##.");
 var id = JSV.common.JSVFileManager.getAbbreviatedSimulationName(name, type, false);
 var pt1 = id.indexOf("id='");
 if (isInline && pt1 > 0) id = id.substring(pt1 + 4, (id + "'").indexOf("'", pt1 + 4));
+JSV.common.JSVFileManager.cachePut(type + "-json.jcamp", jcamp);
 jcamp = jcamp.substring(0, pt) + "##$MODELS=\n<Models>\n" + "<ModelData id=" + JU.PT.esc(id) + " type=\"MOL\" src=" + JU.PT.esc(src) + ">\n" + molFile + "</ModelData>\n</Models>\n" + "##$SIGNALS=\n" + xml + "\n" + jcamp.substring(pt);
 JSV.common.JSVFileManager.cachePut("jcamp", jcamp);
 JSV.common.JSVFileManager.cachePut(key, jcamp);
 return jcamp;
+}, "~S,~S,~S,~S,~S,~S,java.util.Map,~B,~B");
+c$.getSignalMinMax = Clazz_defineMethod(c$, "getSignalMinMax", 
+function(signal, delta, freq, is13C){
+var minmax =  Clazz_newFloatArray (2, 0);
+if (is13C) {
+minmax[0] = delta - 0.5;
+minmax[1] = delta + 0.5;
+} else {
+var js = signal.get("js");
+var d = 1;
+for (var i = js.size(); --i >= 0; ) {
+var j = js.get(i);
+var c = (j.get("coupling")).floatValue();
+switch (j.get("multiplicity")) {
+case "d":
+d += c / 2;
+break;
+default:
+case "t":
+d += c;
+break;
+}
+}
+minmax[0] = delta - d / freq;
+minmax[1] = delta + d / freq;
+}return minmax;
+}, "java.util.Map,~N,~N,~B");
+c$.hackNewNmriumSimulationJCAMP = Clazz_defineMethod(c$, "hackNewNmriumSimulationJCAMP", 
+function(jcamp){
+var shift = JSV.common.JSVFileManager.getline(jcamp, "##.SHIFT REFERENCE=INTERNAL");
+var offset = JSV.common.JSVFileManager.getval(jcamp, "##$OFFSET");
+if (shift != null && offset != null) {
+shift = shift.substring(0, shift.lastIndexOf(", ") + 2) + offset;
+jcamp = JSV.common.JSVFileManager.setline(jcamp, "##$OFFSET", null);
+jcamp = JSV.common.JSVFileManager.setline(jcamp, "##.SHIFT REFERENCE=INTERNAL", shift);
+}return jcamp;
 }, "~S");
+c$.getline = Clazz_defineMethod(c$, "getline", 
+function(jcamp, record){
+var pt = jcamp.indexOf(record);
+if (pt < 0) return null;
+return jcamp.substring(pt, jcamp.indexOf("\n", pt));
+}, "~S,~S");
+c$.getval = Clazz_defineMethod(c$, "getval", 
+function(jcamp, record){
+var pt = jcamp.indexOf(record);
+if (pt < 0) return null;
+var val = jcamp.substring(jcamp.indexOf("=", pt) + 1, jcamp.indexOf("\n", pt));
+pt = val.indexOf("$$");
+if (pt >= 0) val = val.substring(pt);
+return val.trim();
+}, "~S,~S");
+c$.setline = Clazz_defineMethod(c$, "setline", 
+function(jcamp, record, replacement){
+var pt = jcamp.indexOf(record);
+if (pt < 0) return jcamp;
+if (replacement == null) return jcamp.substring(0, pt) + jcamp.substring(jcamp.indexOf("\n", pt) + 1);
+return jcamp.substring(0, pt) + replacement + jcamp.substring(jcamp.indexOf("\n", pt));
+}, "~S,~S,~S");
 c$.getAtomMap = Clazz_defineMethod(c$, "getAtomMap", 
 function(jsonMolFile, jmolMolFile){
 var acJson = JSV.common.JSVFileManager.getCoord(jsonMolFile);
@@ -20317,9 +21361,9 @@ pts[i] = JU.P3.new3(data[0], data[1], data[2]);
 return pts;
 }, "~S");
 c$.setAttr = Clazz_defineMethod(c$, "setAttr", 
-function(sb, mykey, lucsKey, map){
-sb.append(mykey + "=\"").appendO(map.get(lucsKey)).append("\" ");
-}, "JU.SB,~S,~S,java.util.Map");
+function(sb, mykey, lucsKeyOrVal, map){
+sb.append(mykey + "=\"").appendO((map == null ? lucsKeyOrVal : map.get(lucsKeyOrVal))).append("\" ");
+}, "JU.SB,~S,~O,java.util.Map");
 c$.getResource = Clazz_defineMethod(c$, "getResource", 
 function(object, fileName, error){
 var url = null;
@@ -20406,15 +21450,17 @@ c$.viewer = null;
 c$.jsDocumentBase = "";
 c$.urlPrefixes =  Clazz_newArray(-1, ["http:", "https:", "ftp:", "http://SIMULATION/", "file:"]);
 c$.htCorrelationCache =  new java.util.Hashtable();
+c$.cacheDir = null;
 c$.nciResolver = "https://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
-c$.nmrdbServerH1 = "https://www.nmrdb.org/tools/jmol/predict.php?POST?molfile=";
-c$.nmrdbServerC13 = "https://www.nmrdb.org/service/jsmol13c?POST?molfile=";
+c$.nmrdbServerH1 = "https://nmr-prediction.service.zakodium.com/v1/predict/proton?POST?{\"molfile\":\"$MOLFILE\",\"includeJDX\":true}";
+c$.nmrdbServerC13 = "https://nmr-prediction.service.zakodium.com/v1/predict/carbon?POST?{\"molfile\":\"$MOLFILE\",\"includeJDX\":true}";
 c$.stringCount = 0;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
-Clazz_load(["javajs.api.BytePoster", "J.api.PlatformViewer", "JSV.common.Spectrum"], "JSV.common.JSViewer", ["java.io.File", "java.net.URL", "java.util.Arrays", "$.Hashtable", "JU.CU", "$.Lst", "$.OC", "$.PT", "$.SB", "JSV.common.Annotation", "$.ExportType", "$.JSVFileManager", "$.PanelData", "$.PanelNode", "$.Parameters", "$.PeakInfo", "$.PrintLayout", "$.RepaintManager", "$.ScriptToken", "$.ScriptTokenizer", "JSV.source.JDXReader", "$.JDXSource", "JSV.tree.SimpleTree", "JU.Logger"], function(){
+Clazz_load(["javajs.api.BytePoster", "J.api.PlatformViewer", "JSV.common.Spectrum"], "JSV.common.JSViewer", ["java.io.File", "java.net.URL", "java.util.Arrays", "$.Hashtable", "JU.CU", "$.Lst", "$.OC", "$.PT", "$.SB", "JSV.common.Annotation", "$.ExportType", "$.JSVFileManager", "$.PanelData", "$.PanelNode", "$.Parameters", "$.PeakInfo", "$.PrintLayout", "$.RepaintManager", "$.ScriptToken", "$.ScriptTokenizer", "$.SyncManager", "JSV.source.JDXReader", "$.JDXSource", "JSV.tree.SimpleTree", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
+this.parentFrame = null;
 this.si = null;
 this.g2d = null;
 this.spectraTree = null;
@@ -20432,6 +21478,7 @@ this.dialogManager = null;
 this.viewDialog = null;
 this.overlayLegendDialog = null;
 this.irMode = null;
+this.isEmbedded = false;
 this.loadImaginary = false;
 this.interfaceOverlaid = false;
 this.autoIntegrate = false;
@@ -20455,17 +21502,16 @@ this.screenWidth = 0;
 this.fileCount = 0;
 this.nViews = 0;
 this.scriptLevelCount = 0;
-this.returnFromJmolModel = null;
 this.integrationRatios = null;
 this.apiPlatform = null;
+this.hasDisplay = false;
+this.peakInfoModelSentToJmol = null;
 this.popupAllowMenu = true;
 this.popupZoomEnabled = true;
 this.defaultLoadScript = null;
 this.nmrMaxY = NaN;
-this.overlayLegendVisible = false;
 this.recentStackPercent = 5;
 this.lastPrintLayout = null;
-this.offWindowFrame = null;
 this.recentOpenURL = "http://";
 this.recentURL = null;
 this.recentSimulation = "tylenol";
@@ -20474,14 +21520,15 @@ Clazz_prepareFields (c$, function(){
 this.irMode = JSV.common.Spectrum.IRMode.NO_CONVERT;
 });
 Clazz_makeConstructor(c$, 
-function(si, isApplet, isJSApplet){
+function(si, isApplet, isJSApplet, hasDisplay){
 this.si = si;
 this.isApplet = isApplet;
+this.hasDisplay = hasDisplay;
 JSV.common.JSViewer.isJS = isApplet && isJSApplet;
 var jmol = null;
 {
 self.Jmol && (jmol = Jmol);
-}JSV.common.JSViewer.jmolObject = jmol;
+}JSV.common.JSViewer.jsmolObject = jmol;
 this.isSigned = si.isSigned();
 this.apiPlatform = this.getPlatformInterface("Platform");
 this.apiPlatform.setViewer(this, this.display);
@@ -20494,7 +21541,11 @@ this.isSingleThreaded = this.apiPlatform.isSingleThreaded();
 this.panelNodes =  new JU.Lst();
 this.repaintManager =  new JSV.common.RepaintManager(this);
 if (!isApplet) this.setPopupMenu(true, true);
-}, "JSV.api.ScriptInterface,~B,~B");
+}, "JSV.api.ScriptInterface,~B,~B,~B");
+Clazz_defineMethod(c$, "setParentFrame", 
+function(parentFrame){
+this.parentFrame = parentFrame;
+}, "javax.swing.JFrame");
 Clazz_defineMethod(c$, "setProperty", 
 function(key, value){
 if (this.properties != null) this.properties.setProperty(key, value);
@@ -20531,6 +21582,8 @@ throw e;
 Clazz_defineMethod(c$, "runScriptNow", 
 function(script){
 System.out.println(this.checkScript(script));
+var pt = script.indexOf("JSpecView:");
+if (pt >= 0) script = script.substring(pt + 10);
 this.scriptLevelCount++;
 if (script == null) script = "";
 script = script.trim();
@@ -20611,7 +21664,7 @@ case JSV.common.ScriptToken.INVERTY:
 this.execZoom("invertY");
 break;
 case JSV.common.ScriptToken.JMOL:
-this.si.syncToJmol(value);
+this.syncToJmol(value);
 break;
 case JSV.common.ScriptToken.JSV:
 this.syncScript(JU.PT.trimQuotes(value));
@@ -20678,7 +21731,6 @@ case JSV.common.ScriptToken.SHIFTX:
 case JSV.common.ScriptToken.SHOWERRORS:
 case JSV.common.ScriptToken.SHOWMEASUREMENTS:
 case JSV.common.ScriptToken.SHOWMENU:
-case JSV.common.ScriptToken.SHOWKEY:
 case JSV.common.ScriptToken.SHOWPEAKLIST:
 case JSV.common.ScriptToken.SHOWINTEGRATION:
 case JSV.common.ScriptToken.SHOWPROPERTIES:
@@ -20727,9 +21779,6 @@ this.show("errors");
 break;
 case JSV.common.ScriptToken.SHOWINTEGRATION:
 this.pd().showAnnotation(JSV.common.Annotation.AType.Integration, JSV.common.Parameters.getTFToggle(value));
-break;
-case JSV.common.ScriptToken.SHOWKEY:
-this.setOverlayLegendVisibility(JSV.common.Parameters.getTFToggle(value), true);
 break;
 case JSV.common.ScriptToken.SHOWMEASUREMENTS:
 this.pd().showAnnotation(JSV.common.Annotation.AType.Measurements, JSV.common.Parameters.getTFToggle(value));
@@ -20989,6 +22038,15 @@ throw e;
 }
 }
 return;
+}var isFirst = value.equalsIgnoreCase("first");
+var isLast = value.equalsIgnoreCase("last");
+if (isFirst || isLast) {
+var pd = this.selectedPanel.getPanelData();
+var gsets = pd.graphSets;
+if (gsets == null || gsets.size() == 0) return;
+var gs = gsets.get(isFirst ? 0 : gsets.size() - 1);
+pd.setCurrentGraphSet(gs, -1);
+return;
 }var nodes = this.panelNodes;
 for (var i = nodes.size(); --i >= 0; ) nodes.get(i).pd().selectFromEntireSet(-2147483648);
 
@@ -21059,160 +22117,11 @@ if (JSV.common.Spectrum.areXScalesCompatible(spec, node.getSpectrum(), false, fa
 } else {
 this.pd().setZoom(0, y1, 0, y2);
 }}, "~S");
-Clazz_defineMethod(c$, "setOverlayLegendVisibility", 
-function(tftoggle, doSet){
-if (doSet) this.overlayLegendVisible = (tftoggle == null ? !this.overlayLegendVisible : tftoggle === Boolean.TRUE);
-var node = JSV.common.PanelNode.findNode(this.selectedPanel, this.panelNodes);
-for (var i = this.panelNodes.size(); --i >= 0; ) this.showOverlayLegend(this.panelNodes.get(i), this.panelNodes.get(i) === node && this.overlayLegendVisible);
-
-}, "Boolean,~B");
-Clazz_defineMethod(c$, "showOverlayLegend", 
-function(node, visible){
-var legend = node.legend;
-if (legend == null && visible) {
-legend = node.setLegend(node.pd().getNumberOfSpectraInCurrentSet() > 1 && node.pd().getNumberOfGraphSets() == 1 ? this.getDialog(JSV.common.Annotation.AType.OverlayLegend, null) : null);
-}if (legend != null) legend.setVisible(visible);
-}, "JSV.common.PanelNode,~B");
-Clazz_defineMethod(c$, "syncScript", 
-function(peakScript){
-if (peakScript.equals("TEST")) peakScript = JSV.common.JSViewer.testScript;
-JU.Logger.info("JSViewer.syncScript Jmol>JSV " + peakScript);
-if (peakScript.indexOf("<PeakData") < 0) {
-if (peakScript.startsWith("JSVSTR:")) {
-this.si.syncToJmol(peakScript);
-return;
-}this.runScriptNow(peakScript);
-if (peakScript.indexOf("#SYNC_PEAKS") >= 0) this.syncPeaksAfterSyncScript();
-return;
-}JU.Logger.info(">>toJSV>> " + peakScript);
-var sourceID = JU.PT.getQuotedAttribute(peakScript, "sourceID");
-var type;
-var model;
-var file;
-var jmolSource;
-var index;
-var atomKey;
-if (sourceID == null) {
-file = JU.PT.getQuotedAttribute(peakScript, "file");
-index = JU.PT.getQuotedAttribute(peakScript, "index");
-if (file == null || index == null) return;
-file = JU.PT.rep(file, "#molfile", "");
-model = JU.PT.getQuotedAttribute(peakScript, "model");
-jmolSource = JU.PT.getQuotedAttribute(peakScript, "src");
-var modelSent = (jmolSource != null && jmolSource.startsWith("Jmol") ? null : this.returnFromJmolModel);
-if (model != null && modelSent != null && !model.equals(modelSent)) {
-JU.Logger.info("JSV ignoring model " + model + "; should be " + modelSent);
-return;
-}this.returnFromJmolModel = null;
-if (this.panelNodes.size() == 0 || !this.checkFileAlreadyLoaded(file)) {
-JU.Logger.info("file " + file + " not found -- JSViewer closing all and reopening");
-this.si.siSyncLoad(file);
-}type = JU.PT.getQuotedAttribute(peakScript, "type");
-atomKey = null;
-} else {
-file = null;
-index = model = sourceID;
-atomKey = "," + JU.PT.getQuotedAttribute(peakScript, "atom") + ",";
-type = "ID";
-jmolSource = sourceID;
-}var pi = this.selectPanelByPeak(file, index, atomKey);
-var pd = this.pd();
-pd.selectSpectrum(file, type, model, true);
-this.si.siSendPanelChange();
-pd.addPeakHighlight(pi);
-this.repaint(true);
-if (jmolSource == null || (pi != null && pi.getAtoms() != null)) this.si.syncToJmol(this.jmolSelect(pi));
-}, "~S");
-Clazz_defineMethod(c$, "syncPeaksAfterSyncScript", 
-function(){
-var source = this.currentSource;
-if (source == null) return;
-try {
-var file = "file=" + JU.PT.esc(source.getFilePath());
-var peaks = source.getSpectra().get(0).getPeakList();
-var sb =  new JU.SB();
-sb.append("[");
-var n = peaks.size();
-for (var i = 0; i < n; i++) {
-var s = peaks.get(i).toString();
-s = s + " " + file;
-sb.append(JU.PT.esc(s));
-if (i > 0) sb.append(",");
-}
-sb.append("]");
-this.si.syncToJmol("Peaks: " + sb);
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-} else {
-throw e;
-}
-}
-});
-Clazz_defineMethod(c$, "checkFileAlreadyLoaded", 
-function(fileName){
-if (this.isClosed()) return false;
-if (this.pd().hasFileLoaded(fileName)) return true;
-for (var i = this.panelNodes.size(); --i >= 0; ) if (this.panelNodes.get(i).pd().hasFileLoaded(fileName)) {
-this.si.siSetSelectedPanel(this.panelNodes.get(i).jsvp);
-return true;
-}
-return false;
-}, "~S");
-Clazz_defineMethod(c$, "selectPanelByPeak", 
-function(file, index, atomKey){
-if (this.panelNodes == null) return null;
-var pi = null;
-for (var i = this.panelNodes.size(); --i >= 0; ) this.panelNodes.get(i).pd().addPeakHighlight(null);
-
-pi = this.pd().selectPeakByFileIndex(file, index, atomKey);
-if (pi != null) {
-this.setNode(JSV.common.PanelNode.findNode(this.selectedPanel, this.panelNodes));
-} else {
-for (var i = this.panelNodes.size(); --i >= 0; ) {
-var node = this.panelNodes.get(i);
-if ((pi = node.pd().selectPeakByFileIndex(file, index, atomKey)) != null) {
-this.setNode(node);
-break;
-}}
-}return pi;
-}, "~S,~S,~S");
-Clazz_defineMethod(c$, "processPeakPickEvent", 
-function(eventObj, isApp){
-var pi;
-if (Clazz_instanceOf(eventObj,"JSV.common.PeakInfo")) {
-pi = eventObj;
-var pi2 = this.pd().findMatchingPeakInfo(pi);
-if (pi2 == null) {
-if (!"ALL".equals(pi.getTitle())) return;
-var node = null;
-for (var i = 0; i < this.panelNodes.size(); i++) if ((pi2 = this.panelNodes.get(i).pd().findMatchingPeakInfo(pi)) != null) {
-node = this.panelNodes.get(i);
-break;
-}
-if (node == null) return;
-this.setNode(node);
-}pi = pi2;
-} else {
-var e = (eventObj);
-this.si.siSetSelectedPanel(e.getSource());
-pi = e.getPeakInfo();
-}this.pd().addPeakHighlight(pi);
-this.syncToJmol(pi);
-if (pi.isClearAll()) this.repaint(false);
- else this.pd().selectSpectrum(pi.getFilePath(), pi.getType(), pi.getModel(), true);
-this.si.siCheckCallbacks(pi.getTitle());
-}, "~O,~B");
 Clazz_defineMethod(c$, "newStructToJmol", 
 function(data){
 JU.Logger.info("sending new structure to Jmol:\n" + data);
-this.si.syncToJmol("struct:" + data);
+this.syncToJmol("struct:" + data);
 }, "~S");
-Clazz_defineMethod(c$, "syncToJmol", 
-function(pi){
-this.repaint(true);
-this.returnFromJmolModel = pi.getModel();
-this.si.syncToJmol(this.jmolSelect(pi));
-}, "JSV.common.PeakInfo");
 Clazz_defineMethod(c$, "sendPanelChange", 
 function(){
 var pd = this.pd();
@@ -21222,13 +22131,8 @@ if (pi == null) pi = spec.getModelPeakInfoForAutoSelectOnLoad();
 if (pi == null) pi = spec.getBasePeakInfo();
 pd.addPeakHighlight(pi);
 JU.Logger.info(Thread.currentThread() + "JSViewer sendFrameChange " + this.selectedPanel);
-this.syncToJmol(pi);
+this.notifyJmol(pi);
 });
-Clazz_defineMethod(c$, "jmolSelect", 
-function(pi){
-var script = ("IR".equals(pi.getType()) || "RAMAN".equals(pi.getType()) ? "vibration ON; selectionHalos OFF;" : "vibration OFF; selectionhalos " + (pi.getAtoms() == null ? "OFF" : "ON"));
-return "Select: " + pi + " script=\"" + script + " \" sourceID=\"" + this.pd().getSpectrum().sourceID + "\"";
-}, "JSV.common.PeakInfo");
 Clazz_defineMethod(c$, "getPropertyAsJavaObject", 
 function(key){
 var map =  new java.util.Hashtable();
@@ -21509,8 +22413,11 @@ id = JU.PT.trimQuotes(tokens.get(1));
 filename = tokens.get(2);
 pt = 2;
 }var isAppend = filename.equalsIgnoreCase("APPEND");
-var isCheck = filename.equalsIgnoreCase("CHECK");
-if (isAppend || isCheck) pt++;
+if (isAppend) {
+pt++;
+if (pt > 0) filename = tokens.get(pt);
+}var isCheck = filename.equalsIgnoreCase("CHECK");
+if (isCheck) pt++;
 if (pt > 0) filename = tokens.get(pt);
 if (script == null) script = this.defaultLoadScript;
 if (filename.equals("?")) {
@@ -21555,7 +22462,7 @@ break;
 var jsvp = this.si.siGetNewJSVPanel2(specs);
 jsvp.setTitle(source.getTitle());
 if (jsvp.getTitle().equals("")) {
-jsvp.getPanelData().setViewTitle(source.getFilePath());
+jsvp.getPanelData().setViewTitle("");
 jsvp.setTitle(name);
 }this.si.siSetPropertiesFromPreferences(jsvp, true);
 this.spectraTree.createTree(++this.fileCount, source,  Clazz_newArray(-1, [jsvp])).getPanelNode().isView = true;
@@ -21613,7 +22520,6 @@ function(jsvp){
 var node = JSV.common.PanelNode.findNode(jsvp, this.panelNodes);
 if (node == null) return null;
 this.spectraTree.setPath(this.spectraTree.newTreePath(node.treeNode.getPath()));
-this.setOverlayLegendVisibility(null, false);
 return node;
 }, "JSV.api.JSVPanel");
 Clazz_defineMethod(c$, "setSpectrum", 
@@ -21751,6 +22657,10 @@ Clazz_defineMethod(c$, "processTwoPointGesture",
 function(touches){
 if (!this.isClosed()) this.selectedPanel.processTwoPointGesture(touches);
 }, "~A");
+Clazz_defineMethod(c$, "processKeyEvent", 
+function(event){
+if (!this.isClosed()) this.selectedPanel.processKeyEvent(event);
+}, "~O");
 Clazz_defineMethod(c$, "getApplet", 
 function(){
 return this.html5Applet;
@@ -21825,10 +22735,10 @@ this.dialogManager.showMessage(this, "<div style='width:100%;height:100%;" + msg
 } else {
 this.selectedPanel.showMessage("<html><body style='" + msg + "</body></html>", "Predicted Colour");
 }}}, "~S");
-Clazz_defineMethod(c$, "getDialogPrint", 
+Clazz_defineMethod(c$, "getPrintLayout", 
 function(isJob){
-if (!JSV.common.JSViewer.isJS) try {
-var pl = (this.getPlatformInterface("PrintDialog")).set(this.offWindowFrame, this.lastPrintLayout, isJob).getPrintLayout();
+if (!JSV.common.JSViewer.isJS && this.hasDisplay) try {
+var pl = (this.getPlatformInterface("PrintDialog")).set(this.parentFrame, this.lastPrintLayout, isJob).getPrintLayout();
 if (pl != null) this.lastPrintLayout = pl;
 return pl;
 } catch (e) {
@@ -21916,18 +22826,26 @@ function(isAppend, isURL, simulationType, script){
 var url = null;
 if (simulationType != null) {
 url = this.fileHelper.getUrlFromDialog("Enter the name or identifier of a compound", this.recentSimulation);
-if (url == null) return;
+if (url == null) return false;
 this.recentSimulation = url;
-url = "$" + simulationType + "/" + url;
+if (url.equals("<this structure>")) {
+if (this.isEmbedded) {
+this.syncToJmol("sync . \"" + simulationType + "Simulate:\";");
+return true;
+}return false;
+}url = "$" + simulationType + "/" + url;
 } else if (isURL) {
 url = this.fileHelper.getUrlFromDialog("Enter the URL of a JCAMP-DX File", this.recentURL == null ? this.recentOpenURL : this.recentURL);
-if (url == null) return;
+if (url == null) return false;
 this.recentOpenURL = url;
 } else {
 var userData =  Clazz_newArray(-1, [Boolean.$valueOf(isAppend), script]);
-var file = this.fileHelper.showFileOpenDialog(this.mainPanel, userData);
+var file = (this.hasDisplay ? this.fileHelper.showFileOpenDialog(this.mainPanel, userData) : null);
 if (file != null) url = file.getFullPath();
-}if (url != null) this.runScriptNow("load " + (isAppend ? "APPEND " : "") + "\"" + url + "\"" + (script == null ? "" : ";" + script));
+}if (url != null) {
+this.runScriptNow("load " + (isAppend ? "APPEND " : "") + "\"" + url + "\"" + (script == null ? "" : ";" + script));
+return true;
+}return false;
 }, "~B,~B,~S,~S");
 Clazz_defineMethod(c$, "openFile", 
 function(fileName, closeFirst){
@@ -21950,6 +22868,8 @@ j.setFocusable(false);
 j.getPanelData().closeAllDialogsExcept(JSV.common.Annotation.AType.NONE);
 }}
 this.markSelectedPanels(panelNodes, iPanel);
+this.selectedPanel = jsvp;
+if (jsvp != null) jsvp.getPanelData().clearMouseSet(null);
 }return iPanel;
 }, "JSV.api.JSVPanel,JU.Lst");
 Clazz_defineMethod(c$, "checkAutoIntegrate", 
@@ -22103,12 +23023,77 @@ this.getDialogManager().showMessage(null, s, "HELP " + value);
 this.selectedPanel.showMessage(s, "Help " + value);
 }System.out.println(s);
 }, "~S");
-c$.testScript = "<PeakData  index=\"1\" title=\"\" model=\"~1.1\" type=\"1HNMR\" xMin=\"3.2915\" xMax=\"3.2965\" atoms=\"15,16,17,18,19,20\" multiplicity=\"\" integral=\"1\"> src=\"JPECVIEW\" file=\"http://SIMULATION/$caffeine\"";
+Clazz_defineMethod(c$, "setRecentSimulation", 
+function(name){
+if (name == null) name = "<this structure>";
+this.recentSimulation = name;
+}, "~S");
+Clazz_defineMethod(c$, "setCreatingImage", 
+function(isSaving){
+this.pd().creatingImage = isSaving;
+}, "~B");
+Clazz_defineMethod(c$, "checkFileAlreadyLoaded", 
+function(fileName){
+if (this.isClosed()) return false;
+if (this.pd().hasFileLoaded(fileName)) return true;
+for (var i = this.panelNodes.size(); --i >= 0; ) if (this.panelNodes.get(i).pd().hasFileLoaded(fileName)) {
+this.si.siSetSelectedPanel(this.panelNodes.get(i).jsvp);
+return true;
+}
+return false;
+}, "~S");
+Clazz_defineMethod(c$, "advanceSpectrumBy", 
+function(n){
+var i = this.panelNodes.size();
+for (; --i >= 0; ) if (this.panelNodes.get(i).jsvp === this.selectedPanel) break;
+
+this.setFrameAndTreeNode(i + n);
+this.selectedPanel.getFocusNow(false);
+}, "~N");
+Clazz_defineMethod(c$, "processPeakPickEvent", 
+function(eventObj, isApp){
+var pi;
+if (Clazz_instanceOf(eventObj,"JSV.common.PeakInfo")) {
+pi = eventObj;
+var pi2 = this.pd().findMatchingPeakInfo(pi);
+if (pi2 == null) {
+if (!"ALL".equals(pi.getTitle())) return;
+var node = null;
+for (var i = 0; i < this.panelNodes.size(); i++) if ((pi2 = this.panelNodes.get(i).pd().findMatchingPeakInfo(pi)) != null) {
+node = this.panelNodes.get(i);
+break;
+}
+if (node == null) return;
+this.setNode(node);
+}pi = pi2;
+} else {
+var e = (eventObj);
+this.si.siSetSelectedPanel(e.getSource());
+pi = e.getPeakInfo();
+}this.pd().addPeakHighlight(pi);
+this.notifyJmol(pi);
+if (pi.isClearAll()) this.repaint(false);
+ else this.pd().selectSpectrum(pi.getFilePath(), pi.getType(), pi.getModel(), true);
+this.si.siCheckCallbacks(pi.getTitle());
+}, "~O,~B");
+Clazz_defineMethod(c$, "syncScript", 
+function(peakScript){
+JSV.common.SyncManager.syncFromJmol(this, peakScript);
+}, "~S");
+Clazz_defineMethod(c$, "syncToJmol", 
+function(msg){
+this.si.syncToJmol(msg);
+}, "~S");
+Clazz_defineMethod(c$, "notifyJmol", 
+function(pi){
+this.repaint(true);
+JSV.common.SyncManager.syncToJmol(this, pi);
+}, "JSV.common.PeakInfo");
 c$.isJS = false;
 c$.isSwingJS = false;
-c$.jmolObject = null;
+c$.jsmolObject = null;
 });
-;//5.0.1-v7 Wed Jul 30 21:51:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.Annotation", "$.Coordinate"], "JSV.common.Measurement", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -22183,7 +23168,7 @@ function(){
 return "[" + this.getXVal() + "," + this.pt2.getXVal() + "]";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JU.Lst", "JSV.api.AnnotationData"], "JSV.common.MeasurementData", ["JU.AU", "$.DF", "JSV.common.Annotation", "$.Parameters"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -22325,7 +23310,7 @@ return false;
 });
 c$.HEADER =  Clazz_newArray(-1, ["", "start", "end", "value"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.lang.Enum", "J.api.EventManager", "java.util.Hashtable", "JU.Lst"], "JSV.common.PanelData", ["JU.CU", "JSV.common.Annotation", "$.Coordinate", "$.GraphSet", "$.JSVFileManager", "$.JSVersion", "$.JSViewer", "$.MeasurementData", "$.Parameters", "$.PeakPickEvent", "$.ScriptToken", "$.Spectrum", "$.SubSpecChangeEvent", "$.ZoomEvent", "JU.Font", "$.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -22364,6 +23349,7 @@ this.viewTitle = null;
 this.displayFontName = null;
 this.titleFontName = null;
 this.isPrinting = false;
+this.creatingImage = false;
 this.doReset = true;
 this.printingFontName = null;
 this.printGraphPosition = "default";
@@ -22376,17 +23362,20 @@ this.taintedAll = true;
 this.testingJavaScript = false;
 this.currentFont = null;
 this.mouseState = null;
-this.gridOn = false;
-this.titleOn = false;
-this.peakTabsOn = false;
+this.gridOn = true;
+this.titleOn = true;
+this.peakTabsOn = true;
 this.mouseX = 0;
 this.mouseY = 0;
+this.mouseSet = null;
+this.mousePeak = null;
 this.linking = false;
 this.xPixelClicked = 0;
 this.coordinatesColor = null;
 this.gridColor = null;
 this.integralPlotColor = null;
 this.peakTabColor = null;
+this.peakOverColor = null;
 this.plotAreaColor = null;
 this.scaleColor = null;
 this.titleColor = null;
@@ -22398,6 +23387,7 @@ this.BLACK = null;
 this.bgcolor = null;
 this.optionsSaved = null;
 this.gMain = null;
+this.unitsDrawn = false;
 Clazz_instantialize(this, arguments);}, JSV.common, "PanelData", null, J.api.EventManager);
 Clazz_prepareFields (c$, function(){
 this.listeners =  new JU.Lst();
@@ -22540,7 +23530,7 @@ Clazz_defineMethod(c$, "setGraphSets",
 function(linkMode){
 this.graphSets = JSV.common.GraphSet.createGraphSetsAndSetLinkMode(this, this.jsvp, this.spectra, this.startIndex, this.endIndex, linkMode);
 this.currentGraphSet = this.graphSets.get(0);
-this.title = this.getSpectrum().getTitleLabel();
+this.setTitle(this.getSpectrum().getTitleLabel());
 }, "JSV.common.PanelData.LinkMode");
 Clazz_defineMethod(c$, "findMatchingPeakInfo", 
 function(pi){
@@ -22566,10 +23556,14 @@ Clazz_defineMethod(c$, "refresh",
 function(){
 this.doReset = true;
 });
+Clazz_defineMethod(c$, "setTitle", 
+function(title){
+this.title = title;
+}, "~S");
 Clazz_defineMethod(c$, "addAnnotation", 
 function(tokens){
 var title = this.currentGraphSet.addAnnotation(tokens, this.getTitle());
-if (title != null) this.title = title;
+if (title != null) this.setTitle(title);
 }, "JU.Lst");
 Clazz_defineMethod(c$, "addPeakHighlight", 
 function(peakInfo){
@@ -22609,7 +23603,7 @@ for (var i = this.graphSets.size(); --i >= 0; ) this.graphSets.get(i).resetViewC
 
 });
 Clazz_defineMethod(c$, "drawGraph", 
-function(gMain, gFront, gRear, width, height, addFilePath){
+function(gMain, gFront, gRear, width, height, addFilePath, addBorder){
 var withCoords;
 this.gMain = gMain;
 this.display1D = !this.isLinked && this.getBoolean(JSV.common.ScriptToken.DISPLAY1D);
@@ -22622,33 +23616,38 @@ if (gFront !== gMain) {
 this.g2d.fillBackground(gFront, null);
 if (gMain !== gRear) this.g2d.fillBackground(gMain, null);
 this.g2d.setStrokeBold(gMain, false);
-}if (this.isPrinting) {
-top *= 3;
-bottom *= 3;
+}this.scalingFactor = 1;
+if (this.isPrinting) {
 this.scalingFactor = 10;
 withCoords = false;
+} else if (addBorder) {
+bottom *= 2;
+withCoords = false;
 } else {
-this.scalingFactor = 1;
-withCoords = this.getBoolean(JSV.common.ScriptToken.COORDINATESON);
+withCoords = !this.creatingImage && this.getBoolean(JSV.common.ScriptToken.COORDINATESON);
 this.titleOn = this.getBoolean(JSV.common.ScriptToken.TITLEON);
 this.gridOn = this.getBoolean(JSV.common.ScriptToken.GRIDON);
 this.peakTabsOn = this.getBoolean(JSV.common.ScriptToken.PEAKTABSON);
 }var pointsOnly = this.getBoolean(JSV.common.ScriptToken.POINTSONLY);
 this.doReset = false;
 this.titleDrawn = false;
+this.unitsDrawn = false;
 this.thisWidth = width;
 this.thisHeight = height;
-for (var i = this.graphSets.size(); --i >= 0; ) this.graphSets.get(i).drawGraphSet(gMain, gFront, gRear, width, height, this.left, this.right, top, bottom, isResized, this.taintedAll, pointsOnly);
-
-if (this.titleOn && !this.titleDrawn && this.taintedAll) this.drawTitle(gMain, height * this.scalingFactor, width * this.scalingFactor, this.getDrawTitle(this.isPrinting));
-if (withCoords && this.coordStr != null) this.drawCoordinates(gFront, top, this.thisWidth - this.right, top - 20);
+for (var i = this.graphSets.size(); --i >= 0; ) {
+this.graphSets.get(i).drawGraphSet(gMain, gFront, gRear, width, height, this.left, this.right, top, bottom, isResized, this.taintedAll, pointsOnly);
+}
+if (this.isPrinting || this.creatingImage) this.titleDrawn = true;
+if (this.isPrinting && this.titleOn && !this.titleDrawn && this.taintedAll) {
+this.drawTitle(gMain, (height + 20) * this.scalingFactor, width * this.scalingFactor, this.getDrawTitle(true, -1));
+}if (withCoords && this.coordStr != null) this.drawCoordinates(gFront, top, this.thisWidth - this.right, top - 20);
 if (addFilePath && this.taintedAll) {
 this.printFilePath(gMain, this.left, height, this.commonFilePath != null ? this.commonFilePath : this.graphSets.size() == 1 && this.currentGraphSet.getTitle(true) != null ? this.getSpectrum().getFilePath() : null);
 }if (this.isPrinting) {
 this.printVersion(gMain, height);
 }if (!this.testingJavaScript && (this.isPrinting || gMain === gFront)) this.setTaintedAll();
  else this.taintedAll = false;
-}, "~O,~O,~O,~N,~N,~B");
+}, "~O,~O,~O,~N,~N,~B,~B");
 Clazz_defineMethod(c$, "drawCoordinates", 
 function(g, top, x, y){
 this.g2d.setGraphicsColor(g, this.coordinatesColor);
@@ -22678,20 +23677,20 @@ this.g2d.setGraphicsColor(g, this.BLACK);
 var font = this.setFont(g, 100, 0, 12, true);
 var s = this.jsvp.getApiPlatform().getDateFormat(null) + " JSpecView " + JSV.common.JSVersion.VERSION_SHORT;
 var w = font.stringWidth(s);
-this.g2d.drawString(g, s, (this.thisWidth - this.right) * this.scalingFactor - w, pageHeight * this.scalingFactor - font.getHeight() * 3);
+this.g2d.drawString(g, s, (this.thisWidth - this.right) * this.scalingFactor - w, pageHeight * this.scalingFactor + font.getHeight() * 3);
 }, "~O,~N");
 Clazz_defineMethod(c$, "drawTitle", 
-function(g, pageHeight, pageWidth, title){
-title = title.$replace('\n', ' ');
+function(g, y, pageWidth, title){
 var font = this.getFont(g, pageWidth, this.isPrinting || this.getBoolean(JSV.common.ScriptToken.TITLEBOLDON) ? 1 : 0, 14, true);
 var nPixels = font.stringWidth(title);
-if (nPixels > pageWidth) {
-var size = Clazz_doubleToInt(14.0 * pageWidth / nPixels);
+if (nPixels > pageWidth * 0.5) {
+var size = Clazz_doubleToInt(14.0 * pageWidth * 0.5 / nPixels);
 if (size < 10) size = 10;
 font = this.getFont(g, pageWidth, this.isPrinting || this.getBoolean(JSV.common.ScriptToken.TITLEBOLDON) ? 1 : 0, size, true);
 }this.g2d.setGraphicsColor(g, this.titleColor);
 this.setCurrentFont(this.g2d.setFont(g, font));
-this.g2d.drawString(g, title, (this.isPrinting ? this.left * this.scalingFactor : 5), pageHeight - Clazz_doubleToInt(font.getHeight() * (this.isPrinting ? 2 : 0.5)));
+y -= Clazz_doubleToInt(font.getHeight() * (this.isPrinting ? -0.2 : this.creatingImage ? 1.2 : 0.4));
+this.g2d.drawString(g, title, (this.isPrinting ? this.left * this.scalingFactor : 5), y);
 }, "~O,~N,~N,~S");
 Clazz_defineMethod(c$, "setCurrentFont", 
 function(font){
@@ -22950,6 +23949,16 @@ Clazz_defineMethod(c$, "isMouseUp",
 function(){
 return (this.mouseState === JSV.common.PanelData.Mouse.UP);
 });
+Clazz_defineMethod(c$, "clearMouseSet", 
+function(gs){
+if (gs == null) {
+this.mousePeak = null;
+}if (this.mouseSet != null && this.mouseSet !== gs) {
+this.mouseSet.mouseMovedEvent(2147483647, 0);
+}this.mouseSet = gs;
+if (gs == null && this.graphSets.size() > 0) {
+(this.mouseSet = gs = this.graphSets.get(this.graphSets.size() - 1)).setSpectrumMovedTo(gs.nSpectra - 1);
+}}, "JSV.common.GraphSet");
 Clazz_defineMethod(c$, "doMouseMoved", 
 function(xPixel, yPixel){
 this.mouseX = xPixel;
@@ -22958,13 +23967,27 @@ this.mouseState = JSV.common.PanelData.Mouse.UP;
 this.clickCount = 0;
 var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
 if (gs == null) return;
-gs.mouseMovedEvent(xPixel, yPixel);
-}, "~N,~N");
+this.clearMouseSet(gs);
+var peak = gs.mouseMovedEvent(xPixel, yPixel);
+if (this.mousePeak !== peak) {
+this.mousePeak = peak;
+this.setTaintedAll();
+}}, "~N,~N");
+Clazz_defineMethod(c$, "doMouseClicked", 
+function(xPixel, yPixel, isControlDown){
+var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
+if (gs == null) return;
+this.setCurrentGraphSet(gs, yPixel);
+gs.mouseClickedEvent(xPixel, yPixel, this.clickCount, isControlDown);
+this.setTaintedAll();
+this.repaint();
+}, "~N,~N,~B");
 Clazz_defineMethod(c$, "doMousePressed", 
 function(xPixel, yPixel){
 this.mouseState = JSV.common.PanelData.Mouse.DOWN;
 var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
 if (gs == null) return;
+this.clearMouseSet(gs);
 this.setCurrentGraphSet(gs, yPixel);
 this.clickCount = (++this.clickCount % 3);
 this.currentGraphSet.mousePressedEvent(xPixel, yPixel, this.clickCount);
@@ -22985,15 +24008,6 @@ this.currentGraphSet.mouseReleasedEvent(xPixel, yPixel);
 this.thisWidget = null;
 this.isIntegralDrag = false;
 this.integralShiftMode = 0;
-}, "~N,~N,~B");
-Clazz_defineMethod(c$, "doMouseClicked", 
-function(xPixel, yPixel, isControlDown){
-var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
-if (gs == null) return;
-this.setCurrentGraphSet(gs, yPixel);
-gs.mouseClickedEvent(xPixel, yPixel, this.clickCount, isControlDown);
-this.setTaintedAll();
-this.repaint();
 }, "~N,~N,~B");
 Clazz_defineMethod(c$, "hasCurrentMeasurements", 
 function(type){
@@ -23050,11 +24064,14 @@ throw e;
 }
 });
 Clazz_defineMethod(c$, "getDrawTitle", 
-function(isPrinting){
+function(isPrinting, iSpec){
 var title = null;
-if (isPrinting) title = this.printJobTitle;
- else if (this.nSpectra == 1) {
+if (isPrinting) {
+title = this.printJobTitle;
+} else if (this.nSpectra == 1) {
 title = this.getSpectrum().getPeakTitle();
+} else if (iSpec >= 0) {
+title = this.getSpectrumAt(iSpec).getPeakTitle();
 } else if (this.viewTitle != null) {
 if (this.currentGraphSet.getTitle(false) != null) title = this.getSpectrum().getPeakTitle();
 if (title == null) title = this.viewTitle;
@@ -23062,21 +24079,7 @@ if (title == null) title = this.viewTitle;
 title = this.jsvp.getTitle().trim();
 }if (title.indexOf("\n") >= 0) title = title.substring(0, title.indexOf("\n")).trim();
 return title;
-}, "~B");
-Clazz_defineMethod(c$, "getPrintJobTitle", 
-function(isPrinting){
-var title = null;
-if (this.nSpectra == 1) {
-title = this.getSpectrum().getTitle();
-} else if (this.viewTitle != null) {
-if (this.graphSets.size() == 1) title = this.currentGraphSet.getTitle(isPrinting);
-if (title == null) title = this.viewTitle;
-} else {
-title = this.jsvp.getTitle().trim();
-}if (title.indexOf("\n") >= 0) title = title.substring(0, title.indexOf("\n")).trim();
- else if (title.startsWith("$")) title = title.substring(1);
-return title;
-}, "~B");
+}, "~B,~N");
 Clazz_defineMethod(c$, "linkSpectra", 
 function(mode){
 if (mode === JSV.common.PanelData.LinkMode.ALL) mode = (this.nSpectra == 2 ? JSV.common.PanelData.LinkMode.AB : this.nSpectra == 3 ? JSV.common.PanelData.LinkMode.ABC : JSV.common.PanelData.LinkMode.NONE);
@@ -23139,8 +24142,7 @@ case JSV.common.ScriptToken.COORDINATESCOLOR:
 this.coordinatesColor = color;
 return;
 case JSV.common.ScriptToken.HIGHLIGHTCOLOR:
-this.highlightColor = color;
-if (this.highlightColor.getOpacity255() == 255) this.highlightColor.setOpacity255(150);
+this.highlightColor = color.addAlpha(150);
 return;
 case JSV.common.ScriptToken.ZOOMBOXCOLOR:
 this.zoomBoxColor = color;
@@ -23156,6 +24158,9 @@ this.gridColor = color;
 break;
 case JSV.common.ScriptToken.INTEGRALPLOTCOLOR:
 this.integralPlotColor = color;
+break;
+case JSV.common.ScriptToken.PEAKOVERCOLOR:
+this.peakOverColor = color.addAlpha(30);
 break;
 case JSV.common.ScriptToken.PEAKTABCOLOR:
 this.peakTabColor = color;
@@ -23198,6 +24203,8 @@ case JSV.common.ScriptToken.INTEGRALPLOTCOLOR:
 return this.integralPlotColor;
 case JSV.common.ScriptToken.GRIDCOLOR:
 return this.gridColor;
+case JSV.common.ScriptToken.PEAKOVERCOLOR:
+return this.peakOverColor;
 case JSV.common.ScriptToken.PEAKTABCOLOR:
 return this.peakTabColor;
 case JSV.common.ScriptToken.PLOTAREACOLOR:
@@ -23220,12 +24227,12 @@ var useFileName = f1 != null && f2 != null && !f1.equals(f2);
 for (var index = 0; index < numSpectra; index++) {
 var cols =  new Array(3);
 var spectrum = this.getSpectrumAt(index);
-this.title = spectrum.getTitle();
-if (useFileName) this.title = JSV.common.JSVFileManager.getTagName(spectrum.getFilePath()) + " - " + this.title;
+var title = spectrum.getTitle();
+if (useFileName) title = JSV.common.JSVFileManager.getTagName(spectrum.getFilePath()) + " - " + title;
 var plotColor = this.getCurrentPlotColor(index);
 cols[0] =  new Integer(index + 1);
 cols[1] = plotColor;
-cols[2] = " " + this.title;
+cols[2] = " " + title;
 data[index] = cols;
 }
 return data;
@@ -23265,7 +24272,7 @@ this.printGraphPosition = pl.position;
 this.optionsSaved =  new java.util.Hashtable();
 this.optionsSaved.putAll(this.options);
 this.gridOn = pl.showGrid;
-this.titleOn = pl.showTitle;
+this.titleOn = pl.showTitles;
 this.setBoolean(JSV.common.ScriptToken.XSCALEON, pl.showXScale);
 this.setBoolean(JSV.common.ScriptToken.XUNITSON, pl.showXScale);
 this.setBoolean(JSV.common.ScriptToken.YSCALEON, pl.showYScale);
@@ -23276,7 +24283,7 @@ function(pl){
 pl.showGrid = this.gridOn;
 pl.showXScale = this.getBoolean(JSV.common.ScriptToken.XSCALEON);
 pl.showYScale = this.getBoolean(JSV.common.ScriptToken.YSCALEON);
-pl.showTitle = this.titleOn;
+pl.showTitles = this.titleOn;
 }, "JSV.common.PrintLayout");
 Clazz_defineMethod(c$, "showDialog", 
 function(type){
@@ -23301,9 +24308,10 @@ var isPortrait = !pl.layout.equals("landscape");
 this.print(pdfCreator, (isPortrait ? pl.imageableHeight : pl.imageableWidth), (isPortrait ? pl.imageableWidth : pl.imageableHeight), pl.imageableX, pl.imageableY, pl.paperHeight, pl.paperWidth, isPortrait, 0);
 }, "J.api.GenericGraphics,JSV.common.PrintLayout");
 Clazz_defineMethod(c$, "print", 
-function(g, height, width, x, y, paperHeight, paperWidth, isPortrait, pi){
-this.g2d = this.g2d0;
-if (pi == 0) {
+function(g, height, width, x, y, paperHeight, paperWidth, isPortrait, pageIndex){
+if (pageIndex != 0) {
+return 1;
+}this.g2d = this.g2d0;
 this.isPrinting = true;
 var addFilePath = false;
 if (Clazz_instanceOf(g,"J.api.GenericGraphics")) {
@@ -23317,7 +24325,6 @@ width = 280;
 height = 280;
 width = 450;
 }} else if (this.printGraphPosition.equals("fit to page")) {
-addFilePath = true;
 } else {
 if (isPortrait) {
 height = 450;
@@ -23329,13 +24336,14 @@ height = 280;
 width = 450;
 y = Clazz_doubleToInt(Clazz_doubleToInt(paperWidth - 280) / 2);
 x = Clazz_doubleToInt(Clazz_doubleToInt(paperHeight - 450) / 2);
-}}this.g2d.translateScale(g, x, y, 0.1);
-this.setTaintedAll();
-this.drawGraph(g, g, g, Clazz_doubleToInt(width), Clazz_doubleToInt(height), addFilePath);
+}}this.setTaintedAll();
+this.g2d.translateScale(null, x, y, 0.1);
+if (g == null) g =  new java.awt.image.BufferedImage(Clazz_doubleToInt(width), Clazz_doubleToInt(height), 2).getGraphics();
+this.drawGraph(g, g, g, Clazz_doubleToInt(width), Clazz_doubleToInt(height), addFilePath, false);
+if (this.g2d !== this.g2d0 && g !== this.gMain) (g).dispose();
+this.g2d = this.g2d0;
 this.isPrinting = false;
 return 0;
-}this.isPrinting = false;
-return 1;
 }, "~O,~N,~N,~N,~N,~N,~N,~B,~N");
 Clazz_overrideMethod(c$, "keyPressed", 
 function(code, modifiers){
@@ -23542,7 +24550,7 @@ Clazz_defineEnumConstant(c$, "UP", 0, []);
 Clazz_defineEnumConstant(c$, "DOWN", 1, []);
 /*eoif2*/})();
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.PanelNode", ["JU.SB", "JSV.common.Parameters"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -23637,9 +24645,8 @@ return sb.toString().trim();
 }, "JU.Lst");
 c$.isOpen = Clazz_defineMethod(c$, "isOpen", 
 function(panelNodes, filePath){
-var pt = -1;
 if (filePath != null) for (var i = panelNodes.size(); --i >= 0; ) {
-if (panelNodes.get(i).source.matchesFilePath(filePath) || filePath.equals(panelNodes.get(i).frameTitle)) return pt;
+if (panelNodes.get(i).source.matchesFilePath(filePath) || filePath.equals(panelNodes.get(i).frameTitle)) return i;
 }
 return -1;
 }, "JU.Lst,~S");
@@ -23666,7 +24673,7 @@ JSV.common.Parameters.putInfo(key, info, "panelSource", this.source.getFilePath(
 return info;
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.Parameters", ["java.util.Hashtable", "JSV.common.ScriptToken"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -23774,7 +24781,7 @@ function(match, info, key, value){
 if (value != null && JSV.common.Parameters.isMatch(match, key)) info.put(match == null ? key : match, value);
 }, "~S,java.util.Map,~S,~O");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.MeasurementData"], "JSV.common.PeakData", ["JU.DF", "JSV.common.Coordinate", "$.PeakPick"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -23859,7 +24866,7 @@ if (++n == 100) break;
 }, "JSV.common.Parameters,~N,JSV.common.ScaleData");
 c$.HNMR_HEADER =  Clazz_newArray(-1, ["peak", "shift/ppm", "intens", "shift/hz", "diff/hz", "2-diff", "3-diff"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.PeakInfo", ["JU.PT"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -23885,6 +24892,7 @@ this.atomKey = null;
 Clazz_instantialize(this, arguments);}, JSV.common, "PeakInfo", null);
 /*LV!1824 unnec constructor*/Clazz_makeConstructor(c$, 
 function(s){
+if (s == null) return;
 this.stringInfo = s;
 this.type = JU.PT.getQuotedAttribute(s, "type");
 if (this.type == null) this.type = "";
@@ -23896,7 +24904,7 @@ if (pt >= 0) this.type = JSV.common.PeakInfo.fixType(this.type.substring(0, pt))
 this.id = JU.PT.getQuotedAttribute(s, "id");
 this.index = JU.PT.getQuotedAttribute(s, "index");
 this.file = JU.PT.getQuotedAttribute(s, "file");
-System.out.println("pi file=" + this.file);
+System.out.println("PeakInfo file=" + this.file);
 this.filePathForwardSlash = (this.file == null ? null : this.file.$replace('\\', '/'));
 this.model = JU.PT.getQuotedAttribute(s, "model");
 var isBaseModel = s.contains("baseModel=\"\"");
@@ -24017,9 +25025,8 @@ Clazz_defineMethod(c$, "getXPixel",
 function(){
 return Clazz_doubleToInt((this.px0 + this.px1) / 2);
 });
-c$.nullPeakInfo = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.Measurement"], "JSV.common.PeakPick", null, function(){
 var c$ = Clazz_declareType(JSV.common, "PeakPick", JSV.common.Measurement);
@@ -24035,7 +25042,7 @@ this.setPt2(this.getXVal(), this.getYVal());
 }return this;
 }, "~N,~N,JSV.common.Spectrum,~S,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.util.EventObject"], "JSV.common.PeakPickEvent", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24061,7 +25068,7 @@ function(){
 return (this.peakInfo == null ? null : this.peakInfo.toString());
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["JSV.common.Coordinate", "$.ScriptToken"], "JSV.common.PlotWidget", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24119,7 +25126,7 @@ function(enabled){
 this.isEnabled = enabled;
 }, "~B");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24134,7 +25141,7 @@ this.position = "fit to page";
 this.showGrid = true;
 this.showXScale = true;
 this.showYScale = true;
-this.showTitle = true;
+this.showTitles = true;
 this.font = "Helvetica";
 this.paper = null;
 this.asPDF = true;
@@ -24154,7 +25161,7 @@ this.asPDF = true;
 pd.setDefaultPrintOptions(this);
 }}, "JSV.common.PanelData");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.RepaintManager", ["JSV.common.JSViewer"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24171,7 +25178,7 @@ if (this.repaintPending) {
 return false;
 }this.repaintPending = true;
 var applet = this.vwr.html5Applet;
-var jmol = (JSV.common.JSViewer.isJS && !JSV.common.JSViewer.isSwingJS ? JSV.common.JSViewer.jmolObject : null);
+var jmol = (JSV.common.JSViewer.isJS && !JSV.common.JSViewer.isSwingJS ? JSV.common.JSViewer.jsmolObject : null);
 if (jmol == null) {
 this.vwr.selectedPanel.repaint();
 } else {
@@ -24185,7 +25192,7 @@ this.repaintPending = false;
 this.notify();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.ScaleData", ["JSV.common.Coordinate"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24497,7 +25504,7 @@ this.spectrumScaleFactor *= f;
 c$.NTICKS =  Clazz_newIntArray(-1, [2, 5, 10, 10]);
 c$.LOGTICKS =  Clazz_newDoubleArray(-1, [Math.log10(2), Math.log10(5), 0, 1]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(["java.lang.Enum"], "JSV.common.ScriptToken", ["java.util.Hashtable", "JU.Lst", "$.PT", "$.SB", "JSV.common.ScriptTokenizer"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24659,24 +25666,24 @@ Clazz_defineEnumConstant(c$, "OVERLAYSTACKED", 46, ["TF", "whether viewed spectr
 Clazz_defineEnumConstant(c$, "PEAK", 47, ["[IR,CNMR,HNMR,MS] [#nnn or ID=xxx or text] [ALL], for example: PEAK HNMR #3", "highlights a peak based on its number or title text, optionally checking all loade spectra"]);
 Clazz_defineEnumConstant(c$, "PEAKCALLBACKFUNCTIONNAME", 48, []);
 Clazz_defineEnumConstant(c$, "PEAKLIST", 49, ["[THRESHOLD=n] [INTERPOLATE=PARABOLIC or NONE]", "creates a peak list based on a threshold value and parabolic or no interpolation"]);
-Clazz_defineEnumConstant(c$, "PEAKTABCOLOR", 50, ["C", "sets the color of peak marks for a peak listing"]);
-Clazz_defineEnumConstant(c$, "PEAKTABSON", 51, ["T", "show peak tabs for simulated spectra"]);
-Clazz_defineEnumConstant(c$, "PLOTAREACOLOR", 52, ["C", "sets the color of the plot background"]);
-Clazz_defineEnumConstant(c$, "PLOTCOLOR", 53, ["C", "sets the color of the graph line"]);
-Clazz_defineEnumConstant(c$, "PLOTCOLORS", 54, ["color,color,color,...", "sets the colors of multiple plots"]);
-Clazz_defineEnumConstant(c$, "POINTSONLY", 55, ["TF", "show points only for all data"]);
-Clazz_defineEnumConstant(c$, "PRINT", 56, ["", "prints the current spectrum"]);
-Clazz_defineEnumConstant(c$, "REVERSEPLOT", 57, ["T", "reverses the x-axis of a spectrum"]);
-Clazz_defineEnumConstant(c$, "SCALEBY", 58, ["factor", "multiplies the y-scale of the spectrum by a factor"]);
-Clazz_defineEnumConstant(c$, "SCALECOLOR", 59, ["C", "sets the color of the x-axis and y-axis scales"]);
-Clazz_defineEnumConstant(c$, "SCRIPT", 60, ["filename.jsv", "runs a script from a file"]);
-Clazz_defineEnumConstant(c$, "SELECT", 61, ["spectrumID, spectrumID,...", "selects one or more spectra based on IDs"]);
-Clazz_defineEnumConstant(c$, "SETPEAK", 62, ["xNew, xOld xNew, ?, or NONE", "sets nearest peak to xOld ppm to a new value; NONE resets (1D NMR only)"]);
-Clazz_defineEnumConstant(c$, "SETX", 63, ["xNew, xOld xNew, ?, or NONE", "sets an old ppm position in the spectrum to a new value; NONE resets (1D NMR only)"]);
-Clazz_defineEnumConstant(c$, "SHIFTX", 64, ["dx or NONE", "shifts the x-axis of a 1D NMR spectrum by the given ppm; NONE resets (1D NMR only)"]);
-Clazz_defineEnumConstant(c$, "SHOWERRORS", 65, ["shows recent errors"]);
-Clazz_defineEnumConstant(c$, "SHOWINTEGRATION", 66, ["T", "shows an integration listing"]);
-Clazz_defineEnumConstant(c$, "SHOWKEY", 67, ["T", "shows a color key when multiple spectra are displayed"]);
+Clazz_defineEnumConstant(c$, "PEAKOVERCOLOR", 50, ["C", "sets the color of peak backgrounds when moused over"]);
+Clazz_defineEnumConstant(c$, "PEAKTABCOLOR", 51, ["C", "sets the color of peak marks for a peak listing"]);
+Clazz_defineEnumConstant(c$, "PEAKTABSON", 52, ["T", "show peak tabs for simulated spectra"]);
+Clazz_defineEnumConstant(c$, "PLOTAREACOLOR", 53, ["C", "sets the color of the plot background"]);
+Clazz_defineEnumConstant(c$, "PLOTCOLOR", 54, ["C", "sets the color of the graph line"]);
+Clazz_defineEnumConstant(c$, "PLOTCOLORS", 55, ["color,color,color,...", "sets the colors of multiple plots"]);
+Clazz_defineEnumConstant(c$, "POINTSONLY", 56, ["TF", "show points only for all data"]);
+Clazz_defineEnumConstant(c$, "PRINT", 57, ["", "prints the current spectrum"]);
+Clazz_defineEnumConstant(c$, "REVERSEPLOT", 58, ["T", "reverses the x-axis of a spectrum"]);
+Clazz_defineEnumConstant(c$, "SCALEBY", 59, ["factor", "multiplies the y-scale of the spectrum by a factor"]);
+Clazz_defineEnumConstant(c$, "SCALECOLOR", 60, ["C", "sets the color of the x-axis and y-axis scales"]);
+Clazz_defineEnumConstant(c$, "SCRIPT", 61, ["filename.jsv", "runs a script from a file"]);
+Clazz_defineEnumConstant(c$, "SELECT", 62, ["spectrumID, spectrumID,...", "selects one or more spectra based on IDs"]);
+Clazz_defineEnumConstant(c$, "SETPEAK", 63, ["xNew, xOld xNew, ?, or NONE", "sets nearest peak to xOld ppm to a new value; NONE resets (1D NMR only)"]);
+Clazz_defineEnumConstant(c$, "SETX", 64, ["xNew, xOld xNew, ?, or NONE", "sets an old ppm position in the spectrum to a new value; NONE resets (1D NMR only)"]);
+Clazz_defineEnumConstant(c$, "SHIFTX", 65, ["dx or NONE", "shifts the x-axis of a 1D NMR spectrum by the given ppm; NONE resets (1D NMR only)"]);
+Clazz_defineEnumConstant(c$, "SHOWERRORS", 66, ["shows recent errors"]);
+Clazz_defineEnumConstant(c$, "SHOWINTEGRATION", 67, ["T", "shows an integration listing"]);
 Clazz_defineEnumConstant(c$, "SHOWMEASUREMENTS", 68, ["T", "shows a listing of measurements"]);
 Clazz_defineEnumConstant(c$, "SHOWMENU", 69, ["displays the popup menu"]);
 Clazz_defineEnumConstant(c$, "SHOWPEAKLIST", 70, ["T", "shows a listing for peak picking"]);
@@ -24707,7 +25714,7 @@ Clazz_defineEnumConstant(c$, "ZOOM", 94, ["OUT or PREVIOUS or NEXT or x1,x2 or x
 Clazz_defineEnumConstant(c$, "ZOOMBOXCOLOR", 95, []);
 Clazz_defineEnumConstant(c$, "ZOOMBOXCOLOR2", 96, []);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.ScriptTokenizer", ["JU.PT"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24778,7 +25785,7 @@ function(){
 return this.str.substring(this.pt);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24803,7 +25810,116 @@ function(){
 return this.title;
 });
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
+Clazz_declarePackage("JSV.common");
+Clazz_load(null, "JSV.common.SyncManager", ["JU.PT", "$.SB", "JSV.common.PanelNode", "JU.Logger"], function(){
+var c$ = Clazz_declareType(JSV.common, "SyncManager", null);
+c$.syncToJmol = Clazz_defineMethod(c$, "syncToJmol", 
+function(vwr, pi){
+vwr.peakInfoModelSentToJmol = pi.getModel();
+vwr.si.syncToJmol(JSV.common.SyncManager.jmolSelect(vwr.pd(), pi));
+}, "JSV.common.JSViewer,JSV.common.PeakInfo");
+c$.syncFromJmol = Clazz_defineMethod(c$, "syncFromJmol", 
+function(vwr, peakScript){
+if (peakScript.equals("TEST")) peakScript = JSV.common.SyncManager.testScript;
+if (peakScript.indexOf("<PeakData") < 0) {
+if (peakScript.startsWith("JSVSTR:")) {
+vwr.si.syncToJmol(peakScript);
+return;
+}vwr.runScriptNow(peakScript);
+if (peakScript.indexOf("#SYNC_PEAKS") >= 0) JSV.common.SyncManager.syncToJmolPeaksAfterSyncScript(vwr);
+return;
+}var sourceID = JU.PT.getQuotedAttribute(peakScript, "sourceID");
+var type;
+var model;
+var file;
+var jmolSource;
+var index;
+var atomKey;
+if (sourceID == null) {
+file = JU.PT.getQuotedAttribute(peakScript, "file");
+index = JU.PT.getQuotedAttribute(peakScript, "index");
+if (file == null || index == null) return;
+file = JU.PT.rep(file, "#molfile", "");
+model = JU.PT.getQuotedAttribute(peakScript, "model");
+jmolSource = JU.PT.getQuotedAttribute(peakScript, "src");
+var modelSent = (jmolSource != null && jmolSource.startsWith("Jmol") ? null : vwr.peakInfoModelSentToJmol);
+if (model != null && modelSent != null && !model.equals(modelSent)) {
+JU.Logger.info("JSV ignoring model " + model + "; should be " + modelSent);
+return;
+}vwr.peakInfoModelSentToJmol = null;
+if (vwr.panelNodes.size() == 0 || !vwr.checkFileAlreadyLoaded(file)) {
+JU.Logger.info("file " + file + " not found -- JSViewer closing all and reopening");
+vwr.si.siSyncLoad(file);
+}type = JU.PT.getQuotedAttribute(peakScript, "type");
+atomKey = null;
+} else {
+file = null;
+index = model = sourceID;
+atomKey = "," + JU.PT.getQuotedAttribute(peakScript, "atom") + ",";
+type = "ID";
+jmolSource = sourceID;
+}var pi = JSV.common.SyncManager.selectPanelByPeak(vwr, file, index, atomKey);
+var pd = vwr.pd();
+pd.selectSpectrum(file, type, model, true);
+vwr.si.siSendPanelChange();
+pd.addPeakHighlight(pi);
+vwr.repaint(true);
+if (jmolSource == null || (pi != null && pi.getAtoms() != null)) vwr.si.syncToJmol(JSV.common.SyncManager.jmolSelect(vwr.pd(), pi));
+}, "JSV.common.JSViewer,~S");
+c$.syncToJmolPeaksAfterSyncScript = Clazz_defineMethod(c$, "syncToJmolPeaksAfterSyncScript", 
+function(vwr){
+var source = vwr.currentSource;
+if (source == null) return;
+try {
+var file = "file=" + JU.PT.esc(source.getFilePath());
+var spectra = source.getSpectra();
+var peaks = spectra.get(spectra.size() - 1).getPeakList();
+var sb =  new JU.SB();
+sb.append("[");
+var n = peaks.size();
+for (var i = 0; i < n; i++) {
+var s = peaks.get(i).toString();
+s = s + " " + file;
+sb.append(JU.PT.esc(s));
+if (i > 0) sb.append(",");
+}
+sb.append("]");
+vwr.si.syncToJmol("Peaks: " + sb);
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+} else {
+throw e;
+}
+}
+}, "JSV.common.JSViewer");
+c$.selectPanelByPeak = Clazz_defineMethod(c$, "selectPanelByPeak", 
+function(vwr, file, index, atomKey){
+var panelNodes = vwr.panelNodes;
+if (panelNodes == null) return null;
+var pi = null;
+for (var i = panelNodes.size(); --i >= 0; ) panelNodes.get(i).pd().addPeakHighlight(null);
+
+pi = vwr.pd().selectPeakByFileIndex(file, index, atomKey);
+if (pi != null) {
+vwr.setNode(JSV.common.PanelNode.findNode(vwr.selectedPanel, panelNodes));
+} else {
+for (var i = panelNodes.size(); --i >= 0; ) {
+var node = panelNodes.get(i);
+if ((pi = node.pd().selectPeakByFileIndex(file, index, atomKey)) != null) {
+vwr.setNode(node);
+break;
+}}
+}return pi;
+}, "JSV.common.JSViewer,~S,~S,~S");
+c$.jmolSelect = Clazz_defineMethod(c$, "jmolSelect", 
+function(pd, pi){
+var script = ("IR".equals(pi.getType()) || "RAMAN".equals(pi.getType()) ? "vibration ON; selectionHalos OFF;" : "vibration OFF; selectionhalos " + (pi.getAtoms() == null ? "OFF" : "ON"));
+return "Select: " + pi + " script=\"" + script + " \" sourceID=\"" + pd.getSpectrum().sourceID + "\"";
+}, "JSV.common.PanelData,JSV.common.PeakInfo");
+c$.testScript = "<PeakData  index=\"1\" title=\"\" model=\"~1.1\" type=\"1HNMR\" xMin=\"3.2915\" xMax=\"3.2965\" atoms=\"15,16,17,18,19,20\" multiplicity=\"\" integral=\"1\"> src=\"JPECVIEW\" file=\"http://SIMULATION/$caffeine\"";
+});
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_load(null, "JSV.common.ViewData", ["JSV.common.Coordinate", "$.ScaleData"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24946,15 +26062,15 @@ sd[i].maxYOnScale = this.scaleData[i].minYOnScale * (1 - f2) + f2 * this.scaleDa
 return sd;
 }, "~N,~B,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 Clazz_declareInterface(JSV.common, "XYScaleConverter");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.common");
 (function(){
 var c$ = Clazz_declareType(JSV.common, "ZoomEvent", null);
 /*LV!1824 unnec constructor*/})();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(["JSV.api.AnnotationData", "JSV.common.Annotation"], "JSV.dialog.JSVDialog", ["JU.DF", "$.PT", "JSV.common.IntegralData", "$.PeakData", "JSV.dialog.DialogManager"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -24989,7 +26105,6 @@ this.unitOptions = null;
 this.formatOptions = null;
 this.unitPtr = null;
 this.isON = true;
-this.lastNorm = 1;
 this.iRowColSelected = -1;
 this.iSelected = -1;
 this.skipCreate = false;
@@ -25145,10 +26260,6 @@ Clazz_defineMethod(c$, "setThreshold",
 function(y){
 this.dialog.setText(this.txt1, this.getThreasholdText(y));
 }, "~N");
-Clazz_defineMethod(c$, "setComboSelected", 
-function(i){
-this.dialog.setSelectedIndex(this.combo1, i);
-}, "~N");
 Clazz_defineMethod(c$, "applyFromFields", 
 function(){
 this.apply(null);
@@ -25190,7 +26301,7 @@ break;
 case JSV.common.Annotation.AType.PeakList:
 this.myParams = this.xyData.getParameters();
 this.setThreshold(this.myParams.peakListThreshold);
-this.setComboSelected(this.myParams.peakListInterpolation.equals("none") ? 1 : 0);
+this.dialog.setSelectedIndex(this.combo1, this.myParams.peakListInterpolation.equals("none") ? 1 : 0);
 this.createData();
 break;
 case JSV.common.Annotation.AType.OverlayLegend:
@@ -25241,13 +26352,6 @@ case JSV.common.Annotation.AType.Views:
 break;
 }
 }, "JSV.common.Coordinate,~N,~N");
-Clazz_defineMethod(c$, "getPeakData", 
-function(){
-var md =  new JSV.common.PeakData(JSV.common.Annotation.AType.PeakList, this.$spec);
-md.setPeakList(this.myParams, this.precision, this.jsvp.getPanelData().getView());
-this.xyData = md;
-return null;
-});
 Clazz_overrideMethod(c$, "getData", 
 function(){
 if (this.xyData == null) this.createData();
@@ -25262,25 +26366,6 @@ Clazz_overrideMethod(c$, "setSpecShift",
 function(dx){
 if (this.xyData != null) this.xyData.setSpecShift(dx);
 }, "~N");
-Clazz_defineMethod(c$, "setType", 
-function(type){
-this.type = type;
-switch (type) {
-case JSV.common.Annotation.AType.Measurements:
-this.addUnits = true;
-break;
-case JSV.common.Annotation.AType.Integration:
-break;
-case JSV.common.Annotation.AType.PeakList:
-break;
-case JSV.common.Annotation.AType.OverlayLegend:
-break;
-case JSV.common.Annotation.AType.Views:
-break;
-case JSV.common.Annotation.AType.NONE:
-break;
-}
-}, "JSV.common.Annotation.AType");
 Clazz_defineMethod(c$, "apply", 
 function(objects){
 try {
@@ -25331,11 +26416,11 @@ Clazz_defineMethod(c$, "restoreDialogPosition",
 function(panel, posXY){
 if (panel != null) {
 if (posXY[0] == -2147483648) {
-posXY[0] = 0;
-posXY[1] = -20;
+posXY[0] = 50;
+posXY[1] = 50;
 }var pt = this.manager.getLocationOnScreen(panel);
 var height = panel.getHeight();
-this.loc =  Clazz_newIntArray(-1, [Math.max(0, pt[0] + posXY[0]), Math.max(0, pt[1] + height + posXY[1])]);
+this.loc =  Clazz_newIntArray(-1, [Math.max(0, pt[0] + posXY[0]), Math.max(0, pt[1] + posXY[1])]);
 this.dialog.setIntLocation(this.loc);
 }}, "JSV.api.JSVPanel,~A");
 Clazz_defineMethod(c$, "saveDialogPosition", 
@@ -25618,12 +26703,12 @@ var pt = url.indexOf(key);
 return (pt < 0 ? null : url.substring(pt + key.length, url.indexOf("&", pt + 1)));
 }, "~S,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.exception");
 Clazz_load(["java.lang.Exception"], "JSV.exception.JSVException", null, function(){
 var c$ = Clazz_declareType(JSV.exception, "JSVException", Exception);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 (function(){
 var c$ = Clazz_declareType(JSV.js2d, "Display", null);
@@ -25664,7 +26749,7 @@ c$.convertPointFromScreen = Clazz_defineMethod(c$, "convertPointFromScreen",
 function(canvas, ptTemp){
 }, "~O,JU.P3");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 (function(){
 var c$ = Clazz_declareType(JSV.js2d, "Image", null);
@@ -25738,7 +26823,7 @@ this.fromIntARGB(canvas.buf32, canvas.buf8);
 context.putImageData(canvas.imgdata,x,y);
 }}, "~O,~O,~N,~N,~N,~N");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["J.api.GenericFileInterface"], "JSV.js2d.JsFile", ["JU.PT", "JSV.common.JSVFileManager"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -25782,9 +26867,13 @@ c$.getURLContents = Clazz_defineMethod(c$, "getURLContents",
 function(url, outputBytes, post){
 try {
 var conn = url.openConnection();
-if (outputBytes != null) conn.outputBytes(outputBytes);
- else if (post != null) conn.outputString(post);
-return conn.getContents();
+if (outputBytes != null) {
+conn.outputBytes(outputBytes);
+} else if (post != null) {
+if (post.charAt(0) == '{') {
+post = post.$replace("\n", "\\n");
+}conn.outputString(post);
+}return conn.getContents();
 } catch (e) {
 if (Clazz_exceptionOf(e, Exception)){
 return e.toString();
@@ -25794,7 +26883,7 @@ throw e;
 }
 }, "java.net.URL,~A,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JSV.api.JSVFileHelper"], "JSV.js2d.JsFileHelper", ["JU.PT", "JSV.common.JSViewer", "JSV.js2d.JsFile"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -25822,7 +26911,7 @@ function(pdf){
 }, "JSV.common.ExportType");
 Clazz_overrideMethod(c$, "showFileOpenDialog", 
 function(panelOrFrame, userData){
-JSV.common.JSViewer.jmolObject.loadFileAsynchronously(this, this.vwr.html5Applet, "?", userData);
+JSV.common.JSViewer.jsmolObject.loadFileAsynchronously(this, this.vwr.html5Applet, "?", userData);
 return null;
 }, "~O,~A");
 Clazz_defineMethod(c$, "setData", 
@@ -25845,7 +26934,7 @@ function(info, msg){
 return prompt(info, msg);
 }}, "~S,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 (function(){
 var c$ = Clazz_declareType(JSV.js2d, "JsFont", null);
@@ -25884,7 +26973,7 @@ font.fontMetrics.font = font.font;
 return Math.ceil(font.fontMetrics.measureText(text).width);
 }}, "JU.Font,~S");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["J.api.GenericGraphics"], "JSV.js2d.JsG2D", ["JU.CU", "JSV.common.JSViewer", "JS.Color"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -25907,7 +26996,7 @@ return JS.Color.get1(rgb);
 }, "~N");
 Clazz_overrideMethod(c$, "newGrayScaleImage", 
 function(context, image, width, height, grayBuffer){
-return JSV.common.JSViewer.jmolObject.newGrayScaleImage(context, image, width, height, grayBuffer);
+return JSV.common.JSViewer.jsmolObject.newGrayScaleImage(context, image, width, height, grayBuffer);
 }, "~O,~O,~N,~N,~A");
 Clazz_overrideMethod(c$, "drawGrayScaleImage", 
 function(g, image, destX0, destY0, destX1, destY1, srcX0, srcY0, srcX1, srcY1){
@@ -26064,7 +27153,7 @@ function(g, x2, y2){
 g.lineTo(x2, y2);
 }}, "~O,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JSV.api.JSVPanel"], "JSV.js2d.JsPanel", ["JSV.common.JSViewer", "$.PanelData", "JU.Font", "$.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -26115,7 +27204,7 @@ this.mouse = null;
 });
 Clazz_overrideMethod(c$, "setTitle", 
 function(title){
-this.pd.title = title;
+this.pd.setTitle(title);
 this.name = title;
 }, "~S");
 Clazz_defineMethod(c$, "setColorOrFont", 
@@ -26172,7 +27261,7 @@ this.vwr.g2d.fillBackground(contextFront, this.bgcolor);
 return;
 }if (this.pd.graphSets == null || this.pd.isPrinting) return;
 this.pd.g2d = this.pd.g2d0;
-this.pd.drawGraph(context, contextFront, contextRear, this.getWidth(), this.getHeight(), false);
+this.pd.drawGraph(context, contextFront, contextRear, this.getWidth(), this.getHeight(), false, false);
 this.vwr.repaintDone();
 }, "~O");
 Clazz_overrideMethod(c$, "printPanel", 
@@ -26193,12 +27282,12 @@ this.pd.setPrint(null, null);
 }
 }, "JSV.common.PrintLayout,java.io.OutputStream,~S");
 Clazz_overrideMethod(c$, "saveImage", 
-function(type, file, out){
+function(type, file, out, width, height){
 var fname = file.getName();
 if (out != null) out.cancel();
-JSV.common.JSViewer.jmolObject.saveImage(this.vwr.html5Applet, "png", fname);
+JSV.common.JSViewer.jsmolObject.saveImage(this.vwr.html5Applet, "png", fname);
 return "OK";
-}, "~S,J.api.GenericFileInterface,JU.OC");
+}, "~S,J.api.GenericFileInterface,JU.OC,~N,~N");
 Clazz_overrideMethod(c$, "hasFocus", 
 function(){
 return false;
@@ -26261,7 +27350,7 @@ function(x, y){
 this.vwr.showMenu(x, y);
 }, "~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JSV.common.ColorParameters"], "JSV.js2d.JsParameters", ["JS.Color"], function(){
 var c$ = Clazz_declareType(JSV.js2d, "JsParameters", JSV.common.ColorParameters);
@@ -26286,7 +27375,7 @@ function(newName){
 return ( new JSV.js2d.JsParameters().setName(newName)).setElementColors(this);
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["J.api.GenericPlatform"], "JSV.js2d.JsPlatform", ["java.net.URL", "JU.AjaxURLStreamHandlerFactory", "$.Rdr", "JSV.app.GenericMouse", "JSV.js2d.Display", "$.Image", "$.JsFile", "$.JsFont"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -26526,11 +27615,11 @@ if (msgNo != null) ok = false;
 return (ok ? 1 : 2);
 }, "~S,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JSV.api.JSVMainPanel"], "JSV.js2d.JsMainPanel", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
-this.selectedPanel = null;
+this.mainSelectedPanel = null;
 this.currentPanelIndex = 0;
 this.title = null;
 this.visible = false;
@@ -26552,20 +27641,13 @@ Clazz_overrideMethod(c$, "setTitle",
 function(title){
 this.title = title;
 }, "~S");
-Clazz_overrideMethod(c$, "setSelectedPanel", 
-function(viewer, jsvp, panelNodes){
-if (jsvp !== this.selectedPanel) this.selectedPanel = jsvp;
-var i = viewer.selectPanel(jsvp, panelNodes);
-if (i >= 0) this.currentPanelIndex = i;
-this.visible = true;
-}, "JSV.common.JSViewer,JSV.api.JSVPanel,JU.Lst");
 Clazz_defineMethod(c$, "getHeight", 
 function(){
-return (this.selectedPanel == null ? 0 : this.selectedPanel.getHeight());
+return (this.mainSelectedPanel == null ? 0 : this.mainSelectedPanel.getHeight());
 });
 Clazz_defineMethod(c$, "getWidth", 
 function(){
-return (this.selectedPanel == null ? 0 : this.selectedPanel.getWidth());
+return (this.mainSelectedPanel == null ? 0 : this.mainSelectedPanel.getWidth());
 });
 Clazz_overrideMethod(c$, "isEnabled", 
 function(){
@@ -26587,8 +27669,16 @@ Clazz_overrideMethod(c$, "setFocusable",
 function(b){
 this.focusable = b;
 }, "~B");
+Clazz_overrideMethod(c$, "setSelectedPanel", 
+function(viewer, jsvp, panelNodes){
+if (jsvp !== this.mainSelectedPanel) {
+this.mainSelectedPanel = jsvp;
+}var i = viewer.selectPanel(jsvp, panelNodes);
+if (i >= 0) this.currentPanelIndex = i;
+this.visible = true;
+}, "JSV.common.JSViewer,JSV.api.JSVPanel,JU.Lst");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.source");
 Clazz_load(["JSV.source.JDXHeader", "java.util.Hashtable"], "JSV.source.JDXDataObject", ["JU.DF", "$.PT", "JSV.common.Annotation", "$.Coordinate", "JSV.exception.JSVException", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -27143,7 +28233,7 @@ c$.gyroMap =  new java.util.Hashtable();
 for (var i = 0, n = JSV.source.JDXDataObject.gyroData.length - 1; i < n; i += 2) JSV.source.JDXDataObject.gyroMap.put("" + Clazz_doubleToInt(JSV.source.JDXDataObject.gyroData[i]), Double.$valueOf(JSV.source.JDXDataObject.gyroData[i + 1]));
 
 }});
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.source");
 Clazz_load(["java.util.Iterator"], "JSV.source.JDXDecompressor", ["JSV.common.Coordinate", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -27471,7 +28561,7 @@ break;
 }
 }
 }});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.source");
 Clazz_load(["JU.Lst"], "JSV.source.JDXHeader", ["java.util.Hashtable", "JSV.source.JDXSourceStreamTokenizer"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -27626,9 +28716,9 @@ entry[1] = value;
 /*eoif3*/})();
 c$.typeNames =  Clazz_newArray(-1, ["ND NMR SPECTRUM   NMR", "NMR SPECTRUM      NMR", "INFRARED SPECTRUM IR", "MASS SPECTRUM     MS", "RAMAN SPECTRUM    RAMAN", "GAS CHROMATOGRAM  GC", "UV/VIS SPECTRUM   UV/VIS"]);
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.source");
-Clazz_load(["J.api.JmolJDXMOLReader"], "JSV.source.JDXReader", ["java.io.BufferedReader", "$.StringReader", "java.util.Hashtable", "$.LinkedHashMap", "$.StringTokenizer", "javajs.api.Interface", "JU.AU", "$.Lst", "$.PT", "$.Rdr", "$.SB", "JSV.common.Coordinate", "$.JSVFileManager", "$.JSViewer", "$.PeakInfo", "$.Spectrum", "JSV.exception.JSVException", "JSV.source.JDXDecompressor", "$.JDXHeader", "$.JDXSource", "$.JDXSourceStreamTokenizer", "JU.Logger"], function(){
+Clazz_load(["J.api.JmolJDXMOLReader"], "JSV.source.JDXReader", ["java.io.BufferedReader", "$.FileInputStream", "$.StringReader", "java.util.Hashtable", "$.LinkedHashMap", "$.StringTokenizer", "javajs.api.Interface", "JU.AU", "$.Lst", "$.PT", "$.Rdr", "$.SB", "JSV.common.Coordinate", "$.JSVFileManager", "$.JSViewer", "$.PeakInfo", "$.Spectrum", "JSV.exception.JSVException", "JSV.source.JDXDecompressor", "$.JDXHeader", "$.JDXSource", "$.JDXSourceStreamTokenizer", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.mnovaParamValue = null;
 this.nmrMaxY = NaN;
@@ -27661,7 +28751,7 @@ function(filePath, obscure, loadImaginary, iSpecFirst, iSpecLast, nmrNormalizati
 filePath = JU.PT.trimQuotes(filePath);
 this.isSimulation = (filePath != null && filePath.startsWith("http://SIMULATION/"));
 if (this.isSimulation) {
-this.nmrMaxY = (Float.isNaN(nmrNormalization) ? 10000 : nmrNormalization);
+this.nmrMaxY = (Double.isNaN(nmrNormalization) ? 10000 : nmrNormalization);
 }this.filePath = filePath;
 this.obscure = obscure;
 this.firstSpec = iSpecFirst;
@@ -27832,7 +28922,7 @@ this.lastErrPath = this.filePath;
 Clazz_defineMethod(c$, "setVenderSpecificValues", 
 function(rawLine){
 if (rawLine.indexOf("JEOL") >= 0) {
-System.out.println("Skipping ##SHIFTREFERENCE for JEOL " + rawLine);
+System.out.println("Skipping ##.SHIFTREFERENCE for JEOL " + rawLine);
 this.ignoreShiftReference = true;
 }if (rawLine.indexOf("MestReNova") >= 0) {
 this.ignorePeakTables = true;
@@ -28088,7 +29178,7 @@ if (!spectrum.isShiftTypeSpecified()) {
 spectrum.setShiftReference(this.parseAFFN(label, value), 1, 1);
 }return false;
 default:
-if (label.length < 17) return true;
+if (label.length < 17 || isHeaderOnly && value.indexOf(",") >= 0) return !isHeaderOnly;
 if (label.equals("##.OBSERVEFREQUENCY ")) {
 spectrum.setObservedFreq(this.parseAFFN(label, value));
 return false;
@@ -28308,8 +29398,8 @@ break;
 case 40:
 case 50:
 case 60:
-this.acdAssignments = this.mpr.readACDAssignments((spectrum).fileNPoints, pt == 40);
-break;
+this.acdAssignments =  new JU.Lst();
+return this.mpr.readACDAssignments((spectrum).fileNPoints, pt == 40, this.acdAssignments);
 }
 } catch (e) {
 if (Clazz_exceptionOf(e, Exception)){
@@ -28364,9 +29454,29 @@ while ((line = this.rd()) != null && line.trim().length == 0) {
 }
 return line;
 });
+c$.main = Clazz_defineMethod(c$, "main", 
+function(args){
+try {
+var map = JSV.source.JDXReader.getHeaderMap( new java.io.FileInputStream("c:/temp/t6.jdx"), null);
+for (var k, $k = map.keySet().iterator (); $k.hasNext()&& ((k = $k.next ()) || true);) {
+if (k.startsWith("##")) continue;
+var s = map.get(k);
+if (s.length > 30) {
+s = s.substring(0, 30) + "...";
+}System.out.println(k + "=" + s);
+}
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+e.printStackTrace();
+} else {
+throw e;
+}
+}
+System.out.println("done");
+}, "~A");
 c$.VAR_LIST_TABLE =  Clazz_newArray(-1, ["PEAKTABLE   XYDATA      XYPOINTS", " (XY..XY)    (X++(Y..Y)) (XY..XY)    "]);
 });
-;//5.0.1-v7 Wed Jul 30 21:51:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.source");
 Clazz_load(["JSV.source.JDXHeader"], "JSV.source.JDXSource", ["JU.Lst"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28465,7 +29575,7 @@ if (this.jdxSpectra != null) for (var i = this.jdxSpectra.size(); --i >= 0; ) th
 
 }, "~S");
 });
-;//5.0.1-v7 Wed Jul 30 21:52:56 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.source");
 Clazz_load(null, "JSV.source.JDXSourceStreamTokenizer", ["JU.SB", "JU.Logger"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28638,7 +29748,7 @@ while (--pt >= 0 && (v.charAt(pt) == ' ' || v.charAt(pt) == '\t')) {
 return pt;
 }, "JU.SB,~N");
 });
-;//5.0.1-v7 Wed Jul 30 21:54:06 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.tree");
 Clazz_load(["JSV.api.JSVTree"], "JSV.tree.SimpleTree", ["JSV.common.JSVFileManager", "$.PanelNode", "JSV.tree.SimpleTreeModel", "$.SimpleTreeNode", "$.SimpleTreePath"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28714,7 +29824,7 @@ this.spectraTreeModel.removeNodeFromParent(toDelete.get(i));
 }
 }, "JU.Lst");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.tree");
 Clazz_load(["java.util.Enumeration"], "JSV.tree.SimpleTreeEnumeration", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28734,7 +29844,7 @@ function(){
 return this.node.$children.get(this.pt++);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.tree");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28755,7 +29865,7 @@ function(node){
 (node).prevNode.$children.removeObj(node);
 }, "JSV.api.JSVTreeNode");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.tree");
 Clazz_load(["JSV.api.JSVTreeNode"], "JSV.tree.SimpleTreeNode", ["JU.Lst", "JSV.tree.SimpleTreeEnumeration"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28809,7 +29919,7 @@ function(){
 return this.text;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.tree");
 Clazz_load(["JSV.api.JSVTreePath"], "JSV.tree.SimpleTreePath", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -28824,7 +29934,7 @@ function(){
 return (this.path == null || this.path.length == 0 ? null : this.path[this.path.length - 1]);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 
 })();
 

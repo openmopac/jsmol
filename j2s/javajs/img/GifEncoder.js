@@ -58,11 +58,10 @@ this.params = params;
 var ic = params.get("transparentColor");
 if (ic == null) {
 ic = params.get("backgroundColor");
-if (ic != null) this.backgroundColor = ic.intValue();
 } else {
-this.backgroundColor = ic.intValue();
 this.isTransparent = true;
-}if (this.backgroundColor == 0xFF000000) {
+}if (ic != null) this.backgroundColor = ic.intValue() & 0xFFFFFF;
+if (this.backgroundColor == 0xFF000000) {
 for (var i = this.pixels.length; --i >= 0; ) this.pixels[i] = this.pixels[i] & -263173;
 
 }this.interlaced = (Boolean.TRUE === params.get("interlaced"));
@@ -623,4 +622,4 @@ javajs.img.GifEncoder.rgb2xyz = JU.M3.newA9( Clazz.newFloatArray(-1, [0.4124, 0.
 javajs.img.GifEncoder.xyz2rgb = JU.M3.newA9( Clazz.newFloatArray(-1, [3.2406, -1.5372, -0.4986, -0.9689, 1.8758, 0.0415, 0.0557, -0.204, 1.0570]));
 }c$.INTERLACE_PARAMS =  Clazz.newIntArray(-1, [8, 8, 4, 2, 4, 2, 1, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 21:07:39 CDT 2026

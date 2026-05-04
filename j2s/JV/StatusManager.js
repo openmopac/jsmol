@@ -359,11 +359,10 @@ JU.Logger.debug(this.vwr.appletName + " sync mode=" + syncMode + "; synced? " + 
 }}, "~N");
 Clazz.defineMethod(c$, "syncSend", 
 function(script, appletNameOrProp, port){
-if (port != 0 || this.notifyEnabled(J.c.CBK.SYNC)) {
+if (port == 0 && !this.notifyEnabled(J.c.CBK.SYNC)) return null;
 var o =  Clazz.newArray(-1, [null, script, appletNameOrProp, Integer.$valueOf(port)]);
 if (this.cbl != null) this.cbl.notifyCallback(J.c.CBK.SYNC, o);
 return o[0];
-}return null;
 }, "~S,~O,~N");
 Clazz.defineMethod(c$, "processService", 
 function(info){
@@ -623,4 +622,4 @@ this.vwr.showString("error reading SYNC command: " + script, false);
 }, "~S");
 c$.MAXIMUM_QUEUE_LENGTH = 16;
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

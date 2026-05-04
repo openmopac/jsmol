@@ -82,4 +82,4 @@ if (++n == 100) break;
 }, "JSV.common.Parameters,~N,JSV.common.ScaleData");
 c$.HNMR_HEADER =  Clazz.newArray(-1, ["peak", "shift/ppm", "intens", "shift/hz", "diff/hz", "2-diff", "3-diff"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

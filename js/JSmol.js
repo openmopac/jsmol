@@ -2,6 +2,7 @@
 // author: Bob Hanson, hansonr@stolaf.edu	4/16/2012
 // author: Takanori Nakane biochem_fan 6/12/2012
 
+// BH 2025.06.09 adjusing Math.round(container.width()) to not allow 0 return
 // BH 2022.12.16 adds key press listener for ModelKit
 // BH 2021.04.09 fix _cover(false) script in getAppletHtml() to be img onerror
 // BH 12/17/2015 4:43:05 PM adding Jmol._requestRepaint to allow for MSIE9 not having 3imationFrame
@@ -245,8 +246,8 @@
 			Jmol._jsUnsetMouse(this._mouseInterface);
 			} catch (e) {}
 			//}
-			var w = Math.round(container.width());
-			var h = Math.round(container.height());
+			var w = Math.round(container.width()) || 100;
+			var h = Math.round(container.height()) || 100;
 			var canvas = document.createElement( 'canvas' );
 			canvas.tabIndex = 1;
 			canvas.outline = "none";

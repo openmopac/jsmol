@@ -55,7 +55,7 @@ for (var i = 0, n = JM.BioResolver.predefinedGroup3Names.length; i < n; ++i) JM.
 Clazz.defineMethod(c$, "getBioModel", 
 function(modelIndex, trajectoryBaseIndex, jmolData, modelProperties, modelAuxiliaryInfo){
 return  new JM.BioModel().setBioModel(this.ms, modelIndex, trajectoryBaseIndex, jmolData, modelProperties, modelAuxiliaryInfo);
-}, "~N,~N,~S,java.util.Properties,java.util.Map");
+}, "~N,~N,java.util.Map,java.util.Properties,java.util.Map");
 Clazz.defineMethod(c$, "distinguishAndPropagateGroup", 
 function(chain, group3, seqcode, firstAtomIndex, lastAtomIndex, specialAtomIndexes, atoms){
 var mask = 0;
@@ -447,6 +447,7 @@ if (!(Clazz.instanceOf(group,"JM.Monomer")) || (current = group).bioPolymer != n
 previous = current;
 count++;
 }
+System.out.println(count);
 if (count < 2) return null;
 var monomers =  new Array(count);
 for (var j = 0; j < count; ++j) monomers[j] = groups[firstGroupIndex + j];
@@ -693,4 +694,4 @@ c$.argbsShapely =  Clazz.newIntArray(-1, [0xFFFF00FF, 0xFF00007C, 0xFFFF7C70, 0x
 {
 {
 }}});
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 28 10:50:06 CST 2026

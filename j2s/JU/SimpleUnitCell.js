@@ -306,8 +306,45 @@ return this.unitCellParams;
 Clazz.defineMethod(c$, "getUnitCellAsArray", 
 function(vectorsOnly){
 var m = this.matrixFractionalToCartesian;
-return (vectorsOnly ?  Clazz.newFloatArray(-1, [m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12, m.m22]) :  Clazz.newFloatArray(-1, [this.a, this.b, this.c, this.alpha, this.beta, this.gamma, m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12, m.m22, this.dimension, this.volume]));
+return (vectorsOnly ?  Clazz.newFloatArray(-1, [m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12, m.m22]) :  Clazz.newFloatArray(-1, [this.a, this.b, this.c, this.alpha, this.beta, this.gamma, m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12, m.m22, this.dimension, this.dimensionType, this.volume]));
 }, "~B");
+Clazz.defineMethod(c$, "getInfoStr", 
+function(type){
+var itype;
+switch (type.toLowerCase()) {
+case "a":
+itype = 0;
+break;
+case "b":
+itype = 1;
+break;
+case "c":
+itype = 2;
+break;
+case "alpha":
+itype = 3;
+break;
+case "beta":
+itype = 4;
+break;
+case "gamma":
+itype = 5;
+break;
+case "dim":
+itype = 6;
+break;
+case "dimtype":
+itype = 7;
+break;
+case "volume":
+itype = 10;
+break;
+default:
+itype = -1;
+break;
+}
+return (itype < 0 ? NaN : this.getInfo(itype));
+}, "~S");
 Clazz.defineMethod(c$, "getInfo", 
 function(infoType){
 switch (infoType) {
@@ -331,6 +368,8 @@ case 8:
 return (JU.SimpleUnitCell.isHexagonal(this.unitCellParams) ? 1 : 0);
 case 9:
 return (JU.SimpleUnitCell.isRhombohedral(this.unitCellParams) ? 1 : 0);
+case 10:
+return this.volume;
 }
 return NaN;
 }, "~N");
@@ -366,7 +405,11 @@ return JU.SimpleUnitCell.setAbcFromParams(params, ucnew);
 c$.setAbcFromParams = Clazz.defineMethod(c$, "setAbcFromParams", 
 function(params, ucnew){
 var f = JU.SimpleUnitCell.newA(params).getUnitCellAsArray(true);
-ucnew[1].set(f[0], f[1], f[2]);
+if (ucnew[0] == null) {
+for (var i = 4; --i >= 0; ) {
+ucnew[i] =  new JU.P3();
+}
+}ucnew[1].set(f[0], f[1], f[2]);
 ucnew[2].set(f[3], f[4], f[5]);
 ucnew[3].set(f[6], f[7], f[8]);
 return ucnew;
@@ -554,9 +597,10 @@ s = JU.PT.join(parts, '/', 0);
 }, "JV.Viewer,~A,~S");
 c$.parseSimpleMath = Clazz.defineMethod(c$, "parseSimpleMath", 
 function(vwr, suvw){
+suvw = JU.PT.rep(suvw.toLowerCase(), " ", "");
 if (suvw.indexOf('(') < 0) return suvw;
-if (suvw.indexOf("PI") >= 0) {
-suvw = JU.PT.rep(suvw, "PI", "(180)");
+if (suvw.indexOf("pi") >= 0) {
+suvw = JU.PT.rep(suvw, "pi", "(180)");
 }var parts = suvw.$replace('"', ' ').$replace('\'', ' ').$plit(",");
 for (var p = 0; p < parts.length; p++) {
 var part = parts[p].trim();
@@ -584,10 +628,23 @@ case 120:
 case 121:
 case 122:
 if (pt > i + 1) {
-var val = JU.SimpleUnitCell.parseCalc(vwr, part.substring(i + 1, pt));
+var exp = part.substring(i + 1, pt);
+var k = exp.lastIndexOf('(');
+if (k > 0) {
+while (k > 0) {
+while (--k >= 0) {
+var c = exp.charAt(k);
+if (c < '0') break;
+if (c <= '9') {
+exp = exp.substring(0, k + 1) + "*" + exp.substring(k + 1);
+break;
+}}
+k = exp.lastIndexOf('(', k);
+}
+var val = JU.SimpleUnitCell.parseCalc(vwr, exp);
 var sign = (i > 1 && val >= 0 ? "+" : "");
 part = part.substring(0, i + 1) + sign + val + part.substring(pt);
-}pt = i;
+}}pt = i;
 break;
 }
 }
@@ -601,4 +658,4 @@ return "[" + this.a + " " + this.b + " " + this.c + " " + this.alpha + " " + thi
 });
 c$.functions =  Clazz.newArray(-1, ["sqrt", "sin", "cos", "tan", "+", "-", "*", "/"]);
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Tue Mar 24 12:16:51 CDT 2026

@@ -1,0 +1,73 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<title>two JSmol/JSV links (16.3.49/50) </title>
+<meta charset="utf-8" />
+<script src="JSmol.min.js" type="text/javascript"></script>
+<script src="js/JSmolJSV.js" type="text/javascript"></script>
+<script type="text/javascript">
+var JSmolPath = "./";
+var dataPath = JSmolPath + "data/"
+
+// html code offered by Carl Leblond, revised by Bob Hanson
+// This function hides the loading message
+function specReady() { $("#JSV_preload").hide()}
+function specReady2() { $("#JSV_preload2").hide() }
+
+
+Jmol.setAppletSync(["jmolApplet0", "jsvApplet0","jmolApplet2", "jsvApplet2"], [
+   "set debug;set debugscript;load "+ dataPath + "acetophenone.jdx;sync > 'JSpecView:view all'", "", 
+   "background lightgray;load " + dataPath + "tcb-13c.jdx filter 'filescaling=0.02';zoom 60", ""
+], true);
+
+
+// SET 1 Configuration
+var jmolInfo0 = {
+    width: 350, height: 350, use: "HTML5",
+    j2sPath: JSmolPath + "j2s",
+   // disableJ2SLoadMonitor: true,
+};
+
+var jsvInfo0 = {
+    width: 600, height: 400, use: "HTML5",
+    j2sPath: JSmolPath + "j2s",
+    //disableJ2SLoadMonitor: true,
+    readyFunction: specReady,
+};
+
+// SET 2 Configuration
+var jmolInfo2 = Object.assign({}, jmolInfo0);
+
+var jsvInfo2 = Object.assign({}, jsvInfo0);
+jsvInfo2.readyFunction = specReady2;
+
+</script>
+</head>
+<body>
+
+<h3>Chemical Set #1</h3>
+<table border="1">
+  <tr>
+    <td><script type="text/javascript">jmolApplet0 = Jmol.getApplet("jmolApplet0", jmolInfo0);</script></td>
+    <td>
+        <div id="JSV_preload" style="position:absolute; background:yellow;">Loading...</div>
+        <script type="text/javascript">jsvApplet0 = Jmol.getJSVApplet("jsvApplet0", jsvInfo0);</script>
+    </td>
+  </tr>
+</table>
+
+<hr>
+
+<h3>Chemical Set #2</h3>
+<table border="1">
+  <tr>
+    <td><script type="text/javascript">jmolApplet2 = Jmol.getApplet("jmolApplet2", jmolInfo2);</script></td>
+    <td>
+        <div id="JSV_preload2" style="position:absolute; background:yellow;">Loading...</div>
+        <script type="text/javascript">jsvApplet2 = Jmol.getJSVApplet("jsvApplet2", jsvInfo2);</script>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

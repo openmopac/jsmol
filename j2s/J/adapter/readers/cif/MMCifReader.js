@@ -137,7 +137,7 @@ if (this.doCheckUnitCell) {
 this.ignoreFileSpaceGroupName = true;
 this.sgName = spaceGroup;
 this.fractionalizeCoordinates(true);
-this.asc.setCurrentModelInfo("biosymmetry", null);
+this.asc.setCurrentModelInfo("bioSymmetry", null);
 this.asc.setCurrentModelInfo("biosymmetryCount", null);
 this.checkNearAtoms = false;
 if (this.byChain) return true;
@@ -659,4 +659,4 @@ c$.structSiteFields =  Clazz.newArray(-1, ["*_site_id", "*_auth_comp_id", "*_aut
 c$.structConnFields =  Clazz.newArray(-1, ["*_ptnr1_auth_asym_id", "*_ptnr1_auth_seq_id", "*_ptnr1_auth_comp_id", "*_ptnr1_label_atom_id", "*_pdbx_ptnr1_label_alt_id", "*_ptnr1_symmetry", "*_ptnr2_auth_asym_id", "*_ptnr2_auth_seq_id", "*_ptnr2_auth_comp_id", "*_ptnr2_label_atom_id", "*_pdbx_ptnr2_label_alt_id", "*_ptnr2_symmetry", "*_conn_type_id", "*_pdbx_value_order"]);
 c$.chemCompBondFields =  Clazz.newArray(-1, ["*_comp_id", "*_atom_id_1", "*_atom_id_2", "*_value_order", "*_pdbx_aromatic_flag"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Tue Mar 17 09:56:02 CDT 2026

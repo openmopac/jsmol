@@ -1,11 +1,14 @@
 Clazz.declarePackage("JSV.export");
-Clazz.load(["JSV.api.ExportInterface"], "JSV.export.Exporter", ["JU.OC", "$.PT", "JSV.common.ExportType", "$.JSVFileManager", "$.JSViewer"], function(){
+Clazz.load(["JSV.api.ExportInterface"], "JSV.export.Exporter", ["java.io.File", "JU.OC", "$.PT", "JSV.common.ExportType", "$.JSVFileManager", "$.JSViewer"], function(){
 var c$ = Clazz.declareType(JSV["export"], "Exporter", null, JSV.api.ExportInterface);
 /*LV!1824 unnec constructor*/Clazz.overrideMethod(c$, "write", 
 function(viewer, tokens, forInkscape){
-if (tokens == null) return this.printPDF(viewer, null, false);
+if (tokens == null) return this.printPDF(viewer, null, null, false);
 var type = null;
 var fileName = null;
+var width = 0;
+var height = 0;
+var ptFileName = 1;
 var eType;
 var out;
 var jsvp = viewer.selectedPanel;
@@ -15,14 +18,19 @@ default:
 return "WRITE what?";
 case 1:
 fileName = JU.PT.trimQuotes(tokens.get(0));
-if (fileName.indexOf(".") >= 0) type = "XY";
-if (jsvp == null) return null;
-eType = JSV.common.ExportType.getType(fileName);
+var ext = fileName;
+var pt = fileName.lastIndexOf(".");
+if (pt >= 0) {
+ext = fileName.substring(pt + 1);
+type = "XY";
+}if (jsvp == null) return null;
+eType = JSV.common.ExportType.getType(ext);
 switch (eType) {
 case JSV.common.ExportType.PDF:
 case JSV.common.ExportType.PNG:
 case JSV.common.ExportType.JPG:
-return this.exportTheSpectrum(viewer, eType, null, null, -1, -1, null, false);
+out = (pt >= 0 ? viewer.getOutputChannel( new java.io.File(fileName).getAbsolutePath(), false) : null);
+return this.exportTheSpectrum(viewer, eType, out, null, -1, -1, null, false);
 default:
 viewer.fileHelper.setFileChooser(eType);
 var items = this.getExportableItems(viewer, eType.equals(JSV.common.ExportType.SOURCE));
@@ -31,15 +39,20 @@ if (index == -2147483648) return null;
 var file = viewer.fileHelper.getFile(this.getSuggestedFileName(viewer, eType), jsvp, true);
 if (file == null) return null;
 out = viewer.getOutputChannel(file.getFullPath(), false);
-var msg = this.exportSpectrumOrImage(viewer, eType, index, out);
+var msg = this.exportSpectrumOrImage(viewer, eType, index, out, 0, 0);
 var isOK = msg.startsWith("OK");
 if (isOK) viewer.si.siUpdateRecentMenus(file.getFullPath());
 out.closeChannel();
 return msg;
 }
+case 4:
+width = JU.PT.parseInt(tokens.get(1));
+height = JU.PT.parseInt(tokens.get(2));
+if (width < 0 || height < 0) return "width and height must be positive: " + tokens.get(1) + " " + tokens.get(2);
+ptFileName = 3;
 case 2:
 type = tokens.get(0).toUpperCase();
-fileName = JU.PT.trimQuotes(tokens.get(1));
+fileName = JU.PT.trimQuotes(tokens.get(ptFileName));
 break;
 }
 var ext = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
@@ -54,7 +67,7 @@ fileName += "." + type;
 }eType = JSV.common.ExportType.getType(type);
 if (forInkscape && eType === JSV.common.ExportType.SVG) eType = JSV.common.ExportType.SVGI;
 out = viewer.getOutputChannel(fileName, false);
-return this.exportSpectrumOrImage(viewer, eType, -1, out);
+return this.exportSpectrumOrImage(viewer, eType, -1, out, width, height);
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
 System.out.println(e);
@@ -65,7 +78,7 @@ throw e;
 }
 }, "JSV.common.JSViewer,JU.Lst,~B");
 Clazz.defineMethod(c$, "exportSpectrumOrImage", 
-function(viewer, eType, index, out){
+function(viewer, eType, index, out, width, height){
 var spec;
 var pd = viewer.pd();
 if (index < 0 && (index = pd.getCurrentSpectrumIndex()) < 0) return "Error exporting spectrum: No spectrum selected";
@@ -75,7 +88,7 @@ var endIndex = pd.getEndingPointIndex(index);
 var msg = null;
 try {
 var asBase64 = out.isBase64();
-msg = this.exportTheSpectrum(viewer, eType, out, spec, startIndex, endIndex, pd, asBase64);
+msg = this.exportTheSpectrumWH(viewer, eType, out, spec, startIndex, endIndex, width, height, asBase64);
 if (asBase64) return msg;
 if (msg.startsWith("OK")) return "OK - Exported " + eType.name() + ": " + out.getFileName() + msg.substring(2);
 } catch (ioe) {
@@ -86,9 +99,14 @@ throw ioe;
 }
 }
 return "Error exporting " + out.getFileName() + ": " + msg;
-}, "JSV.common.JSViewer,JSV.common.ExportType,~N,JU.OC");
+}, "JSV.common.JSViewer,JSV.common.ExportType,~N,JU.OC,~N,~N");
 Clazz.defineMethod(c$, "exportTheSpectrum", 
 function(viewer, mode, out, spec, startIndex, endIndex, pd, asBase64){
+return this.exportTheSpectrumWH(viewer, mode, out, spec, startIndex, endIndex, 0, 0, asBase64);
+}, "JSV.common.JSViewer,JSV.common.ExportType,JU.OC,JSV.common.Spectrum,~N,~N,JSV.common.PanelData,~B");
+Clazz.defineMethod(c$, "exportTheSpectrumWH", 
+function(viewer, mode, out, spec, startIndex, endIndex, width, height, asBase64){
+var file = null;
 var jsvp = viewer.selectedPanel;
 var type = mode.name();
 switch (mode) {
@@ -108,13 +126,17 @@ break;
 case JSV.common.ExportType.JPG:
 case JSV.common.ExportType.PNG:
 if (jsvp == null) return null;
+if (out == null) {
 viewer.fileHelper.setFileChooser(mode);
 var name = this.getSuggestedFileName(viewer, mode);
-var file = viewer.fileHelper.getFile(name, jsvp, true);
+file = viewer.fileHelper.getFile(name, jsvp, true);
 if (file == null) return null;
-return jsvp.saveImage(type.toLowerCase(), file, out);
+}viewer.setCreatingImage(true);
+var ret = jsvp.saveImage(type.toLowerCase(), file, out, width, height);
+viewer.setCreatingImage(false);
+return ret;
 case JSV.common.ExportType.PDF:
-return this.printPDF(viewer, "PDF", asBase64);
+return this.printPDF(viewer, (out == null ? "PDF" : null), out, asBase64);
 case JSV.common.ExportType.SOURCE:
 if (jsvp == null) return null;
 var data = jsvp.getPanelData().getSpectrum().getInlineData();
@@ -128,41 +150,38 @@ case JSV.common.ExportType.UNK:
 return null;
 }
 return (JSV.common.JSViewer.getInterface("JSV.export." + type.toUpperCase() + "Exporter")).exportTheSpectrum(viewer, mode, out, spec, startIndex, endIndex, null, false);
-}, "JSV.common.JSViewer,JSV.common.ExportType,JU.OC,JSV.common.Spectrum,~N,~N,JSV.common.PanelData,~B");
+}, "JSV.common.JSViewer,JSV.common.ExportType,JU.OC,JSV.common.Spectrum,~N,~N,~N,~N,~B");
 Clazz.defineMethod(c$, "printPDF", 
-function(viewer, pdfFileName, isBase64){
-var isJob = (pdfFileName == null || pdfFileName.length == 0);
+function(viewer, pdfFileName, out, isBase64){
+var isJob = (out != null);
 if (!isBase64 && !viewer.si.isSigned()) return "Error: Applet must be signed for the PRINT command.";
 var pd = viewer.pd();
 if (pd == null) return null;
 var useDialog = false;
 var pl;
 {
-useDialog = false;
-}pl = viewer.getDialogPrint(isJob);
+}pl = viewer.getPrintLayout(isJob);
 if (pl == null) return null;
 if (!useDialog) pl.asPDF = true;
-if (isJob && pl.asPDF) {
+if (isJob && pl.asPDF && out == null) {
 isJob = false;
 pdfFileName = "PDF";
 }var jsvp = viewer.selectedPanel;
-if (!isBase64 && !isJob) {
+if (!isBase64 && !isJob && viewer.hasDisplay) {
 var helper = viewer.fileHelper;
 helper.setFileChooser(JSV.common.ExportType.PDF);
-if (pdfFileName.equals("?") || pdfFileName.equalsIgnoreCase("PDF")) pdfFileName = this.getSuggestedFileName(viewer, JSV.common.ExportType.PDF);
+if (pdfFileName == null || pdfFileName.equals("?") || pdfFileName.equalsIgnoreCase("PDF")) pdfFileName = this.getSuggestedFileName(viewer, JSV.common.ExportType.PDF);
 var file = helper.getFile(pdfFileName, jsvp, true);
 if (file == null) return null;
 if (!JSV.common.JSViewer.isJS) viewer.setProperty("directoryLastExportedFile", helper.setDirLastExported(file.getParentAsFile().getFullPath()));
 pdfFileName = file.getFullPath();
 }var s = null;
 try {
-var out = (isJob ? null : isBase64 ?  new JU.OC().setParams(null, ";base64,", false, null) : viewer.getOutputChannel(pdfFileName, true));
-var printJobTitle = pd.getPrintJobTitle(true);
-if (pl.showTitle) {
-printJobTitle = jsvp.getInput("Title?", "Title for Printing", printJobTitle);
-if (printJobTitle == null) return null;
-}jsvp.printPanel(pl, out, printJobTitle);
-s = out.toString();
+if (out == null) {
+out = (isJob ? null : isBase64 ?  new JU.OC().setParams(null, ";base64,", false, null) : viewer.getOutputChannel(pdfFileName, true));
+}var printJobTitle = "";
+jsvp.printPanel(pl, out, printJobTitle);
+s = "OK " + out.toString();
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
 jsvp.showMessage(e.toString(), "File Error");
@@ -171,7 +190,7 @@ throw e;
 }
 }
 return s;
-}, "JSV.common.JSViewer,~S,~B");
+}, "JSV.common.JSViewer,~S,JU.OC,~B");
 Clazz.defineMethod(c$, "getExportableItems", 
 function(viewer, isSameType){
 var pd = viewer.pd();
@@ -191,8 +210,9 @@ var newName = JSV.common.JSVFileManager.getTagName(sourcePath);
 if (newName.startsWith("$")) newName = newName.substring(1);
 var pt = newName.lastIndexOf(".");
 var name = (pt < 0 ? newName : newName.substring(0, pt));
-var ext = ".jdx";
-var isPrint = false;
+if (name.startsWith("http:") || name.startsWith("https:")) {
+name = name.substring(name.lastIndexOf('/') + 1);
+}var ext = ".jdx";
 switch (imode) {
 case JSV.common.ExportType.XY:
 case JSV.common.ExportType.FIX:
@@ -200,21 +220,24 @@ case JSV.common.ExportType.PAC:
 case JSV.common.ExportType.SQZ:
 case JSV.common.ExportType.DIF:
 case JSV.common.ExportType.DIFDUP:
-case JSV.common.ExportType.SOURCE:
 if (!(name.endsWith("_" + imode))) name += "_" + imode;
 ext = ".jdx";
 break;
 case JSV.common.ExportType.AML:
 ext = ".xml";
 break;
+case JSV.common.ExportType.SOURCE:
+if (!(name.endsWith("_" + imode))) name += "_" + imode;
+var lc = (sourcePath == null ? "JSV" : sourcePath.toLowerCase());
+ext = (lc.endsWith(".zip") ? ".zip" : lc.endsWith(".jdx") ? ".jdx" : "");
+break;
 case JSV.common.ExportType.JPG:
 case JSV.common.ExportType.PNG:
 case JSV.common.ExportType.PDF:
-isPrint = true;
 default:
 ext = "." + imode.toString().toLowerCase();
 }
-if (viewer.currentSource.isView) name = pd.getPrintJobTitle(isPrint);
+if (viewer.currentSource.isView) name = "view";
 name += ext;
 return name;
 }, "JSV.common.JSViewer,JSV.common.ExportType");
@@ -239,4 +262,4 @@ throw e;
 }, "~S,JU.OC");
 c$.newLine = System.getProperty("line.separator");
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

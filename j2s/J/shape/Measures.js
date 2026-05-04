@@ -121,8 +121,7 @@ if (md.bsSelected != null) this.bsSelected = md.bsSelected;
 this.define(md, md.tokAction);
 this.setIndices();
 return;
-}var m = this.setSingleItem(md.points);
-m.setFromMD(md, false);
+}var m = this.setSingleItem(md);
 switch (md.tokAction) {
 case 266284:
 this.doAction(md, md.thisID, 266284);
@@ -228,7 +227,8 @@ this.toggleOn(value);
 }return;
 }}, "~S,~O,JU.BS");
 Clazz.defineMethod(c$, "setSingleItem", 
-function(vector){
+function(md){
+var vector = md.points;
 var points =  new Array(4);
 var indices =  Clazz.newIntArray (5, 0);
 indices[0] = vector.size();
@@ -238,12 +238,15 @@ if (Clazz.instanceOf(value,"JU.BS")) {
 var atomIndex = (value).nextSetBit(0);
 if (atomIndex < 0) return null;
 indices[i + 1] = atomIndex;
+md.modelIndex = this.vwr.ms.at[atomIndex].mi;
 } else {
 points[i] = value;
 indices[i + 1] = -2 - i;
 }}
-return  new JM.Measurement().setPoints(this.ms, indices, points, this.tickInfo == null ? this.defaultTickInfo : this.tickInfo);
-}, "JU.Lst");
+var m =  new JM.Measurement().setPoints(this.ms, indices, points, this.tickInfo == null ? this.defaultTickInfo : this.tickInfo);
+m.setFromMD(md, false);
+return m;
+}, "JM.MeasurementData");
 Clazz.overrideMethod(c$, "getProperty", 
 function(property, index){
 if ("pending".equals(property)) return this.mPending;
@@ -553,4 +556,4 @@ m.isVisible = true;
 }
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

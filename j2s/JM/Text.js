@@ -498,7 +498,7 @@ var isRelative = this.isPymolOffsetRelative();
 if (atomPt != null && isRelative) pTemp.setT(atomPt);
  else pTemp.set(0, 0, 0);
 pTemp.add3(this.pymolOffset[4], this.pymolOffset[5], this.pymolOffset[6]);
-this.vwr.tm.transformPtScr(pTemp, screen);
+this.vwr.tm.transformPtScrSafe(pTemp, screen);
 if (isPixel) {
 screen.x += this.pymolOffset[1];
 screen.y += this.pymolOffset[2];
@@ -524,4 +524,4 @@ function(){
 return this.textUnformatted;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

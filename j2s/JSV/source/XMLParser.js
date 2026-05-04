@@ -21,6 +21,7 @@ this.thisEvent = Clazz.innerTypeInstance(JSV.source.XMLParser.XmlEvent, this, nu
 });
 Clazz.makeConstructor(c$, 
 function(br){
+if (br == null) return;
 this.buffer = Clazz.innerTypeInstance(JSV.source.XMLParser.DataBuffer, this, null, br);
 }, "java.io.BufferedReader");
 Clazz.defineMethod(c$, "getBufferData", 
@@ -384,4 +385,4 @@ throw e;
 /*eoif4*/})();
 };
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

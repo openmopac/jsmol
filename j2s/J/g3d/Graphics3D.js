@@ -681,14 +681,14 @@ p.z = Math.round(pt.z);
 }, "JU.P3,JU.P3i");
 Clazz.overrideMethod(c$, "drawLineXYZ", 
 function(x1, y1, z1, x2, y2, z2){
-this.line3d.plotLineOld(this.argbCurrent, this.argbCurrent, x1, y1, z1, x2, y2, z2);
+this.line3d.plotLineInt(this.argbCurrent, this.argbCurrent, x1, y1, z1, x2, y2, z2);
 }, "~N,~N,~N,~N,~N,~N");
 Clazz.overrideMethod(c$, "drawLine", 
 function(colixA, colixB, x1, y1, z1, x2, y2, z2){
 if (!this.setC(colixA)) colixA = 0;
 var argbA = this.argbCurrent;
 if (!this.setC(colixB)) colixB = 0;
-if (colixA != 0 || colixB != 0) this.line3d.plotLineOld(argbA, this.argbCurrent, x1, y1, z1, x2, y2, z2);
+if (colixA != 0 || colixB != 0) this.line3d.plotLineInt(argbA, this.argbCurrent, x1, y1, z1, x2, y2, z2);
 }, "~N,~N,~N,~N,~N,~N,~N,~N");
 Clazz.overrideMethod(c$, "drawLineBits", 
 function(colixA, colixB, pointA, pointB){
@@ -1202,4 +1202,4 @@ return ((argb & 0xC0C0C0) == 0 ? argb | 0x040404 : argb);
 c$.sort = null;
 c$.nullShadeIndex = 50;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

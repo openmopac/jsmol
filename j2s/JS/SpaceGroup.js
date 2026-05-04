@@ -1,7 +1,13 @@
 Clazz.declarePackage("JS");
-Clazz.load(["JS.HallInfo", "java.util.Hashtable"], "JS.SpaceGroup", ["java.util.Arrays", "JU.AU", "$.Lst", "$.M4", "$.P3", "$.PT", "$.SB", "JS.Symmetry", "$.SymmetryOperation", "$.UnitCell", "JU.Logger", "$.SimpleUnitCell"], function(){
+Clazz.load(["JS.HallInfo", "java.util.Hashtable"], "JS.SpaceGroup", ["java.util.Arrays", "JU.AU", "$.Lst", "$.M3", "$.M4", "$.P3", "$.PT", "$.SB", "JS.Symmetry", "$.SymmetryOperation", "$.UnitCell", "JU.Logger", "$.SimpleUnitCell"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.specialPrefix = "";
+this.spinFrameTransform = null;
+this.strName = null;
+this.displayName = null;
+this.spinList = null;
+this.spinConfiguration = null;
+this.ssgNumber = null;
 this.groupType = 0;
 this.symmetryOperations = null;
 this.finalOperations = null;
@@ -45,10 +51,7 @@ this.hmSymbolAbbr = null;
 this.hmSymbolAlternative = null;
 this.hmSymbolAbbrShort = null;
 this.ambiguityType = '\0';
-this.strName = null;
-this.displayName = null;
-this.spinList = null;
-this.spinConfiguration = null;
+this.isSpinSpaceGroup = false;
 Clazz.instantialize(this, arguments);}, JS, "SpaceGroup", null, [Cloneable, JS.HallInfo.HallReceiver]);
 Clazz.makeConstructor(c$, 
 function(index, strData, doInit){
@@ -65,7 +68,7 @@ return this.specialPrefix;
 Clazz.defineMethod(c$, "setFrom", 
 function(sg, isITA){
 if (isITA) {
-this.setName(sg.itaNumber.equals("0") ? this.clegId : "HM:" + sg.hmSymbolFull + " #" + sg.clegId);
+this.setName((sg.isSpinSpaceGroup ? sg.name : sg.itaNumber.equals("0") ? this.clegId : "HM:" + sg.hmSymbolFull + " #" + sg.clegId));
 this.referenceIndex = -2;
 } else {
 this.setName(sg.getName());
@@ -75,7 +78,11 @@ this.specialPrefix = sg.specialPrefix;
 this.periodicity = sg.periodicity;
 this.groupType = sg.groupType;
 this.setClegId(sg.getClegId());
+this.isSpinSpaceGroup = sg.isSpinSpaceGroup;
 this.itaIndex = sg.itaIndex;
+this.itaNumber = sg.itaNumber;
+this.ssgNumber = sg.ssgNumber;
+this.itaTransform = sg.itaTransform;
 this.crystalClass = sg.crystalClass;
 this.hallSymbol = sg.hallSymbol;
 this.hmSymbol = sg.hmSymbol;
@@ -84,8 +91,7 @@ this.hmSymbolAbbrShort = sg.hmSymbolAbbrShort;
 this.hmSymbolAlternative = sg.hmSymbolAlternative;
 this.hmSymbolExt = sg.hmSymbolExt;
 this.hmSymbolFull = sg.hmSymbolFull;
-this.itaNumber = sg.itaNumber;
-this.itaTransform = sg.itaTransform;
+this.spinFrameTransform = sg.spinFrameTransform;
 this.jmolId = null;
 this.jmolIdExt = null;
 this.strName = this.displayName = null;
@@ -126,6 +132,7 @@ return (this.referenceIndex >= 0 ? this.referenceIndex : this.index);
 });
 Clazz.defineMethod(c$, "setClegId", 
 function(cleg){
+if (cleg == null) cleg = this.itaNumber + ":" + this.itaTransform;
 this.clegId = cleg;
 this.canonicalCLEG = JS.SpaceGroup.canonicalizeCleg(cleg);
 }, "~S");
@@ -157,7 +164,7 @@ return sg;
 Clazz.defineMethod(c$, "addSymmetry", 
 function(xyz, opId, allowScaling){
 xyz = xyz.toLowerCase();
-return (xyz.indexOf("[[") < 0 && xyz.indexOf("x4") < 0 && xyz.indexOf(";") < 0 && (xyz.indexOf("x") < 0 || xyz.indexOf("y") < 0 || xyz.indexOf("z") < 0) ? -1 : this.addOperation(xyz, opId, allowScaling));
+return (xyz.indexOf("[[") < 0 && xyz.indexOf("x4") < 0 && xyz.indexOf(";") < 0 && xyz.indexOf("u") < 0 && (xyz.indexOf("x") < 0 || xyz.indexOf("y") < 0 || xyz.indexOf("z") < 0) ? -1 : this.addOperation(xyz, opId, allowScaling));
 }, "~S,~N,~B");
 Clazz.defineMethod(c$, "setFinalOperationsSafely", 
 function(){
@@ -285,7 +292,9 @@ return sg.dumpInfoObj();
 }var sb =  new JU.SB();
 while (sg != null && sg.groupType == 0) {
 if (sg.index < JS.SpaceGroup.SG.length || andNonstandard) break;
-sg = JS.SpaceGroup.SG[sg.index];
+if (!andNonstandard) {
+break;
+}if (sg.index < JS.SpaceGroup.SG.length) sg = JS.SpaceGroup.SG[sg.index];
 }
 sg.getOperationCount();
 sb.append(sg.dumpInfo());
@@ -307,7 +316,7 @@ sb.append("\ngroupType: ").append(JS.SpaceGroup.getSpecialGroupName(this.groupTy
 }sb.append("\nHermann-Mauguin symbol: ");
 if (this.hmSymbol == null || this.hmSymbolExt == null) sb.append("?");
  else sb.append(this.hmSymbol).append(this.hmSymbolExt.length > 0 ? ":" + this.hmSymbolExt : "");
-if (this.itaNumber != null) {
+if (this.itaNumber != null && !"0".equals(this.itaNumber)) {
 sb.append("\ninternational table number: ").append(this.itaNumber);
 }if (this.crystalClass != null) {
 sb.append("\ncrystal class: " + this.crystalClass);
@@ -773,7 +782,7 @@ this.setNo = Integer.parseInt(this.itaIndex.substring(pt + 1));
 }this.itaNo = (pt < 0 ? 0 : Integer.parseInt(this.itaIndex.substring(0, pt)));
 var s = terms[2];
 this.itaTransform = (s.length == 0 || s.equals("--") ? "a,b,c" : s.equals("r") ? "2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c" : JU.PT.rep(s, "ab", "a-b,a+b,c").$replace('|', ';'));
-this.setClegId(this.itaNumber + ":" + this.itaTransform);
+this.setClegId(null);
 if (terms[3].length > 0) {
 this.nHallOperators = Integer.$valueOf(terms[3]);
 var lst = JS.SpaceGroup.htByOpCount.get(this.nHallOperators);
@@ -841,6 +850,8 @@ if (this.hmSymbolFull != null && !"--".equals(this.hmSymbol)) name = this.hmSymb
 name = this.hmSymbolFull;
 }if (name == null) {
 name = "[" + this.hallSymbol + "]";
+} else if (this.isSpinSpaceGroup) {
+name = "spinSG:" + this.ssgNumber + ":" + this.itaTransform;
 } else if (this.getClegId() != null) {
 name += " #" + this.getClegId();
 }if (name.endsWith("2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c")) name = JU.PT.rep(name, "2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c", "r");
@@ -905,8 +916,8 @@ frameXyzUvw = frameXyzUvw.substring(0, p + 1) + s + ")";
 var latticeOp =  new JS.SymmetryOperation(null, 0, true);
 latticeOp.setMatrixFromXYZ(frameXyzUvw, 0, true);
 latticeOp.doFinalize();
-var latU = JU.M4.newM4(latticeOp.spinU);
-var spinU =  new JU.M4();
+var latU = JU.M3.newM3(latticeOp.spinU);
+var spinU =  new JU.M3();
 var pt = this.operationCount;
 for (var i = 0; i < nOps; i++) {
 var op = this.symmetryOperations[i];
@@ -918,7 +929,7 @@ throw  new RuntimeException("SpaceGroup operation " + (i + 1) + " no spin indica
 }spinU.mul2(op.spinU, latU);
 newOp.modDim = this.modDim;
 newOp.divisor = op.divisor;
-var xyz = JS.SymmetryOperation.getXYZFromMatrix(newOp, false, true, false) + JS.SymmetryOperation.getSpinString(spinU, true);
+var xyz = JS.SymmetryOperation.getXYZFromMatrix(newOp, false, true, false) + JS.SymmetryOperation.getSpinString(spinU, true, true);
 var iop = this.addOperation(xyz, pt, true);
 this.symmetryOperations[iop].doFinalize();
 pt++;
@@ -947,9 +958,23 @@ return Clazz.doubleToInt(n / pts.size());
 Clazz.defineMethod(c$, "setName", 
 function(name){
 this.name = name;
-if (name != null && name.startsWith("HM:")) {
+if (name != null) {
+if (name.equals("spinSG:")) {
+this.itaNumber = this.ssgNumber = "0";
+this.isSpinSpaceGroup = true;
+this.hallSymbol = "--";
+this.itaTransform = "a,b,c";
+this.setClegId(null);
+this.spinFrameTransform = JU.M3.newM3(null);
+} else if (name.startsWith("HM:")) {
 this.setHMSymbol(name.substring(3));
-}this.strName = this.displayName = null;
+} else if (this.isSpinSpaceGroup) {
+if (name.startsWith("spinSG:")) {
+this.name = name;
+} else {
+this.name = "spinSG:" + name;
+}this.itaTransform = this.name.substring(this.name.indexOf(":", 7) + 1);
+}}this.strName = this.displayName = null;
 }, "~S");
 c$.getSpaceGroupFromJmolClegOrITA = Clazz.defineMethod(c$, "getSpaceGroupFromJmolClegOrITA", 
 function(vwr, name){
@@ -1004,7 +1029,7 @@ return (JS.SpaceGroup.SG != null && i >= 0 && i < JS.SpaceGroup.SG.length ? JS.S
 }, "~N");
 Clazz.defineMethod(c$, "setITATableNames", 
 function(jmolId, sg, set, tr){
-this.itaNumber = sg;
+this.itaNumber = (".".equals(sg) ? "0" : sg);
 this.itaIndex = (tr != null ? sg + ":" + tr : set.indexOf(".") >= 0 ? set : sg + "." + set);
 this.itaTransform = tr;
 this.setClegId(this.specialPrefix + sg + ":" + tr);
@@ -1240,6 +1265,7 @@ return true;
 }, "JU.M4");
 c$.canonicalizeCleg = Clazz.defineMethod(c$, "canonicalizeCleg", 
 function(t){
+if (t == null) return null;
 if (t.indexOf(":") < 0) {
 t += ":a,b,c;0,0,0";
 } else if (t.indexOf(",") > 0 && t.indexOf(";") < 0) {
@@ -1451,9 +1477,9 @@ function(mapSpinIdToUVW){
 var op;
 for (var i = this.operationCount; --i >= 0; ) {
 op = this.symmetryOperations[i];
-var s = (op.suvwkey == null ? null : mapSpinIdToUVW.get(op.suvwkey));
-if (op.suvwkey != null && s == null) {
-System.err.println("SpaceGroup key " + op.suvwkey);
+var s = (op.suvwId == null ? null : mapSpinIdToUVW.get(op.suvwId));
+if (op.suvwId != null && s == null) {
+System.err.println("SpaceGroup key " + op.suvwId);
 } else {
 op.setSpin(s);
 }}
@@ -1567,4 +1593,4 @@ c$.ClegtoHM = null;
 {
 JS.SpaceGroup.getSpaceGroups();
 }});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Wed Mar 25 00:33:43 CDT 2026

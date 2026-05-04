@@ -1,14 +1,12 @@
 Clazz.declarePackage("J.g3d");
-Clazz.load(["J.g3d.PrecisionRenderer", "java.util.Hashtable"], "J.g3d.LineRenderer", ["JU.BS"], function(){
+Clazz.load(["J.g3d.PrecisionRenderer", "java.util.Hashtable", "JU.BS"], "J.g3d.LineRenderer", null, function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.g3d = null;
 this.shader = null;
 this.lineBits = null;
-this.slope = 0;
 this.lineTypeX = false;
 this.nBits = 0;
 this.lineCache = null;
-this.slopeKey = null;
 this.x1t = 0;
 this.y1t = 0;
 this.z1t = 0;
@@ -17,6 +15,7 @@ this.y2t = 0;
 this.z2t = 0;
 Clazz.instantialize(this, arguments);}, J.g3d, "LineRenderer", J.g3d.PrecisionRenderer);
 Clazz.prepareFields (c$, function(){
+this.lineBits =  new JU.BS();
 this.lineCache =  new java.util.Hashtable();
 });
 Clazz.makeConstructor(c$, 
@@ -27,36 +26,47 @@ this.shader = g3d.shader;
 }, "J.g3d.Graphics3D");
 Clazz.defineMethod(c$, "setLineBits", 
 function(dx, dy){
-this.slope = (dx != 0 ? dy / dx : dy >= 0 ? 3.4028235E38 : -3.4028235E38);
-this.lineTypeX = (this.slope <= 1 && this.slope >= -1);
-this.nBits = (this.lineTypeX ? this.g3d.width : this.g3d.height);
-this.slopeKey = Float.$valueOf(this.slope);
-if (this.lineCache.containsKey(this.slopeKey)) {
-this.lineBits = this.lineCache.get(this.slopeKey);
+var adx = Math.abs(dx);
+var ady = Math.abs(dy);
+var slope;
+if (adx < 1 && ady < 0) {
+this.lineBits = J.g3d.LineRenderer.lbNone;
 return;
-}this.lineBits = JU.BS.newN(this.nBits);
-dy = Math.abs(dy);
-dx = Math.abs(dx);
-if (dy > dx) {
-var t = dx;
-dx = dy;
-dy = t;
+}if (adx == 0) {
+slope = (dy >= 0 ? 3.4028235E38 : -3.4028235E38);
+} else {
+slope = (dy / dx);
+if (slope > 1e5) slope = 3.4028235E38;
+ else if (slope < -100000.0) slope = -3.4028235E38;
+}this.lineTypeX = (slope <= 1 && slope >= -1);
+this.nBits = (this.lineTypeX ? this.g3d.width : this.g3d.height);
+var slopeKey = Integer.$valueOf(Math.round(slope * 10000));
+var lb = this.lineCache.get(slopeKey);
+if (lb == null) {
+if (this.lineCache.size() > 10000) {
+this.lineCache.clear();
+}lb = JU.BS.newN(this.nBits);
+if (ady > adx) {
+var t = adx;
+adx = ady;
+ady = t;
 }var twoDError = 0;
-var twoDx = dx + dx;
-var twoDy = dy + dy;
+var twoDx = adx + adx;
+var twoDy = ady + ady;
 for (var i = 0; i < this.nBits; i++) {
 twoDError += twoDy;
-if (twoDError > dx) {
-this.lineBits.set(i);
+if (twoDError > adx) {
+lb.set(i);
 twoDError -= twoDx;
 }}
-this.lineCache.put(this.slopeKey, this.lineBits);
+this.lineCache.put(slopeKey, lb);
+}this.lineBits = lb;
 }, "~N,~N");
 Clazz.defineMethod(c$, "clearLineCache", 
 function(){
 this.lineCache.clear();
 });
-Clazz.defineMethod(c$, "plotLineOld", 
+Clazz.defineMethod(c$, "plotLineInt", 
 function(argbA, argbB, xA, yA, zA, xB, yB, zB){
 this.x1t = xA;
 this.x2t = xB;
@@ -617,5 +627,6 @@ if (zCurrent < zbuf[offset]) p.addPixel(offset, zCurrent, argb);
 }runIndex = (runIndex + 1) % run;
 }
 }}, "~N,~N,~N,~N,~N,~N,~N,~N,~B,~N,~N");
+c$.lbNone =  new JU.BS();
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

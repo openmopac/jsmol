@@ -570,7 +570,7 @@ if (nc % 2 == 0) {
 stereoFlag = 8;
 } else {
 if (nb == 3 || nb == 2 && lastIsN) {
-if (!includeHs && sb.charAt(pt) != ')' && (stereo[pt]).getAtomicAndIsotopeNumber() == 1) {
+if (!includeHs && sb.charAt(pt) != ')' && (stereo[0]).getAtomicAndIsotopeNumber() == 1) {
 var s0 = stereo[0];
 stereo[0] = stereo[1];
 stereo[1] = s0;
@@ -876,4 +876,4 @@ function(i0, i1){
 return Math.min(i0, i1) + "_" + Math.max(i0, i1);
 }, "~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

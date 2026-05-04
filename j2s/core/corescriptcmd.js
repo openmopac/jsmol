@@ -245,7 +245,7 @@ for (var i = bs.nextSetBit(0), pt = 0; i >= 0; i = bs.nextSetBit(i + 1)) p[pt++]
 return p;
 }, "JU.BS");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.ScriptExt"], "JS.CmdExt", ["java.util.Hashtable", "JU.AU", "$.BS", "$.Base64", "$.Lst", "$.M3", "$.M4", "$.Measure", "$.P3", "$.P4", "$.PT", "$.Quat", "$.SB", "$.V3", "J.api.Interface", "J.atomdata.RadiusData", "J.c.STER", "$.VDW", "J.i18n.GT", "JM.AtomCollection", "$.LabelToken", "$.Measurement", "$.Text", "JS.SV", "$.ScriptCompiler", "$.ScriptError", "$.ScriptEval", "$.ScriptInterruption", "$.ScriptMathProcessor", "$.ScriptParam", "$.T", "JU.BSUtil", "$.BoxInfo", "$.C", "$.Edge", "$.Elements", "$.Escape", "$.Logger", "$.Parser", "$.Point3fi", "$.SimpleUnitCell", "JV.FileManager", "$.JC", "$.StateManager", "$.Viewer"], function(){
 var c$ = Clazz_declareType(JS, "CmdExt", JS.ScriptExt);
@@ -336,8 +336,11 @@ break;
 case 528443:
 this.stereo();
 break;
+case 4156:
+this.sync();
+break;
 case 1814695966:
-this.unitcell(flag ? 2 : 1, false);
+this.unitcell(flag ? 2 : 1, 0);
 break;
 case 134221856:
 return this.write(flag ? st : null);
@@ -636,14 +639,17 @@ oabc =  new Array(0);
 }}
 i++;
 if (this.e.chk) return i;
+var isRaw = false;
 switch (tok) {
 case 4:
+isRaw = true;
+case 1095241729:
 i--;
 case 1814695966:
 var type = this.e.optParameterAsString(i++).toLowerCase();
-if (JU.PT.isOneOf(type, ";conventional;primitive;rhombohedral;trigonal;") || type.indexOf(",") >= 0 && (type.indexOf("a") >= 0 && type.indexOf("b") >= 0 && type.indexOf("c") >= 0)) {
+if (isRaw || JU.PT.isOneOf(type, ";spin;conventional;primitive;rhombohedral;trigonal;") || type.indexOf(",") >= 0 && (type.indexOf("a") >= 0 && type.indexOf("b") >= 0 && type.indexOf("c") >= 0)) {
 htParams.put("fillRange", type);
-sOptions.append(" FILL UNITCELL \"" + type + "\"");
+sOptions.append(" FILL " + (isRaw ? "" : "UNITCELL \"" + type + "\""));
 return i;
 }var unitCell = this.vwr.getCurrentUnitCell();
 if (unitCell != null) {
@@ -667,6 +673,7 @@ break;
 case 4:
 break;
 default:
+if (tok != 0) this.invArg();
 oabc =  Clazz_newArray(-1, [ new JU.P3(), JU.P3.new3(10, 0, 0), JU.P3.new3(0, 10, 0), JU.P3.new3(0, 0, 10)]);
 }
 htParams.put("fillRange", oabc);
@@ -1585,12 +1592,8 @@ target = eval.centerParameter(i, ret);
 if (Clazz_instanceOf(ret[0],"JU.BS")) {
 target = bs = ret[0];
 if (!this.chk && bs.length() == 0) return;
-}if (Clazz_instanceOf(target,"JU.P3")) {
-var v =  new JU.Point3fi();
-v.setT(target);
-v.mi = modelIndex;
-target = v;
-}if ((nAtoms = ++expressionCount) > 4) eval.bad();
+}if (Clazz_instanceOf(target,"JU.P3")) target = JU.Point3fi.newPF(target, modelIndex);
+if ((nAtoms = ++expressionCount) > 4) eval.bad();
 i = eval.iToken;
 points.addLast(target);
 break;
@@ -2301,9 +2304,9 @@ if (this.chk) return;
 var bsOut = null;
 this.showString("mapping " + property1.toUpperCase() + " for " + bsFrom.cardinality() + " atoms to " + property2.toUpperCase() + " for " + bsTo.cardinality() + " atoms using " + mapKey.toUpperCase());
 if (JS.T.tokAttrOr(tokProp1, 1094713344, 1111490560) && JS.T.tokAttrOr(tokProp2, 1094713344, 1111490560) && JS.T.tokAttrOr(tokKey, 1094713344, 1111490560)) {
-var data1 = this.getBitsetPropertyFloat(bsFrom, tokProp1 | 224, null, NaN, NaN);
-var data2 = this.getBitsetPropertyFloat(bsFrom, tokKey | 224, null, NaN, NaN);
-var data3 = this.getBitsetPropertyFloat(bsTo, tokKey | 224, null, NaN, NaN);
+var data1 = e.getBitsetPropertyFloat(bsFrom, tokProp1 | 224, null, NaN, NaN);
+var data2 = e.getBitsetPropertyFloat(bsFrom, tokKey | 224, null, NaN, NaN);
+var data3 = e.getBitsetPropertyFloat(bsTo, tokKey | 224, null, NaN, NaN);
 var isProperty = (tokProp2 == 1715472409);
 var dataOut =  Clazz_newFloatArray (isProperty ? this.vwr.ms.ac : data3.length, 0);
 bsOut =  new JU.BS();
@@ -2775,7 +2778,9 @@ if (modelIndex < 0) e.errorStr(30, "plot");
 modelIndex = this.vwr.ms.getJmolDataSourceFrame(modelIndex);
 var pt = args.length - 1;
 var isReturnOnly = (args !== this.st);
-var pdbFormat = true;
+var isQuaternion = false;
+var isPdbFormat = true;
+var isSplit = false;
 var statementSave = this.st;
 if (isReturnOnly) e.st = this.st = args;
 var tokCmd = (isReturnOnly ? 134222350 : args[0].tok);
@@ -2783,10 +2788,13 @@ var pt0 = (isReturnOnly || tokCmd == 134221850 || tokCmd == 4138 ? 0 : 1);
 var filename = null;
 var makeNewFrame = true;
 var isDraw = false;
+var isSpinPointGroup = false;
 switch (tokCmd) {
 case 4133:
 case 134221850:
 case 4138:
+isSplit = (this.tokAt(pt) == 1275069447);
+if (isSplit) e.slen = this.slen = pt--;
 break;
 case 135176:
 makeNewFrame = false;
@@ -2794,7 +2802,7 @@ isDraw = true;
 break;
 case 134222350:
 makeNewFrame = false;
-pdbFormat = false;
+isPdbFormat = false;
 break;
 case 134221856:
 makeNewFrame = false;
@@ -2811,16 +2819,15 @@ this.error(13);
 break;
 }
 var qFrame = "";
-var parameters = null;
-var stateScript = "";
-var isQuaternion = false;
+var startScript = "";
+var endScript = "";
 var isDerivative = false;
 var isSecondDerivative = false;
 var isRamachandranRelative = false;
 var props =  new Array(3);
 var propToks =  Clazz_newIntArray (3, 0);
 var bs = JU.BSUtil.copy(this.vwr.bsA());
-var preSelected = "; select " + JU.Escape.eBS(bs) + ";\n ";
+var preselected = "; select " + JU.Escape.eBS(bs) + ";\n ";
 var type = e.optParameterAsString(pt).toLowerCase();
 var minXYZ = null;
 var maxXYZ = null;
@@ -2835,8 +2842,29 @@ break;
 case 134221834:
 e.iToken = 1;
 type = "data";
-preSelected = "";
+preselected = "";
 break;
+case 1073741872:
+type = "brillouin";
+if (bs.nextSetBit(0) < 0) {
+bs = this.vwr.getModelUndeletedAtomsBitSet(modelIndex);
+}break;
+case 1095241729:
+if (!this.chk) {
+type = "spin";
+isSpinPointGroup = (this.tokAt(pt0 + 1) == 1275068447);
+propToks[0] = 1111492626;
+propToks[1] = 1111492627;
+propToks[2] = 1111492628;
+props[0] = "spinX";
+props[1] = "spinY";
+props[2] = "spinZ";
+bs = this.vwr.fm.getJmolDataReader().getPlotSpinSet(this.vwr, bs, modelIndex, minXYZ =  new JU.P3(), maxXYZ =  new JU.P3());
+if (bs == null || bs.cardinality() == 0) return null;
+var spinModel = this.vwr.ms.getJmolDataFrameInt(modelIndex, 1095241729);
+if (spinModel >= 0) this.vwr.deleteModels(spinModel, null);
+this.vwr.setSelectionSet(bs);
+}break;
 case 1715472409:
 e.iToken = pt0 + 1;
 for (var i = 0; i < 3; i++) {
@@ -2861,7 +2889,7 @@ e.iToken++;
 }
 if (this.tokAt(e.iToken) == 1287653388) {
 format = this.stringParameter(++e.iToken);
-pdbFormat = false;
+isPdbFormat = false;
 e.iToken++;
 }if (this.tokAt(e.iToken) == 32) {
 minXYZ = this.getPoint3f(++e.iToken, false);
@@ -2871,7 +2899,7 @@ maxXYZ = this.getPoint3f(++e.iToken, false);
 e.iToken++;
 }type = "property " + props[0] + (props[1] == null ? "" : " " + props[1]) + (props[2] == null ? "" : " " + props[2]);
 if (bs.nextSetBit(0) < 0) bs = this.vwr.getModelUndeletedAtomsBitSet(modelIndex);
-stateScript = "select " + JU.Escape.eBS(bs) + ";\n ";
+startScript = "select " + JU.Escape.eBS(bs) + ";\n ";
 break;
 case 4138:
 if (type.equalsIgnoreCase("draw")) {
@@ -2883,7 +2911,7 @@ break;
 case 134221850:
 case 136314895:
 qFrame = " \"" + this.vwr.getQuaternionFrame() + "\"";
-stateScript = "set quaternionFrame" + qFrame + ";\n  ";
+startScript = "set quaternionFrame" + qFrame + ";\n  ";
 isQuaternion = true;
 if (type.equalsIgnoreCase("draw")) {
 isDraw = true;
@@ -2904,60 +2932,26 @@ break;
 this.st = statementSave;
 if (this.chk) return "";
 if (makeNewFrame) {
-stateScript += "plot " + type;
-var ptDataFrame = this.vwr.ms.getJmolDataFrameIndex(modelIndex, stateScript);
+if (isSplit) endScript += " split";
+startScript += "plot " + type + endScript;
+var ptDataFrame = this.vwr.ms.getJmolDataFrameIndex(modelIndex, startScript);
 if (ptDataFrame > 0 && tokCmd != 134221856 && tokCmd != 134222350) {
 this.vwr.setCurrentModelIndexClear(ptDataFrame, true);
 return "";
-}}var dataX = null;
-var dataY = null;
-var dataZ = null;
-var propData =  new Array(3);
-if (tok == 1715472409) {
-dataX = this.getBitsetPropertyFloat(bs, propToks[0] | 224, propToks[0] == 1715472409 ? props[0] : null, (minXYZ == null ? NaN : minXYZ.x), (maxXYZ == null ? NaN : maxXYZ.x));
-propData[0] = props[0] + " " + JU.Escape.eAF(dataX);
-if (props[1] != null) {
-dataY = this.getBitsetPropertyFloat(bs, propToks[1] | 224, propToks[1] == 1715472409 ? props[1] : null, (minXYZ == null ? NaN : minXYZ.y), (maxXYZ == null ? NaN : maxXYZ.y));
-propData[1] = props[1] + " " + JU.Escape.eAF(dataY);
-}if (props[2] != null) {
-dataZ = this.getBitsetPropertyFloat(bs, propToks[2] | 224, propToks[2] == 1715472409 ? props[2] : null, (minXYZ == null ? NaN : minXYZ.z), (maxXYZ == null ? NaN : maxXYZ.z));
-propData[2] = props[2] + " " + JU.Escape.eAF(dataZ);
-}if (minXYZ == null) minXYZ = JU.P3.new3(this.getPlotMinMax(dataX, false, propToks[0]), this.getPlotMinMax(dataY, false, propToks[1]), this.getPlotMinMax(dataZ, false, propToks[2]));
-if (maxXYZ == null) maxXYZ = JU.P3.new3(this.getPlotMinMax(dataX, true, propToks[0]), this.getPlotMinMax(dataY, true, propToks[1]), this.getPlotMinMax(dataZ, true, propToks[2]));
-JU.Logger.info("plot min/max: " + minXYZ + " " + maxXYZ);
-var center = null;
-var factors = null;
-if (pdbFormat) {
-factors = JU.P3.new3(1, 1, 1);
-center =  new JU.P3();
-center.ave(maxXYZ, minXYZ);
-factors.sub2(maxXYZ, minXYZ);
-factors.set(factors.x / 200, factors.y / 200, factors.z / 200);
-if (JS.T.tokAttr(propToks[0], 1094713344)) {
-factors.x = 1;
-center.x = 0;
-} else if (factors.x > 0.1 && factors.x <= 10) {
-factors.x = 1;
-}if (JS.T.tokAttr(propToks[1], 1094713344)) {
-factors.y = 1;
-center.y = 0;
-} else if (factors.y > 0.1 && factors.y <= 10) {
-factors.y = 1;
-}if (JS.T.tokAttr(propToks[2], 1094713344)) {
-factors.z = 1;
-center.z = 0;
-} else if (factors.z > 0.1 && factors.z <= 10) {
-factors.z = 1;
-}if (props[2] == null || props[1] == null) center.z = minXYZ.z = maxXYZ.z = factors.z = 0;
-for (var i = 0; i < dataX.length; i++) dataX[i] = (dataX[i] - center.x) / factors.x;
-
-if (props[1] != null) for (var i = 0; i < dataY.length; i++) dataY[i] = (dataY[i] - center.y) / factors.y;
-
-if (props[2] != null) for (var i = 0; i < dataZ.length; i++) dataZ[i] = (dataZ[i] - center.z) / factors.z;
-
-}parameters =  Clazz_newArray(-1, [bs, dataX, dataY, dataZ, minXYZ, maxXYZ, factors, center, format, propData]);
-}if (tokCmd == 134221856) return this.vwr.writeFileData(filename, "PLOT_" + type, modelIndex, parameters);
-var data = (type.equals("data") ? "1 0 H 0 0 0 # Jmol PDB-encoded data" : this.vwr.getPdbData(modelIndex, type, null, parameters, null, true));
+}}var reader = this.vwr.fm.getJmolDataReader();
+var parameters = (tok == 1715472409 || tok == 1095241729 ? reader.getJmolDataFrameProperties(e, tok, propToks, props, bs, minXYZ, maxXYZ, format, isPdbFormat) : null);
+if (tokCmd == 134221856) return this.vwr.writeFileData(filename, "PLOT_" + type, modelIndex, parameters);
+var data;
+switch (type.substring(0, 4)) {
+case "data":
+data = "1 0 H 0 0 0 # Jmol PDB-encoded data";
+break;
+case "spin":
+case "bril":
+default:
+data = this.vwr.getPdbData(modelIndex, type, null, parameters, null, true);
+break;
+}
 if (tokCmd == 134222350) return data;
 if (JU.Logger.debugging) JU.Logger.debug(data);
 if (tokCmd == 135176) {
@@ -2971,37 +2965,33 @@ this.vwr.g.appendNew = oldAppendNew;
 this.vwr.fm.setFileInfo(savedFileInfo);
 if (!isOK) return "";
 var modelCount = this.vwr.ms.mc;
-this.vwr.ms.setJmolDataFrame(stateScript, modelIndex, modelCount - 1);
-if (tok != 1715472409) stateScript += ";\n" + preSelected;
-var ss = this.vwr.addStateScript(stateScript, true, false);
-var radius = 150;
-var script;
+reader.setJmolDataFrame(this.vwr.ms, startScript, modelIndex, modelCount - 1);
+if (tok != 1715472409) startScript += ";\n" + preselected;
+var ss = this.vwr.addStateScript(startScript, true, false);
+var scripts = reader.getJmolDataFrameScripts(this.vwr, tok, modelIndex, modelCount, type, qFrame, props, isSpinPointGroup);
+e.runScript(scripts[0] + preselected);
+ss.setModelIndex(this.vwr.am.cmi);
+var radius;
 switch (tok) {
-default:
-script = "frame 0.0; frame last; reset;select visible;wireframe only;";
-radius = 10;
-break;
 case 1715472409:
-this.vwr.setFrameTitle(modelCount - 1, type + " plot for model " + this.vwr.getModelNumberDotted(modelIndex));
-script = "frame 0.0; frame last; reset;select visible; spacefill 3.0; wireframe 0;draw plotAxisX" + modelCount + " {100 -100 -100} {-100 -100 -100} \"" + props[0] + "\";" + "draw plotAxisY" + modelCount + " {-100 100 -100} {-100 -100 -100} \"" + props[1] + "\";";
-if (props[2] != null) script += "draw plotAxisZ" + modelCount + " {-100 -100 100} {-100 -100 -100} \"" + props[2] + "\";";
-break;
 case 4138:
-this.vwr.setFrameTitle(modelCount - 1, "ramachandran plot for model " + this.vwr.getModelNumberDotted(modelIndex));
-script = "frame 0.0; frame last; reset;select visible; color structure; spacefill 3.0; wireframe 0;draw ramaAxisX" + modelCount + " {100 0 0} {-100 0 0} \"phi\";" + "draw ramaAxisY" + modelCount + " {0 100 0} {0 -100 0} \"psi\";";
-break;
 case 134221850:
 case 136314895:
-this.vwr.setFrameTitle(modelCount - 1, type.$replace('w', ' ') + qFrame + " for model " + this.vwr.getModelNumberDotted(modelIndex));
-var color = (JU.C.getHexCode(this.vwr.cm.colixBackgroundContrast));
-script = "frame 0.0; frame last; reset;select visible; wireframe 0; spacefill 3.0; isosurface quatSphere" + modelCount + " color " + color + " sphere 100.0 mesh nofill frontonly translucent 0.8;" + "draw quatAxis" + modelCount + "X {100 0 0} {-100 0 0} color red \"x\";" + "draw quatAxis" + modelCount + "Y {0 100 0} {0 -100 0} color green \"y\";" + "draw quatAxis" + modelCount + "Z {0 0 100} {0 0 -100} color blue \"z\";" + "color structure;" + "draw quatCenter" + modelCount + "{0 0 0} scale 0.02;";
+case 1095241729:
+radius = 180;
+break;
+default:
+radius = 10;
 break;
 }
-e.runScript(script + preSelected);
-ss.setModelIndex(this.vwr.am.cmi);
 this.vwr.setRotationRadius(radius, true);
 e.sm.loadShape(31);
-this.showString("frame " + this.vwr.getModelNumberDotted(modelCount - 1) + (type.length > 0 ? " created: " + type + (isQuaternion ? qFrame : "") : ""));
+if (scripts[1] != null) {
+e.runScript(scripts[1]);
+}if (isSplit) {
+var m = this.vwr.getP("_modelNumber");
+e.runScript("frame 1.1 " + m + " split;");
+}this.showString("frame " + this.vwr.getModelNumberDotted(this.vwr.ms.mc - 1) + (type.length > 0 ? " created: " + type + (isQuaternion ? qFrame : "") : ""));
 return "";
 }, "~A");
 Clazz_defineMethod(c$, "polyhedra", 
@@ -3040,11 +3030,12 @@ case 1073742197:
 scale = NaN;
 case 1073741872:
 var index = (this.e.theTok == 1073742197 ? -1 : (this.tokAt(i + 1) == 2 ? this.intParameter(++i) : 1));
+if (index > 8) this.invArg();
 if (!this.chk) (J.api.Interface.getInterface("JU.BZone", this.vwr, "script")).createBZ(this.vwr, index, null, false, id, scale, foffset, offset);
 return;
 case 6:
 propertyName = "info";
-propertyValue = (this.e.theToken).getMap();
+propertyValue = this.e.theToken.value;
 needsGenerating = true;
 break;
 case 134217751:
@@ -3272,6 +3263,14 @@ if (t0 != null) tok = t0.tok;
 }switch (tok) {
 case 0:
 break;
+case 7:
+case 6:
+type = "VAR";
+break;
+case 1095241729:
+case 1073741872:
+this.invArg();
+break;
 case 134221850:
 case 4138:
 case 1715472409:
@@ -3302,17 +3301,24 @@ var bsFrames = null;
 var width = -1;
 var height = -1;
 var isExport = false;
+var asJSON = false;
 var fileName = null;
 var quality = -2147483648;
 if (tok != 0 && isCommand && this.slen > 1 && this.tokAt(this.slen - 2) == 1073741848) {
-type = this.paramAsStr(this.slen - 1).toUpperCase();
-pt0 = argCount;
+var p = this.paramAsStr(this.slen - 1).toUpperCase();
+if (p.equals("JSON")) {
+asJSON = true;
 argCount -= 2;
+}if (asJSON && type.equals("VAR")) {
+} else {
+type = p;
+pt0 = argCount;
 tok = 0;
+}argCount -= 2;
 }switch (tok) {
 case 0:
 break;
-case 15:
+case 7:
 case 6:
 type = "VAR";
 tVar = this.tokenAt(pt++, args);
@@ -3440,14 +3446,14 @@ if (width <= 0) this.invArg();
 height = JS.SV.iValue(this.tokenAt(++pt, args));
 if (height <= 0) this.invArg();
 }if (JS.CmdExt.tokAtArray(pt + 1, args) == 2) quality = JS.SV.iValue(this.tokenAt(++pt, args));
-} else if (JU.PT.isOneOf(val.toLowerCase(), ";xyz;xyzrn;xyzvib;mol;mol67;sdf;v2000;v3000;json;pdb;pqr;cml;cif;scif;cifp1;pwmat;pwslab;qcjson;xsf;")) {
+} else if (!"VAR".equals(type) && JU.PT.isOneOf(val.toLowerCase(), ";xyz;xyzrn;xyzvib;mol;mol67;sdf;v2000;v3000;json;pdb;pqr;cml;cif;scif;cifp1;pwmat;pwslab;qcjson;xsf;")) {
 type = val.toUpperCase();
 if (pt + 1 == argCount) pt++;
 }if (type.equals("IMAGE") && JU.PT.isOneOf(val.toLowerCase(), ";jpg;jpeg;jpg64;jpeg64;gif;gift;pdf;ppm;png;pngj;pngt;scene;")) {
 type = val.toUpperCase();
 pt++;
 }}if (pt + 2 == argCount) {
-JS.SV.sValue(this.tokenAt(++pt, args));
+++pt;
 }switch (JS.CmdExt.tokAtArray(pt, args)) {
 case 0:
 showOnly = true;
@@ -3457,6 +3463,9 @@ break;
 case 805307393:
 fileName = (type.equals("IMAGE") ? "?jmol.png" : "?jmol." + type.toLowerCase());
 break;
+case 6:
+case 7:
+break;
 case 1073741824:
 case 4:
 fileName = JS.SV.sValue(this.tokenAt(pt, args));
@@ -3465,49 +3474,83 @@ break;
 default:
 this.invArg();
 }
-if (type.equals("IMAGE") || type.equals("FRAME") || type.equals("VIBRATION")) {
-type = (fileName != null && fileName.indexOf(".") >= 0 ? fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase() : "JPG");
-}if (type.equals("ISOSURFACE") || type.equals("CONTACT") || type.equals("PLB")) {
-isContact = type.equals("CONTACT");
-if (!type.equals("PLB")) type = (fileName != null && fileName.indexOf(".") >= 0 ? fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase() : "JVXL");
-if (type.equals("PMESH")) type = "ISOMESH";
- else if (type.equals("PMB")) type = "ISOMESHBIN";
-if (type.equals("PLY")) type = "ISOPLY";
- else if (type.equals("PLB")) type = "ISOPLYBIN";
-}var isImage = JU.PT.isOneOf(type.toLowerCase(), ";jpg;jpeg;jpg64;jpeg64;gif;gift;pdf;ppm;png;pngj;pngt;scene;");
+switch (type) {
+case "IMAGE":
+case "FRAME":
+case "VIBRATION":
+type = this.getWriteType(fileName, "JPG");
+break;
+case "CONTACT":
+isContact = true;
+case "ISOSURFACE":
+type = this.getWriteType(fileName, "JVXL");
+case "PLB":
+switch (type) {
+case "PMESH":
+type = "ISOMESH";
+break;
+case "PMB":
+type = "ISOMESHBIN";
+break;
+case "PLY":
+type = "ISOPLY";
+break;
+case "PLB":
+type = "ISOPLYBIN";
+break;
+}
+break;
+}
+var isImage = JU.PT.isOneOf(type.toLowerCase(), ";jpg;jpeg;jpg64;jpeg64;gif;gift;pdf;ppm;png;pngj;pngt;scene;");
 if (!isImage) {
-if (type.equals("MNU")) {
+switch (type) {
+case "MNU":
 type = "MENU";
-} else if (type.equals("WRL") || type.equals("VRML")) {
+break;
+case "WRL":
+case "VRML":
 type = "Vrml";
 isExport = true;
-} else if (type.equals("X3D")) {
+break;
+case "X3D":
 type = "X3d";
 isExport = true;
-} else if (type.equals("STL")) {
+break;
+case "STL":
 type = "Stl";
 isExport = true;
-} else if (type.equals("IDTF")) {
+break;
+case "IDTF":
 type = "Idtf";
 isExport = true;
-} else if (type.equals("MA")) {
+break;
+case "MA":
 type = "Maya";
 isExport = true;
-} else if (type.equals("JS")) {
+break;
+case "JS":
 type = "Js";
 isExport = true;
-} else if (type.equals("OBJ")) {
+break;
+case "OBJ":
 type = "Obj";
 isExport = true;
-} else if (type.equals("JVXL")) {
+break;
+case "JVXL":
+case "XJVXL":
 type = "ISOSURFACE";
-} else if (type.equals("XJVXL")) {
-type = "ISOSURFACE";
-} else if (type.equals("JMOL")) {
+break;
+case "JMOL":
 type = "ZIPALL";
-} else if (type.equals("HIS")) {
+break;
+case "HIS":
 type = "HISTORY";
-}if (type.equals("COORD") || type.equals("COORDS")) type = (fileName != null && fileName.indexOf(".") >= 0 ? fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase() : "XYZ");
+break;
+case "COORD":
+case "COORDS":
+type = this.getWriteType(fileName, "XYZ");
+break;
+}
 }if (scripts != null) {
 if (!JV.FileManager.isJmolType(type)) this.invArg();
 if (type.equals("PNG")) type = "PNGJ";
@@ -3556,54 +3599,67 @@ eval.report(data, isError);
 }var bytes = null;
 var writeFileData = false;
 if (data == null) {
-var len = 0;
 data = type.intern();
-if (data === "MENU") {
+switch (data) {
+case "MENU":
 data = this.vwr.getMenu("");
-} else if (data === "PGRP") {
+break;
+case "PGRP":
 data = this.vwr.ms.getPointGroupAsString(this.vwr.bsA(), null, 0, 1, null, null, type2.equals("draw") ? "" : null);
-} else if (data === "PDB" || data === "PQR") {
+break;
+case "PDB":
+case "PQR":
 if (showOnly) {
 data = this.vwr.getPdbAtomData(null, null, (data === "PQR"), isCoord);
 } else {
 writeFileData = true;
 type = "PDB_" + data + "-coord " + isCoord;
-}} else if (data === "FILE") {
+}break;
+case "FILE":
 if ("?".equals(fileName)) fileName = "?Jmol." + this.vwr.getP("_fileType");
 if (showOnly) data = this.e.getCurrentModelFileAsString(null);
  else writeFileData = true;
-} else if (JU.PT.isOneOf(data, ";CIF;SCIF;CIFP1;SDF;MOL;MOL67;V2000;V3000;CD;JSON;XYZ;XYZRN;XYZVIB;CML;QCJSON;PWMAT;PWSLAB;XSF;")) {
-var selected = this.vwr.bsA();
-var bsModel;
-this.vwr.setErrorMessage(null, " (" + selected.cardinality() + " atoms)");
-data = this.vwr.getModelExtract(selected, isCoord, false, data);
-msg = this.vwr.getErrorMessageUn();
-this.vwr.setErrorMessage(null, null);
-if (this.vwr.am.cmi >= 0 && !selected.equals(bsModel = this.vwr.getModelUndeletedAtomsBitSet(this.vwr.am.cmi))) msg += "\nNote! Selected atom set " + selected + " is not the same as the current model " + bsModel;
-if (data.startsWith("ERROR:")) bytes = data;
-} else if (data === "CFI") {
+break;
+case "CFI":
 data = this.vwr.getModelFileData("selected", "cfi", false);
-} else if (data === "FUNCTION") {
+break;
+case "FUNCTION":
 data = this.vwr.getFunctionCalls(null);
 type = "TXT";
-} else if (data === "VAR") {
+break;
+case "VAR":
 if (tVar == null) {
-tVar = eval.getParameter(JS.SV.sValue(this.tokenAt(isCommand ? 2 : 1, args)), 1073742190, true);
-}var v = null;
-if (tVar.tok == 15) {
+var vtoken = this.tokenAt(isCommand ? 2 : 1, args);
+switch (vtoken.tok) {
+case 7:
+case 6:
+break;
+default:
+tVar = eval.getParameter(JS.SV.sValue(vtoken), 1073742190, true);
+break;
+}
+}if (fileName != null && fileName.endsWith(".json")) asJSON = true;
+var v = null;
+switch (tVar.tok) {
+case 7:
+break;
+case 15:
 v =  new JU.Lst();
 v.addLast((tVar.value).data);
-} else if (tVar.tok == 6) {
-v = (fileName == null ?  new JU.Lst() : this.prepareBinaryOutput(tVar));
-}if (v == null) {
-data = tVar.asString();
+break;
+case 6:
+v = (fileName == null ? null : this.prepareBinaryOutput(tVar));
+break;
+}
+if (v == null) {
+data = (asJSON ? tVar.toJSON() : tVar.asString());
 type = "TXT";
-} else {
-if (fileName != null) {
+} else if (fileName != null) {
 params =  new java.util.Hashtable();
 params.put("data", v);
 if ((bytes = data = this.vwr.createZip(fileName, v.size() == 1 || fileName.endsWith(".png") || fileName.endsWith(".pngj") ? "BINARY" : "ZIPDATA", params)) == null) eval.evalError("#CANCELED#", null);
-}}} else if (data === "SPT") {
+}break;
+case "SPT":
 if (isCoord) {
 var tainted = this.vwr.ms.getTaintedAtoms(2);
 this.vwr.setAtomCoordsRelative(JU.P3.new3(0, 0, 0), null);
@@ -3612,51 +3668,76 @@ this.vwr.ms.setTaintedAtoms(tainted, 2);
 } else {
 data = this.vwr.getStateInfo();
 if (localPath != null || remotePath != null) data = JV.FileManager.setScriptFileReferences(data, localPath, remotePath, null);
-}} else if (data === "ZIP" || data === "ZIPALL") {
+}break;
+case "ZIP":
+case "ZIPALL":
 if (fileName != null) {
 params =  new java.util.Hashtable();
 if (scripts != null) params.put("data", scripts);
 if ((bytes = data = this.vwr.createZip(fileName, type, params)) == null) eval.evalError("#CANCELED#", null);
-}} else if (data === "HISTORY") {
+}break;
+case "HISTORY":
 data = this.vwr.getSetHistory(2147483647);
 type = "SPT";
-} else if (data === "MO" || data === "NBO") {
+break;
+case "MO":
+case "NBO":
 data = this.getMoJvxl(2147483647, data === "NBO");
 type = "XJVXL";
-} else if (data === "PMESH" || data === "PMB") {
+break;
+case "PMESH":
+case "PMB":
 if ((data = this.getIsosurfaceJvxl(29, data)) == null) this.error(31);
 type = "XJVXL";
-} else if (data === "ISOMESH") {
+break;
+case "ISOMESH":
 if ((data = this.getIsosurfaceJvxl(24, data)) == null) this.error(31);
 type = "PMESH";
-} else if (data === "ISOMESHBIN") {
+break;
+case "ISOMESHBIN":
 if ((bytes = this.getIsosurfaceJvxl(24, "ISOMESHBIN")) == null) this.error(31);
 type = "PMB";
-} else if (data === "ISOPLY") {
+break;
+case "ISOPLY":
 if ((data = this.getIsosurfaceJvxl(24, data)) == null) this.error(31);
 type = "PLY";
-} else if (data === "ISOPLYBIN") {
+break;
+case "ISOPLYBIN":
 if ((bytes = this.getIsosurfaceJvxl(24, "ISOPLYBIN")) == null) this.error(31);
 type = "PLB";
-} else if (data === "ISOSURFACE" || data === "MESH") {
+break;
+case "ISOSURFACE":
+case "MESH":
 if ((data = this.getIsosurfaceJvxl(isContact ? 25 : 24, data)) == null) this.error(31);
 type = (data.indexOf("<?xml") >= 0 ? "XJVXL" : "JVXL");
 if (!showOnly) this.showString(this.getShapeProperty(isContact ? 25 : 24, "jvxlFileInfo"));
+break;
+default:
+if (JU.PT.isOneOf(data, ";CIF;SCIF;CIFP1;SDF;MOL;MOL67;V2000;V3000;CD;JSON;XYZ;XYZRN;XYZVIB;CML;QCJSON;PWMAT;PWSLAB;XSF;")) {
+var selected = this.vwr.bsA();
+var bsModel;
+this.vwr.setErrorMessage(null, " (" + selected.cardinality() + " atoms)");
+data = this.vwr.getModelExtract(selected, isCoord, false, data);
+msg = this.vwr.getErrorMessageUn();
+this.vwr.setErrorMessage(null, null);
+if (this.vwr.am.cmi >= 0 && !selected.equals(bsModel = this.vwr.getModelUndeletedAtomsBitSet(this.vwr.am.cmi))) msg += "\nNote! Selected atom set " + selected + " is not the same as the current model " + bsModel;
+if (data.startsWith("ERROR:")) bytes = data;
 } else {
 if (isCommand && showOnly && fileName == null) {
 showOnly = false;
 fileName = "\1";
-}len = -1;
-if (sceneType == null && quality < 0) quality = -1;
-}if (data == null) data = "";
-if (len == 0) len = (bytes == null ? data.length : (typeof(bytes)=='string') ? (bytes).length : (bytes).length);
+}if (sceneType == null && quality < 0) quality = -1;
+}break;
+}
+if (data == null) data = "";
 }if (!isCommand) return data;
 if (showOnly) {
 eval.showStringPrint(data, true);
 return "";
 }if (bytes != null && (typeof(bytes)=='string')) return this.writeMsg(bytes);
-if (writeFileData) return this.writeMsg(this.vwr.writeFileData(fileName, type, 0, null));
-if (type.equals("SCENE")) bytes = sceneType;
+if (writeFileData) {
+return this.writeMsg(this.vwr.writeFileData(fileName, type, 0, null));
+}if (type.equals("SCENE")) bytes = sceneType;
  else if (bytes == null && (!isImage || fileName != null)) bytes = data;
 if (timeMsg) JU.Logger.startTimer("write");
 if (isImage) {
@@ -3703,6 +3784,13 @@ if (isImage && ret.startsWith("OK")) ret += "; width=" + width + "; height=" + h
 if (timeMsg) this.showString(JU.Logger.getTimerMsg("write", 0));
 return this.writeMsg(ret + (msg == null ? "" : msg));
 }, "~A");
+Clazz_defineMethod(c$, "getWriteType", 
+function(fileName, def){
+if (fileName != null) {
+var pt = fileName.indexOf('.');
+if (pt >= 0) return fileName.substring(pt + 1).toUpperCase();
+}return def;
+}, "~S,~S");
 Clazz_defineMethod(c$, "prepareBinaryOutput", 
 function(tvar){
 var m = tvar.getMap();
@@ -3770,7 +3858,7 @@ var tok = (Clazz_instanceOf(token,"JS.SV") && token.tok != 1073741824 ? 0 : toke
 if (tok == 4) {
 token = JS.T.getTokenFromName(str.toLowerCase());
 if (token != null) tok = token.tok;
-}if (tok != 1296041985 && tok != 1073742158 && tok != 1715472409 && tok != 1228935687) this.checkLength(-3);
+}if (tok != 1296041986 && tok != 1073742158 && tok != 1715472409 && tok != 1228935687) this.checkLength(-3);
 if (this.slen == 2 && str.indexOf("?") >= 0) {
 msg = this.vwr.getAllSettings(str.substring(0, str.indexOf("?")));
 tok = -1;
@@ -3915,7 +4003,7 @@ if (this.chk) break;
 msg = ("" + this.vwr.evaluateExpression("symop('wyckoff" + (tok == 1086324755 ? "m" : "") + "')")).trim();
 break;
 case 134217764:
-case 1296041985:
+case 1296041986:
 var sym = this.vwr.getOperativeSymmetry();
 switch (tok) {
 case 134217764:
@@ -3958,7 +4046,7 @@ var href = (isNames ? "https://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-getge
 msg = href;
 this.vwr.showUrl(href);
 break;
-}case 1296041985:
+}case 1296041986:
 msg = "";
 var info = null;
 if ((len = this.slen) == 2) {
@@ -4209,7 +4297,7 @@ break;
 case 1228935687:
 if (this.slen == 2) {
 if (!this.chk) {
-if (filter == null) this.vwr.sm.clearConsole();
+if (filter == null && !eval.isFuncReturn) this.vwr.sm.clearConsole();
 msg = this.e.getCurrentModelFileAsString(null);
 }if (msg == null) msg = "<unavailable>";
 break;
@@ -4415,7 +4503,7 @@ this.setShapeProperty(1, "type", Integer.$valueOf(1023));
 return true;
 });
 Clazz_defineMethod(c$, "unitcell", 
-function(i, isModelkit){
+function(i, modelkitTok){
 var eval = this.e;
 var icell = 2147483647;
 var mad10 = 2147483647;
@@ -4428,7 +4516,7 @@ var newUC = null;
 var ucname = null;
 var isOffset = false;
 var isReset = false;
-var isPacked = false;
+var packing = -1;
 var sym = (this.chk ? null : this.vwr.getCurrentUnitCell());
 var tok = this.tokAt(++i);
 switch (tok) {
@@ -4581,6 +4669,7 @@ break;
 break;
 case 1095241729:
 case 4:
+case 1814695966:
 case 1073741824:
 var s = this.paramAsStr(i).toLowerCase();
 if (s.equals("rhombohedral") || s.equals("r")) {
@@ -4593,7 +4682,8 @@ s = "a-b,b-c,a+b+c";
 if (s.indexOf(",") >= 0 || this.chk) {
 newUC = s;
 break;
-}var stype = null;
+}if (!s.startsWith("unitcell_")) {
+var stype = null;
 this.vwr.ms.setModelCagePts(-1, null, null);
 newUC = this.vwr.getModelInfo("unitcell_conventional");
 var modelIsPrimitive = this.vwr.getModelInfo("isprimitive") != null;
@@ -4627,7 +4717,7 @@ JU.SimpleUnitCell.getReciprocal(oabc, oabc, scale);
 ucname = s;
 if (s.indexOf(",") >= 0) newUC = s;
 }}break;
-default:
+}default:
 var ret =  new Array(1);
 if (this.getUnitCellParameter(i, ret)) {
 oabc = ret[0];
@@ -4640,46 +4730,70 @@ i = eval.iToken;
 } else {
 i--;
 }} else if (newUC != null) {
-if (!this.chk && isModelkit) {
+if (!this.chk && modelkitTok != 0) {
 if (sym == null) {
-this.assignSpaceGroup(null, "P1", newUC, false, false, "unitcell");
-} else if (sym.fixUnitCell(newUC)) {
+if (modelkitTok == 1073741938) return;
+this.assignSpaceGroup(null, "P1", newUC, packing, false, "unitcell");
+} else if (modelkitTok != 1073741938 && sym.fixUnitCell(newUC)) {
 eval.invArgStr("Unit cell is incompatible with current space group");
 }}i = eval.iToken;
 } else if (oabc != null) {
 i = eval.iToken;
 }break;
 }
-if (isModelkit && this.tokAt(i + 1) == 1073742080) {
-isPacked = true;
-i = ++eval.iToken;
-}mad10 = eval.getSetAxesTypeMad10(++i);
+switch (modelkitTok) {
+case 1073741938:
+if (eval.isFloatParameter(i + 1)) {
+packing = this.floatParameter(++i);
+eval.iToken = i;
+} else {
+packing = 0;
+}mad10 = 0;
+break;
+case 1814695966:
+if (this.tokAt(i + 1) == 1073742080) {
+packing = (eval.isFloatParameter(++i + 1) ? this.floatParameter(++i) : 0);
+eval.iToken = i;
+}default:
+mad10 = eval.getSetAxesTypeMad10(++i);
+break;
+}
 eval.checkLast(eval.iToken);
 if (this.chk || mad10 == 2147483647) return;
 if (oabc == null && newUC != null) oabc = this.vwr.getV0abc(-1, newUC);
-if (icell != 2147483647) {
+if (modelkitTok == 1073741938) {
+if (sym == null || icell != 2147483647 || id != null || isReset) this.invArg();
+if (oabc == null) {
+oabc = sym.getUnitCellVectors();
+if (pt == null) pt =  new JU.P3();
+sym.toCartesian(pt, true);
+oabc[0] = pt;
+}this.vwr.getModelkit(false).cmdFillOABC(oabc, packing, this.e.fullCommand);
+return;
+}if (icell != 2147483647) {
 if (sym != null) sym.setOffset(icell);
 } else if (id != null) {
 this.vwr.setCurrentCage(id);
 } else if (isReset || oabc != null) {
-isReset = (isModelkit || sym == null ? this.vwr.getModelkit(false).transformAtomsToUnitCell(sym, oabc, ucname) : true);
+isReset = (modelkitTok == 1814695966 || sym == null ? this.vwr.getModelkit(false).transformAtomsToUnitCell(sym, oabc, ucname) : true);
 if (isReset) {
-if (isModelkit && sym != null) {
+if (modelkitTok == 1814695966 && sym != null) {
 this.vwr.ms.setSpaceGroup(this.vwr.am.cmi, sym.getUnitCell(oabc, false, null), null);
 return;
 }this.vwr.ms.setModelCagePts(-1, oabc, ucname);
 if (sym == null) {
 this.vwr.setNewRotationCenter(this.vwr.getUnitCellCenter());
-}}}var sym0 = (isModelkit ? this.vwr.ms.getUnitCell(-1 - this.vwr.am.cmi) : null);
+}}}var sym0 = (modelkitTok == 1814695966 ? this.vwr.ms.getUnitCell(-1 - this.vwr.am.cmi) : null);
 eval.setObjectMad10(33, "unitCell", mad10);
 if (pt != null) {
 sym = this.vwr.ms.getUnitCell(-2147483648);
 if (sym != null) sym.setOffsetPt(pt);
-}if (isModelkit && sym.getFractionalOffset(true) == null) {
-this.assignSpaceGroup(this.vwr.getModelUndeletedAtomsBitSet(this.vwr.am.cmi), sym0.getSpaceGroupClegId(), null, isPacked, false, this.e.fullCommand);
+}if (modelkitTok == 1814695966 && sym.getFractionalOffset(true) == null) {
+sym.setSpaceGroupTo(sym0);
+if (packing >= 0) this.vwr.getModelkit(false).cmdPackUnitCell(sym, this.vwr.getModelUndeletedAtomsBitSet(this.vwr.am.cmi), packing);
 }if (tickInfo != null) this.setShapeProperty(33, "tickInfo", tickInfo);
 if (ucname != null) this.showString(ucname + (oabc == null ? "" : " " + JU.Escape.e(oabc)));
-}, "~N,~B");
+}, "~N,~N");
 Clazz_defineMethod(c$, "getUVBoxFromHKL", 
 function(uc, hkl, plane){
 var h = Clazz_floatToInt(hkl.x);
@@ -4903,7 +5017,7 @@ this.invArg();
 break;
 }
 break;
-case 1296041985:
+case 1296041986:
 switch (this.tokAt(++i)) {
 case 4:
 case 1073742333:
@@ -4939,13 +5053,14 @@ case 1073742024:
 value = this.paramAsStr(++i).toLowerCase();
 if (!this.vwr.isModelKitOption('M', value)) this.invArg();
 break;
+case 1073741938:
 case 1814695966:
 if (this.e.isArrayParameter(i + 1)) {
-this.unitcell(2, true);
+this.unitcell(2, tok);
 return;
-}value = (this.tokAt(i + 1) == 4 ? this.paramAsStr(++i).toLowerCase() : null);
+}value = (this.tokAt(i + 1) == 4 || this.tokAt(i + 1) == 1814695966 ? this.paramAsStr(++i).toLowerCase() : null);
 if (value == null || !this.vwr.isModelKitOption('U', value)) {
-this.unitcell(2, true);
+this.unitcell(2, tok);
 return;
 }break;
 case 1088421903:
@@ -4993,10 +5108,12 @@ var isConnect = (mode == 4106);
 var isDelete = (mode == 12291);
 var isMove = (mode == 4129);
 var isSpacegroup = (mode == 134217764);
-var isPacked = (mode == 1073742080);
-if ((isPacked || isSpacegroup) && !isModelkit) {
+var packing = -1;
+if (mode == 1073742080) {
+packing = (this.e.isFloatParameter(i + 1) ? this.floatParameter(++i) : 0);
+}if ((packing >= 0 || isSpacegroup) && !isModelkit) {
 this.invArg();
-}if (isAtom || isBond || isConnect || isSpacegroup || isDelete || isMove || isAdd || isPacked) {
+}if (isAtom || isBond || isConnect || isSpacegroup || isDelete || isMove || isAdd || packing >= 0) {
 i++;
 } else {
 isAtom = true;
@@ -5031,7 +5148,7 @@ default:
 this.invArg();
 }
 }i = ++this.e.iToken;
-} else if (isPacked) {
+} else if (packing >= 0) {
 bs = bsModelAtoms;
 } else if (isAtom && this.tokAt(i) == 4 || mode == 1275069441) {
 } else if (!isSpacegroup || this.e.isAtomExpression(i)) {
@@ -5053,7 +5170,8 @@ i = this.e.iToken;
 type = this.e.optParameterAsString(i + 1);
 i = this.e.iToken;
 if (type.toLowerCase().equals("packed")) {
-isPacked = true;
+packing = (this.e.isFloatParameter(i + 1) ? this.floatParameter(++i) : 0);
+this.e.iToken = i;
 type = "";
 }} else if (this.e.tokAt(i) == 1086324754) {
 this.e.iToken = i - 1;
@@ -5067,8 +5185,8 @@ pts = this.e.getPointArray(this.e.iToken + 1, -1, false, true);
 }if (type.length == 0) type = null;
 switch (this.tokAt(this.e.iToken + 1)) {
 case 1073742080:
-isPacked = true;
-++this.e.iToken;
+this.e.iToken++;
+packing = (this.e.isFloatParameter(this.e.iToken + 1) ? this.floatParameter(++this.e.iToken) : 0);
 break;
 case 1086324754:
 ++this.e.iToken;
@@ -5077,8 +5195,7 @@ var w = (wyckoff.equalsIgnoreCase("all") ? 'L' : wyckoff.equalsIgnoreCase("gener
 if (w < 'a' && w != 'A' && w != 'G' && w != 'L' || w > 'z') this.invArg();
 wyckoff = "" + w;
 if ("packed".equals(this.e.optParameterAsString(this.e.iToken + 1))) {
-isPacked = true;
-++this.e.iToken;
+packing = (this.e.isFloatParameter(++this.e.iToken + 1) ? this.floatParameter(++this.e.iToken) : 0);
 }break;
 }
 } else if (isMove) {
@@ -5095,16 +5212,15 @@ if (type.equals(".")) {
 if (sym == null) type = "P1";
  else type = (i == this.slen ? null : sym.getSpaceGroupClegId());
 }if ("packed".equalsIgnoreCase(type)) {
-isPacked = true;
+packing = (this.e.isFloatParameter(this.e.iToken + 1) ? this.floatParameter(++this.e.iToken) : 0);
 type = sym.getSpaceGroupClegId();
 }if (this.tokAt(this.e.iToken + 1) == 1814695966) {
 var ret =  new Array(1);
 this.getUnitCellParameter(this.e.iToken + 2, ret);
 paramsOrUC = ret[0];
 if (paramsOrUC == null) this.invArg();
-}if (!isPacked && this.tokAt(this.e.iToken + 1) == 1073742080) {
-isPacked = true;
-++this.e.iToken;
+}if (packing < 0 && this.tokAt(this.e.iToken + 1) == 1073742080) {
+packing = (this.e.isFloatParameter(this.e.iToken + 1) ? this.floatParameter(++this.e.iToken) : 0);
 }} else if (isConnect) {
 if (index2 < 0) {
 bs = this.expFor(i, bsModelAtoms);
@@ -5136,7 +5252,7 @@ pts =  Clazz_newArray(-1, [pt]);
 } else if (bs == null && wyckoff == null) {
 if (type == null) this.invArg();
  else wyckoff = "G";
-}}var na = this.vwr.getModelkit(false).cmdAssignAddAtoms(type + (wyckoff != null ? ":" + wyckoff : ""), pts, bs, (isPacked ? "packed" : ""), this.e.fullCommand);
+}}var na = this.vwr.getModelkit(false).cmdAssignAddAtoms(type == null ? null : type + (wyckoff != null ? ":" + wyckoff : ""), pts, bs, packing, this.e.fullCommand);
 if (this.e.doReport()) this.e.report(J.i18n.GT.i(J.i18n.GT.$("{0} atoms added"), na), false);
 break;
 case 12291:
@@ -5144,7 +5260,7 @@ var nd = this.vwr.getModelkit(false).cmdAssignDeleteAtoms(bs);
 if (this.e.doReport()) this.e.report(J.i18n.GT.i(J.i18n.GT.$("{0} atoms deleted"), nd), false);
 break;
 case 4129:
-var nm = this.vwr.getModelkit(false).cmdAssignMoveAtoms(bs, index, JU.P3.newP(pt), pts, true, false);
+var nm = this.vwr.getModelkit(false).cmdAssignMoveAtoms(bs, index, JU.P3.newP(pt), pts, true, false, true);
 if (nm > 0) this.vwr.checkCoordinatesChanged(bs);
 if (this.e.doReport()) this.e.report(J.i18n.GT.i(J.i18n.GT.$("{0} atoms moved"), nm), false);
 break;
@@ -5152,25 +5268,25 @@ case 134217764:
 if (isZap) {
 this.vwr.zap(false, false, false);
 sym = null;
-}if (isPacked && type.equalsIgnoreCase("packed")) {
+}if (packing >= 0 && type.equalsIgnoreCase("packed")) {
 type = null;
 if (sym == null) this.invArg();
 } else {
-if (!isPacked) {
+if (packing < 0) {
 var ptend = i + 1;
 for (var j = ptend; j < this.slen; j++) {
 if (this.tokAt(j) == 1073742080) {
-isPacked = true;
+packing = (this.e.isFloatParameter(j + 1) ? this.floatParameter(++j) : 0);
 ptend = j;
 break;
 }}
 if (ptend < this.slen) type = null;
-}if (type == null) type = this.concatString(i, (isPacked ? "packed" : "unitcell"));
+}if (type == null) type = this.concatString(i, (packing >= 0 ? "packed" : "unitcell"));
 if (type.length > 0 && type.indexOf(":") < 0 && type.indexOf(">") < 0 && (type.indexOf(",") > 0 || "rh".indexOf(type) >= 0)) {
 if (sym == null) this.invArg();
 var cleg = sym.getSpaceGroupClegId();
-type = cleg.substring(0, cleg.indexOf(":") + 1) + type;
-}}var s = this.assignSpaceGroup(bs, type, paramsOrUC, isPacked, doDraw, this.e.fullCommand);
+type = (cleg == null ? "[" + sym.getSpaceGroupName() + "]:" : cleg.substring(0, cleg.indexOf(":") + 1)) + type;
+}}var s = this.assignSpaceGroup(bs, type, paramsOrUC, packing, doDraw, this.e.fullCommand);
 var isError = s.endsWith("!");
 if (isError) this.e.invArgStr(s);
 if (this.e.doReport()) this.e.showString(s);
@@ -5178,14 +5294,14 @@ break;
 }
 }, "~B");
 Clazz_defineMethod(c$, "assignSpaceGroup", 
-function(bs, cleg, paramsOrUC, isPacked, doDraw, cmd){
+function(bs, cleg, paramsOrUC, packing, doDraw, cmd){
 var sb =  new JU.SB();
 var ret = this.vwr.getSymStatic().staticTransformSpaceGroup(bs, cleg, paramsOrUC, sb);
 var isError = ret.endsWith("!");
 if (isError) return ret;
-if (isPacked || doDraw) this.vwr.getModelkit(false).cmdAssignSpaceGroup(ret, sb, cmd, isPacked, doDraw);
+if (packing >= 0 || doDraw) this.vwr.getModelkit(false).cmdAssignSpaceGroup(ret, sb, cmd, packing, doDraw);
 return sb.toString();
-}, "JU.BS,~S,~O,~B,~B,~S");
+}, "JU.BS,~S,~O,~N,~B,~S");
 Clazz_defineMethod(c$, "concatString", 
 function(i, butNot){
 var s = "";
@@ -5201,15 +5317,33 @@ return s;
 Clazz_defineMethod(c$, "getUnitCellParameter", 
 function(i, ret){
 ret[0] = null;
-if (this.tokAt(i) == 8) return false;
+var tok = this.tokAt(i);
 var ei = this.e.iToken;
-if (this.tokAt(i) == 4) {
-var tr = this.paramAsStr(i);
+var isNot = false;
+if (tok == 268439040) {
+isNot = true;
+tok = this.tokAt(++i);
+}switch (tok) {
+case 8:
+return false;
+case 1073741824:
+case 4:
+case 1814695966:
+var tr = this.paramAsStr(i).toLowerCase();
 var uc = this.vwr.getCurrentUnitCell();
 if (uc == null) this.invArg();
-if (!this.chk) ret[0] = uc.getV0abc(tr, null);
-return true;
-}if (this.e.isArrayParameter(i)) {
+if (!this.chk) {
+if (tr.equalsIgnoreCase("unitcell")) {
+tr = "a,b,c";
+} else if (tr.startsWith("unitcell_")) {
+tr = this.vwr.getCurrentModelAuxInfo().get(tr);
+} else {
+tr = JU.SimpleUnitCell.parseSimpleMath(this.vwr, tr);
+}if (isNot) tr = "!" + tr;
+ret[0] = uc.getV0abc(tr, null);
+}return true;
+}
+if (this.e.isArrayParameter(i)) {
 this.e.ignoreError = true;
 if (this.tokAt(i + 2) != 1073742332) {
 try {
@@ -5296,7 +5430,7 @@ function(iShape, type){
 switch (type) {
 case "PMESH":
 case "MESH":
-type = "jvxlMeshX";
+type = "jvxlMeshXml";
 break;
 case "ISOMESH":
 type = "pmesh";
@@ -5345,28 +5479,6 @@ c$.tokAtArray = Clazz_defineMethod(c$, "tokAtArray",
 function(i, args){
 return (i < args.length && args[i] != null ? args[i].tok : 0);
 }, "~N,~A");
-Clazz_defineMethod(c$, "getPlotMinMax", 
-function(data, isMax, tok){
-if (data == null) return 0;
-switch (tok) {
-case 1111490568:
-case 1111490569:
-case 1111490570:
-return (isMax ? 180 : -180);
-case 1111490565:
-case 1111490576:
-return (isMax ? 360 : 0);
-case 1111490574:
-return (isMax ? 1 : -1);
-}
-var fmax = (isMax ? -1.0E10 : 1E10);
-for (var i = data.length; --i >= 0; ) {
-var f = data[i];
-if (Float.isNaN(f)) continue;
-if (isMax == (f > fmax)) fmax = f;
-}
-return fmax;
-}, "~A,~B,~N");
 Clazz_defineMethod(c$, "parseDataArray", 
 function(str, is3D){
 str = JU.Parser.fixDataString(str);
@@ -5401,20 +5513,45 @@ System.out.println("Error reading 3D data -- nX = " + nX + ", but only " + iX + 
 return  Clazz_newFloatArray (1, 1, 1, 0);
 }return data;
 }, "~S,~B");
-Clazz_defineMethod(c$, "getBitsetPropertyFloat", 
-function(bs, tok, property, min, max){
-var odata = (property == null || tok == (1086325010) || tok == (1111490843) ? this.e.getBitsetProperty(bs, null, tok, null, null, property, null, false, 2147483647, false) : this.vwr.getDataObj(property, bs, 1));
-if (odata == null || !JU.AU.isAF(odata)) return (bs == null ? null :  Clazz_newFloatArray (bs.cardinality(), 0));
-var data = odata;
-if (!Float.isNaN(min)) for (var i = 0; i < data.length; i++) if (data[i] < min) data[i] = NaN;
-
-if (!Float.isNaN(max)) for (var i = 0; i < data.length; i++) if (data[i] > max) data[i] = NaN;
-
-return data;
-}, "JU.BS,~N,~S,~N,~N");
+Clazz_defineMethod(c$, "sync", 
+function(){
+var text = "";
+var applet = "";
+var port = JU.PT.parseInt(this.e.optParameterAsString(1));
+if (port == -2147483648) {
+this.checkLength(-3);
+port = 0;
+switch (this.slen) {
+case 1:
+applet = "*";
+text = "ON";
+break;
+case 2:
+applet = this.paramAsStr(1);
+if (applet.indexOf("jmolApplet") == 0 || JU.PT.isOneOf(applet, ";*;.;^;")) {
+text = "ON";
+if (!this.chk) this.vwr.syncScript(text, applet, 0);
+applet = ".";
+break;
+}text = applet;
+applet = "*";
+break;
+case 3:
+applet = this.paramAsStr(1);
+text = (this.tokAt(2) == 528443 ? "GET_GRAPHICS" : this.paramAsStr(2));
+break;
+}
+} else {
+var v = null;
+if (this.slen > 2 && (v = this.e.setVariable(2, -1, "", false)) == null) return;
+text = (this.slen == 2 ? null : v.tok == 6 ? v.toJSON() : v.asString());
+applet = null;
+}if (this.chk) return;
+this.vwr.syncScript(text, applet, port);
+});
 c$.labeler = null;
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026
 })(Clazz
 ,Clazz.getClassName
 ,Clazz.newLongArray

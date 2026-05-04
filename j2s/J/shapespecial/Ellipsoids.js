@@ -174,7 +174,7 @@ if (options != null) this.setSize(2147483647, bs);
 for (var e, $e = this.atomEllipsoids.values().iterator (); $e.hasNext()&& ((e = $e.next ()) || true);) if (e.tensor.type.equals(this.typeSelected) && e.tensor.isSelected(bs, -1)) e.options = options;
 
 return;
-}if ("params" === propertyName) {
+}if ("pymolparams" === propertyName) {
 var data = value;
 data[2] = null;
 this.typeSelected = "0";
@@ -321,4 +321,4 @@ atom.setClickable(this.vf);
 }
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -13,7 +13,7 @@ return true;
 });
 c$.validateAndAllocateA = Clazz.defineMethod(c$, "validateAndAllocateA", 
 function(chain, group3, seqcode, firstIndex, lastIndex, specialAtomIndexes){
-return (firstIndex != lastIndex || specialAtomIndexes[2] != firstIndex ? null :  new JM.AlphaMonomer().set2(chain, group3, seqcode, firstIndex, lastIndex, JM.AlphaMonomer.alphaOffsets));
+return (specialAtomIndexes[2] != firstIndex ? null :  new JM.AlphaMonomer().set2(chain, group3, seqcode, firstIndex, lastIndex,  Clazz.newByteArray (1, 0)));
 }, "JM.Chain,~S,~N,~N,~N,~A");
 Clazz.defineMethod(c$, "isAlphaMonomer", 
 function(){
@@ -89,7 +89,7 @@ function(possiblyPreviousMonomer){
 if (possiblyPreviousMonomer == null) return true;
 var atom1 = this.getLeadAtom();
 var atom2 = possiblyPreviousMonomer.getLeadAtom();
-return atom1.isBonded(atom2) || atom1.distance(atom2) <= 4.2;
+return atom1.isBonded(atom2) || atom1.distance(atom2) <= 4.5;
 }, "JM.Monomer");
 Clazz.overrideMethod(c$, "getQuaternionFrameCenter", 
 function(qType){
@@ -150,6 +150,5 @@ break;
 }
 return JU.Quat.getQuaternionFrameV(vA, vB, vC, false);
 }, "~S");
-c$.alphaOffsets =  Clazz.newByteArray(-1, [0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 10:50:05 CST 2026

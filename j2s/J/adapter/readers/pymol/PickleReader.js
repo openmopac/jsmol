@@ -72,7 +72,7 @@ o = this.pop();
 if (this.writer != null) this.dump("append", o);
 var lst = this.peek();
 lst.addLast(o);
-if (lst.size() < 10) this.dump("appended to " + lst);
+if (this.writer != null && lst.size() < 10) this.dump("appended to " + lst);
 break;
 case 101:
 l = this.getObjects(this.getMark());
@@ -316,6 +316,7 @@ this.stack.addLast(o);
 }, "~O");
 Clazz.defineMethod(c$, "dump", 
 function(key, o){
+if (this.writer == null) return;
 var s = null;
 if (o == null) {
 s = "null";
@@ -336,6 +337,7 @@ this.dump(key + " " + s);
 }, "~S,~O");
 Clazz.defineMethod(c$, "dump", 
 function(string){
+if (this.writer == null) return;
 try {
 this.writer.write(this.binaryDoc.getPosition() + "\t");
 this.writer.write(string + "\n");
@@ -356,4 +358,4 @@ if (this.writer != null) this.dump("pop");
 return this.stack.removeItemAt(this.stack.size() - 1);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

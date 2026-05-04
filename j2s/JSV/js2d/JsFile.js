@@ -41,9 +41,13 @@ c$.getURLContents = Clazz.defineMethod(c$, "getURLContents",
 function(url, outputBytes, post){
 try {
 var conn = url.openConnection();
-if (outputBytes != null) conn.outputBytes(outputBytes);
- else if (post != null) conn.outputString(post);
-return conn.getContents();
+if (outputBytes != null) {
+conn.outputBytes(outputBytes);
+} else if (post != null) {
+if (post.charAt(0) == '{') {
+post = post.$replace("\n", "\\n");
+}conn.outputString(post);
+}return conn.getContents();
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
 return e.toString();
@@ -53,4 +57,4 @@ throw e;
 }
 }, "java.net.URL,~A,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

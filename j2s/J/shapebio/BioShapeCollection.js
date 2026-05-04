@@ -84,7 +84,7 @@ var bioShape = this.bioShapes[i];
 if (bioShape.monomerCount > 0) bioShape.setColixBS(colix, pid, bsSelected);
 }
 return;
-}if ("params" === propertyName) {
+}if ("pymolparams" === propertyName) {
 var n = bsSelected.length();
 var atomMap =  Clazz.newIntArray (n, 0);
 for (var pt = 0, i = bsSelected.nextSetBit(0); i >= 0; i = bsSelected.nextSetBit(i + 1), pt++) atomMap[i] = pt;
@@ -165,4 +165,4 @@ function(i){
 return this.bioShapes[i];
 }, "~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 09:57:54 CST 2026

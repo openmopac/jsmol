@@ -511,8 +511,10 @@ if (p.centralAtom != null) atoms[p.centralAtom.i].setShapeVisibility(this.vf, vi
 Clazz.defineMethod(c$, "buildPolyhedra", 
 function(){
 var p = null;
-if (this.info == null && this.centers == null && (this.center == null || this.nPoints == 0)) return;
+if (this.info == null && this.centers == null && (this.center == null || this.nPoints == 0 && this.bsVertices == null)) return;
 if (this.info != null && this.info.containsKey("id")) {
+var o = this.info.get("id");
+this.thisID = (Clazz.instanceOf(o,"JS.SV") ? (o).asString() : o.toString());
 p =  new J.shapespecial.Polyhedron().setInfo(this.vwr, this.info, this.ms.at);
 } else if (this.thisID != null) {
 if (JU.PT.isWild(this.thisID)) return;
@@ -984,4 +986,4 @@ return s.toString();
 c$.randomPoint = JU.P3.new3(3141, 2718, 1414);
 c$.MAX_DISTANCE_TO_PLANE = 0.1;
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

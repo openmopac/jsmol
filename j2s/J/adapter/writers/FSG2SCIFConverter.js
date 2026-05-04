@@ -122,4 +122,4 @@ return natoms;
 c$.v0 = JU.V3.new3(3.14159, 2.71828, 1.4142);
 c$.headerKeys =  Clazz.newArray(-1, ["_space_group_spin.transform_spinframe_P_abc", "_space_group_spin.collinear_direction", "_space_group_spin.coplanar_perp_uvw", "_space_group_spin.rotation_axis_cartn", "_space_group_spin.rotation_angle", "_space_group_spin.number_SpSG_Chen", "_space_group_spin.name_SpSG_Chen"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

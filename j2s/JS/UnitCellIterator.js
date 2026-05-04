@@ -133,9 +133,7 @@ function(){
 var a = this.getAtom();
 if (JU.Logger.debugging) JU.Logger.info("draw ID p_" + this.nFound + " " + this.p + " //" + a + " " + this.t);
 if (this.p.distanceSquared(a) < 0.0001) return a;
-var p =  new JU.Point3fi();
-p.setT(this.p);
-p.i = a.i;
+var p = JU.Point3fi.newPF(this.p, a.i);
 p.sD = a.getElementNumber();
 return p;
 });
@@ -146,4 +144,4 @@ this.center = null;
 this.translation = null;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

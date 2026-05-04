@@ -86,7 +86,10 @@ spectrum.setYFactor(this.yFactor);
 spectrum.setLongDate(this.LongDate);
 spectrum.setOrigin(this.origin);
 spectrum.setOwner(this.owner);
-spectrum.setNucleusAndFreq(this.obNucleus, true);
+if (this.obNucleus.length > 0) {
+spectrum.setObservedNucleus(this.obNucleus);
+spectrum.setObservedFreq(this.obFreq);
+}spectrum.setNucleusAndFreq(this.obNucleus, true);
 myLDRTable.addHeader("##PATHLENGTH", this.pathlength);
 myLDRTable.addHeader("##RESOLUTION", this.resolution);
 if (!this.strObFreq.equals("")) myLDRTable.addHeader("##.OBSERVEFREQUENCY", this.strObFreq);
@@ -178,4 +181,4 @@ throw e;
 }, "~N,~B");
 c$.tagNames =  Clazz.newArray(-1, ["audittrail", "experimentstepset", "sampleset", "xx result", "spectrum", "metadatalist", "conditionlist", "parameterlist", "sample", "spectrumdata", "peaklist", "author", "peaklist", "acquisitionnucleus", "effectiveexcitationfield", "spectrum1d", "spectrumAnnotationList", "chemicalcompound", "identifier", "npmrd_id", "structure", "atomlist", "atom", "bondlist", "bond", "atomassignmentlist", "multiplet", "atoms", "multiplicity", "peakList", "peak", "acquisition", "spectrumdataarray", "spectrumlist"]);
 });
-;//5.0.1-v7 Wed Jul 30 21:56:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

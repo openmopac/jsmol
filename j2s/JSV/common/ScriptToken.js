@@ -159,24 +159,24 @@ Clazz.defineEnumConstant(c$, "OVERLAYSTACKED", 46, ["TF", "whether viewed spectr
 Clazz.defineEnumConstant(c$, "PEAK", 47, ["[IR,CNMR,HNMR,MS] [#nnn or ID=xxx or text] [ALL], for example: PEAK HNMR #3", "highlights a peak based on its number or title text, optionally checking all loade spectra"]);
 Clazz.defineEnumConstant(c$, "PEAKCALLBACKFUNCTIONNAME", 48, []);
 Clazz.defineEnumConstant(c$, "PEAKLIST", 49, ["[THRESHOLD=n] [INTERPOLATE=PARABOLIC or NONE]", "creates a peak list based on a threshold value and parabolic or no interpolation"]);
-Clazz.defineEnumConstant(c$, "PEAKTABCOLOR", 50, ["C", "sets the color of peak marks for a peak listing"]);
-Clazz.defineEnumConstant(c$, "PEAKTABSON", 51, ["T", "show peak tabs for simulated spectra"]);
-Clazz.defineEnumConstant(c$, "PLOTAREACOLOR", 52, ["C", "sets the color of the plot background"]);
-Clazz.defineEnumConstant(c$, "PLOTCOLOR", 53, ["C", "sets the color of the graph line"]);
-Clazz.defineEnumConstant(c$, "PLOTCOLORS", 54, ["color,color,color,...", "sets the colors of multiple plots"]);
-Clazz.defineEnumConstant(c$, "POINTSONLY", 55, ["TF", "show points only for all data"]);
-Clazz.defineEnumConstant(c$, "PRINT", 56, ["", "prints the current spectrum"]);
-Clazz.defineEnumConstant(c$, "REVERSEPLOT", 57, ["T", "reverses the x-axis of a spectrum"]);
-Clazz.defineEnumConstant(c$, "SCALEBY", 58, ["factor", "multiplies the y-scale of the spectrum by a factor"]);
-Clazz.defineEnumConstant(c$, "SCALECOLOR", 59, ["C", "sets the color of the x-axis and y-axis scales"]);
-Clazz.defineEnumConstant(c$, "SCRIPT", 60, ["filename.jsv", "runs a script from a file"]);
-Clazz.defineEnumConstant(c$, "SELECT", 61, ["spectrumID, spectrumID,...", "selects one or more spectra based on IDs"]);
-Clazz.defineEnumConstant(c$, "SETPEAK", 62, ["xNew, xOld xNew, ?, or NONE", "sets nearest peak to xOld ppm to a new value; NONE resets (1D NMR only)"]);
-Clazz.defineEnumConstant(c$, "SETX", 63, ["xNew, xOld xNew, ?, or NONE", "sets an old ppm position in the spectrum to a new value; NONE resets (1D NMR only)"]);
-Clazz.defineEnumConstant(c$, "SHIFTX", 64, ["dx or NONE", "shifts the x-axis of a 1D NMR spectrum by the given ppm; NONE resets (1D NMR only)"]);
-Clazz.defineEnumConstant(c$, "SHOWERRORS", 65, ["shows recent errors"]);
-Clazz.defineEnumConstant(c$, "SHOWINTEGRATION", 66, ["T", "shows an integration listing"]);
-Clazz.defineEnumConstant(c$, "SHOWKEY", 67, ["T", "shows a color key when multiple spectra are displayed"]);
+Clazz.defineEnumConstant(c$, "PEAKOVERCOLOR", 50, ["C", "sets the color of peak backgrounds when moused over"]);
+Clazz.defineEnumConstant(c$, "PEAKTABCOLOR", 51, ["C", "sets the color of peak marks for a peak listing"]);
+Clazz.defineEnumConstant(c$, "PEAKTABSON", 52, ["T", "show peak tabs for simulated spectra"]);
+Clazz.defineEnumConstant(c$, "PLOTAREACOLOR", 53, ["C", "sets the color of the plot background"]);
+Clazz.defineEnumConstant(c$, "PLOTCOLOR", 54, ["C", "sets the color of the graph line"]);
+Clazz.defineEnumConstant(c$, "PLOTCOLORS", 55, ["color,color,color,...", "sets the colors of multiple plots"]);
+Clazz.defineEnumConstant(c$, "POINTSONLY", 56, ["TF", "show points only for all data"]);
+Clazz.defineEnumConstant(c$, "PRINT", 57, ["", "prints the current spectrum"]);
+Clazz.defineEnumConstant(c$, "REVERSEPLOT", 58, ["T", "reverses the x-axis of a spectrum"]);
+Clazz.defineEnumConstant(c$, "SCALEBY", 59, ["factor", "multiplies the y-scale of the spectrum by a factor"]);
+Clazz.defineEnumConstant(c$, "SCALECOLOR", 60, ["C", "sets the color of the x-axis and y-axis scales"]);
+Clazz.defineEnumConstant(c$, "SCRIPT", 61, ["filename.jsv", "runs a script from a file"]);
+Clazz.defineEnumConstant(c$, "SELECT", 62, ["spectrumID, spectrumID,...", "selects one or more spectra based on IDs"]);
+Clazz.defineEnumConstant(c$, "SETPEAK", 63, ["xNew, xOld xNew, ?, or NONE", "sets nearest peak to xOld ppm to a new value; NONE resets (1D NMR only)"]);
+Clazz.defineEnumConstant(c$, "SETX", 64, ["xNew, xOld xNew, ?, or NONE", "sets an old ppm position in the spectrum to a new value; NONE resets (1D NMR only)"]);
+Clazz.defineEnumConstant(c$, "SHIFTX", 65, ["dx or NONE", "shifts the x-axis of a 1D NMR spectrum by the given ppm; NONE resets (1D NMR only)"]);
+Clazz.defineEnumConstant(c$, "SHOWERRORS", 66, ["shows recent errors"]);
+Clazz.defineEnumConstant(c$, "SHOWINTEGRATION", 67, ["T", "shows an integration listing"]);
 Clazz.defineEnumConstant(c$, "SHOWMEASUREMENTS", 68, ["T", "shows a listing of measurements"]);
 Clazz.defineEnumConstant(c$, "SHOWMENU", 69, ["displays the popup menu"]);
 Clazz.defineEnumConstant(c$, "SHOWPEAKLIST", 70, ["T", "shows a listing for peak picking"]);
@@ -207,4 +207,4 @@ Clazz.defineEnumConstant(c$, "ZOOM", 94, ["OUT or PREVIOUS or NEXT or x1,x2 or x
 Clazz.defineEnumConstant(c$, "ZOOMBOXCOLOR", 95, []);
 Clazz.defineEnumConstant(c$, "ZOOMBOXCOLOR2", 96, []);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

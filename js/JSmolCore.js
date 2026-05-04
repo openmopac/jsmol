@@ -5,6 +5,8 @@
 
 // see JSmolApi.js for public user-interface. All these are private functions
 
+// BH 2026.02.05 fixes issue allowing only one Jmol/JSV pair per page
+// BH 2025.09.04 enables contentType application/json in getFileData
 // BH 2024.02.20 fixes dragging should not stop when mouse leaves applet
 // BH 2024.02.07 adding binary types BCIF 
 // BH 2023.01.19 Jmol._allowKeyboardFocus = true; can be set to false if page jumping is a problem.
@@ -223,6 +225,7 @@ Jmol = (function(document) {
         "rruff.geo.arizona.edu": null, 
         ".rcsb.org": null, 
         		"chemapps.stolaf.edu/jmol/jsmol/": null,
+        		"zakodium.com":null,
 				"ftp.wwpdb.org": null,
 				"pdbe.org": null, 
 				"materialsproject.org": null, 
@@ -1009,8 +1012,7 @@ Jmol = (function(document) {
 		var isMyHost = (fileName.indexOf("://") < 0 || fileName.indexOf(document.location.protocol) == 0 && fileName.indexOf(document.location.host) >= 0);
     var isHttps2Http = (Jmol._httpProto == "https://" && fileName.indexOf("http://") == 0);
 		var isDirectCall = Jmol._isDirectCall(fileName);
-    if (!isDirectCall && fileName.indexOf("?ALLOWSORIGIN?") >= 0) {
-      isDirectCall = true;
+    if (fileName.indexOf("?ALLOWSORIGIN?") >= 0) {
 			fileName = fileName.replace(/\?ALLOWSORIGIN\?/,"");
     }
 		//if (fileName.indexOf("http://pubchem.ncbi.nlm.nih.gov/") == 0)isDirectCall = false;
@@ -1026,6 +1028,10 @@ Jmol = (function(document) {
 				info.type = "POST";
 				info.url = fileName.split("?POST?")[0]
 				info.data = fileName.split("?POST?")[1]
+				if (info.data.startsWith('{"')) {
+					info.contentType = "application/json";
+					info.data = info.data.replaceAll("\n", "\\\\n");
+				}
 			} else {
 				info.type = "GET";
 				info.url = fileName;
@@ -1565,6 +1571,14 @@ Jmol = (function(document) {
 
 	Jmol._setSyncReady = function() {
 		Jmol._syncReady = true;
+		if (Jmol._isJmolJSVSync) {
+			// pairs of Jmol and JSV applets here
+			var applets = Jmol._syncedApplets;
+			for (var i = 0; i < applets.length - 1; i += 2) {
+				applets[i]._linkedApplet = applets[i + 1];
+				applets[i + 1]._linkedApplet = applets[i];
+			}
+		}
 		var s = ""
 		for (var i = 0; i < Jmol._syncedApplets.length; i++)
 			if (Jmol._syncedCommands[i])
@@ -1582,6 +1596,11 @@ Jmol = (function(document) {
 		}
 		if(!Jmol._syncReady || !Jmol._isJmolJSVSync)
 			return 1; // continue processing and ignore me
+		
+		if (app._linkedApplet && msg.indexOf(app._linkedApplet._syncKeyword) >= 0)
+			app._linkedApplet._syncScript(msg);
+		return 0 // prevents further Jmol sync processing 
+
 		for (var i = 0; i < Jmol._syncedApplets.length; i++) {
 			if (msg.indexOf(Jmol._syncedApplets[i]._syncKeyword) >= 0)
 				Jmol._syncedApplets[i]._syncScript(msg);

@@ -63,7 +63,9 @@ var $t$;
 //var c$;
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(["JSV.dialog.JSVDialog"], "JSV.dialog.IntegrationDialog", ["JU.DF", "JSV.common.Annotation"], function(){
-var c$ = Clazz_declareType(JSV.dialog, "IntegrationDialog", JSV.dialog.JSVDialog);
+var c$ = Clazz_decorateAsClass(function(){
+this.lastNorm = 1;
+Clazz_instantialize(this, arguments);}, JSV.dialog, "IntegrationDialog", JSV.dialog.JSVDialog);
 Clazz_makeConstructor(c$, 
 function(){
 Clazz_superConstructor (this, JSV.dialog.IntegrationDialog, []);
@@ -140,7 +142,7 @@ this.applyFromFields();
 });
 c$.posXY =  Clazz_newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(["JSV.dialog.JSVDialog"], "JSV.dialog.PeakListDialog", ["JSV.common.Annotation"], function(){
 var c$ = Clazz_declareType(JSV.dialog, "PeakListDialog", JSV.dialog.JSVDialog);
@@ -167,7 +169,7 @@ return this.callbackAD(id, msg);
 }, "~S,~S");
 c$.posXY =  Clazz_newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(["JSV.dialog.JSVDialog"], "JSV.dialog.MeasurementsDialog", ["JSV.common.Annotation"], function(){
 var c$ = Clazz_declareType(JSV.dialog, "MeasurementsDialog", JSV.dialog.JSVDialog);
@@ -189,7 +191,7 @@ return this.callbackAD(id, msg);
 }, "~S,~S");
 c$.posXY =  Clazz_newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(["JSV.dialog.JSVDialog"], "JSV.dialog.OverlayLegendDialog", ["JSV.common.Annotation"], function(){
 var c$ = Clazz_declareType(JSV.dialog, "OverlayLegendDialog", JSV.dialog.JSVDialog);
@@ -211,7 +213,7 @@ return false;
 }, "~S,~S");
 c$.posXY =  Clazz_newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(["JSV.dialog.JSVDialog"], "JSV.dialog.ViewsDialog", ["JU.Lst", "$.PT", "$.SB", "JSV.common.Annotation"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -274,7 +276,7 @@ n++;
 System.out.println("viewsdialog n=" + n);
 this.dialog.setEnabled(this.closeSelectedButton, n > 0);
 this.dialog.setEnabled(this.combineSelectedButton, n > 1);
-this.dialog.setEnabled(this.viewSelectedButton, n == 1);
+this.dialog.setEnabled(this.viewSelectedButton, n >= 1);
 });
 Clazz_defineMethod(c$, "check", 
 function(name){
@@ -379,7 +381,7 @@ this.apply( Clazz_newArray(-1, [this.dialog.getText(this.txt2)]));
 });
 c$.posXY =  Clazz_newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JSV.dialog.DialogManager"], "JSV.js2d.JsDialogManager", ["JU.PT", "JSV.js2d.DialogTableModel", "$.JsDialog", "JS.Dimension", "$.JDialog", "$.JEditorPane", "$.JLabel", "$.JScrollPane", "$.JTable"], function(){
 var c$ = Clazz_declareType(JSV.js2d, "JsDialogManager", JSV.dialog.DialogManager);
@@ -454,7 +456,7 @@ return;
 }this.processClick(eventId);
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.dialog");
 Clazz_load(null, "JSV.dialog.DialogManager", ["java.util.Hashtable", "JU.PT", "JSV.common.JSVFileManager", "$.JSViewer"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -551,7 +553,7 @@ function(title){
 return (title.length > 50 ? title.substring(0, 50) + "..." : title);
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JS.AbstractTableModel"], "JSV.js2d.DialogTableModel", ["JU.CU"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -634,7 +636,7 @@ style += ";border:" + (isSelected ? 3 : 1) + "px solid #000";
 }}return " style='" + style + "'";
 }, "~S,~N,~N,~O,~B");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.js2d");
 Clazz_load(["JSV.api.PlatformDialog", "JS.JDialog", "$.Insets"], "JSV.js2d.JsDialog", ["java.util.Hashtable", "JSV.common.Annotation", "JSV.js2d.DialogTableModel", "JS.Color", "$.Dimension", "$.FlowLayout", "$.GridBagConstraints", "$.GridBagLayout", "$.JButton", "$.JCheckBox", "$.JComboBox", "$.JLabel", "$.JPanel", "$.JScrollPane", "$.JSplitPane", "$.JTable", "$.JTextField"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -871,10 +873,10 @@ function(column){
 return this.tableCellAlignLeft ? 2 : column == 0 ? 0 : 4;
 }, "~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JSV.api");
 Clazz_declareInterface(JSV.api, "PlatformDialog");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 })(Clazz
 ,Clazz.getClassName
 ,Clazz.newLongArray

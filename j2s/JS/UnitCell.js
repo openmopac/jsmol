@@ -1,5 +1,5 @@
 Clazz.declarePackage("JS");
-Clazz.load(["JU.SimpleUnitCell", "JU.P3", "JV.JC"], "JS.UnitCell", ["java.util.Hashtable", "JU.AU", "$.Lst", "$.M3", "$.M4", "$.P4", "$.PT", "$.Quat", "$.V3", "J.api.Interface", "JS.Symmetry", "JU.BoxInfo", "$.Escape"], function(){
+Clazz.load(["JU.SimpleUnitCell", "JU.P3", "JV.JC"], "JS.UnitCell", ["java.util.Hashtable", "JU.AU", "$.Lst", "$.M3", "$.M4", "$.P4", "$.PT", "$.Quat", "$.V3", "J.api.Interface", "JS.Symmetry", "JU.BoxInfo", "$.Escape", "$.Point3fi"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.moreInfo = null;
 this.name = "";
@@ -10,6 +10,8 @@ this.cartesianOffset = null;
 this.unitCellMultiplier = null;
 this.unitCellMultiplied = null;
 this.f2c = null;
+this.spinFrameFromCartXYZ = null;
+this.spinFrameToCartXYZ = null;
 Clazz.instantialize(this, arguments);}, JS, "UnitCell", JU.SimpleUnitCell, Cloneable);
 Clazz.prepareFields (c$, function(){
 this.cartesianOffset =  new JU.P3();
@@ -48,34 +50,41 @@ throw e;
 }
 return ucnew;
 }, "JS.UnitCell");
-Clazz.defineMethod(c$, "checkDistance", 
-function(f1, f2, distance, dx, iRange, jRange, kRange, ptOffset){
-var p1 = JU.P3.newP(f1);
-this.toCartesian(p1, true);
-for (var i = -iRange; i <= iRange; i++) for (var j = -jRange; j <= jRange; j++) for (var k = -kRange; k <= kRange; k++) {
-ptOffset.set(f2.x + i, f2.y + j, f2.z + k);
-this.toCartesian(ptOffset, true);
-var d = p1.distance(ptOffset);
-if (dx > 0 ? Math.abs(d - distance) <= dx : d <= distance && d > 0.1) {
-ptOffset.set(i, j, k);
-return true;
-}}
-
-
-return false;
-}, "JU.P3,JU.P3,~N,~N,~N,~N,~N,JU.P3");
 Clazz.defineMethod(c$, "checkPeriodic", 
-function(pt){
-switch (this.dimension) {
+function(pt, packing, packing2){
+var min;
+var max;
+if (Float.isNaN(packing)) {
+min = -this.slop;
+} else {
+min = -packing;
+}if (Float.isNaN(packing2)) {
+max = 1 - this.slop;
+} else {
+max = 1 + packing2;
+}switch (this.dimension) {
 case 3:
-if (pt.z < -this.slop || pt.z > 1 - this.slop) return false;
+if (pt.z < min || pt.z > max) return false;
 case 2:
-if (pt.y < -this.slop || pt.y > 1 - this.slop) return false;
+if (pt.y < min || pt.y > max) return false;
 case 1:
-if (pt.x < -this.slop || pt.x > 1 - this.slop) return false;
+if (pt.x < min || pt.x > max) return false;
 }
 return true;
-}, "JU.P3");
+}, "JU.P3,~N,~N");
+Clazz.defineMethod(c$, "isWithinUnitCell", 
+function(a, b, c, packing, pt){
+if (Float.isNaN(packing)) packing = this.slop;
+switch (this.dimension) {
+case 3:
+if (pt.z < c - 1 - packing || pt.z > c + packing) return false;
+case 2:
+if (pt.y < b - 1 - packing || pt.y > b + packing) return false;
+case 1:
+if (pt.x < a - 1 - packing || pt.x > a + packing) return false;
+}
+return true;
+}, "~N,~N,~N,~N,JU.P3");
 Clazz.defineMethod(c$, "dumpInfo", 
 function(isDebug, multiplied){
 var m = (multiplied ? this.getUnitCellMultiplied() : this);
@@ -118,28 +127,37 @@ var oabc = this.getUnitCellVectors();
 if (!latticeType.equals("P") || primitiveToCrystal != null) this.toFromPrimitive(false, latticeType.charAt(0), oabc, primitiveToCrystal);
 return oabc;
 }, "~S,JU.M3");
-Clazz.defineMethod(c$, "getEquivPoints", 
-function(pt, flags, ops, list, i0, n0, dup0, periodicity){
+Clazz.defineMethod(c$, "getEquivalentPoints", 
+function(pt, flags, ops, list, i0, n0, dup0, periodicity, packing){
 var fromfractional = (flags.indexOf("fromfractional") >= 0);
 var tofractional = (flags.indexOf("tofractional") >= 0);
-var packed = (flags.indexOf("packed") >= 0);
-if (list == null) list =  new JU.Lst();
-var pf = JU.P3.newP(pt);
-if (!fromfractional) this.toFractional(pf, true);
-var n = list.size();
 var adjustA = ((periodicity & 0x1) != 0);
 var adjustB = ((periodicity & 0x2) != 0);
 var adjustC = ((periodicity & 0x4) != 0);
+var haveSpin = (pt.sD >= 0);
+var v = (haveSpin ?  new JU.V3() : null);
+if (list == null) list =  new JU.Lst();
+var n = list.size();
+var pf = JU.Point3fi.newPF(pt, pt.i);
+if (!fromfractional) this.toFractional(pf, true);
 for (var i = 0, nops = ops.length; i < nops; i++) {
-var p = JU.P3.newP(pf);
+var p = JU.Point3fi.newPF(pf, pt.i);
+p.mi = i;
 ops[i].rotTrans(p);
 if (adjustA) p.x = this.fixFloor(p.x - Clazz.doubleToInt(Math.floor(p.x)));
 if (adjustB) p.y = this.fixFloor(p.y - Clazz.doubleToInt(Math.floor(p.y)));
 if (adjustC) p.z = this.fixFloor(p.z - Clazz.doubleToInt(Math.floor(p.z)));
-list.addLast(p);
+if (haveSpin) {
+v.set(pt.sX, pt.sY, pt.sZ);
+(ops[i]).rotateSpin(v);
+p.sX = Math.round(v.x);
+p.sY = Math.round(v.y);
+p.sZ = Math.round(v.z);
+p.sD = pt.sD;
+}list.addLast(p);
 n++;
 }
-if (packed) {
+if (packing >= 0) {
 if (!adjustC) {
 var offset = JU.P3.new3(0, 0, 0.5);
 for (var i = n0; i < n; i++) {
@@ -156,44 +174,64 @@ for (var i = n0; i < n; i++) {
 list.get(i).add(offset);
 }
 }for (var i = n0; i < n; i++) {
-pf.setT(list.get(i));
+pf.setPF(pt = list.get(i));
 this.unitizeRnd(pf);
 if (pf.x == 0) {
-list.addLast(JU.P3.new3(0, pf.y, pf.z));
-list.addLast(JU.P3.new3(1, pf.y, pf.z));
+list.addLast(JS.UnitCell.newPt(pt, 0, pf.y, pf.z, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, 1, pf.y, pf.z, pf.i));
 if (pf.y == 0) {
-list.addLast(JU.P3.new3(1, 1, pf.z));
-list.addLast(JU.P3.new3(0, 0, pf.z));
+list.addLast(JS.UnitCell.newPt(pt, 1, 1, pf.z, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, 0, 0, pf.z, pf.i));
 if (pf.z == 0) {
-list.addLast(JU.P3.new3(1, 1, 1));
-list.addLast(JU.P3.new3(0, 0, 0));
+list.addLast(JS.UnitCell.newPt(pt, 1, 1, 1, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, 0, 0, 0, pf.i));
 }}}if (pf.y == 0) {
-list.addLast(JU.P3.new3(pf.x, 0, pf.z));
-list.addLast(JU.P3.new3(pf.x, 1, pf.z));
+list.addLast(JS.UnitCell.newPt(pt, pf.x, 0, pf.z, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, pf.x, 1, pf.z, pf.i));
 if (pf.z == 0) {
-list.addLast(JU.P3.new3(pf.x, 0, 0));
-list.addLast(JU.P3.new3(pf.x, 1, 1));
+list.addLast(JS.UnitCell.newPt(pt, pf.x, 0, 0, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, pf.x, 1, 1, pf.i));
 }}if (pf.z == 0) {
-list.addLast(JU.P3.new3(pf.x, pf.y, 0));
-list.addLast(JU.P3.new3(pf.x, pf.y, 1));
+list.addLast(JS.UnitCell.newPt(pt, pf.x, pf.y, 0, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, pf.x, pf.y, 1, pf.i));
 if (pf.x == 0) {
-list.addLast(JU.P3.new3(0, pf.y, 0));
-list.addLast(JU.P3.new3(1, pf.y, 1));
+list.addLast(JS.UnitCell.newPt(pt, 0, pf.y, 0, pf.i));
+list.addLast(JS.UnitCell.newPt(pt, 1, pf.y, 1, pf.i));
 }}}
+if (packing > 0) {
+if (adjustA) {
 n = list.size();
+for (var i = n0; i < n; i++) {
+pf.setT(pt = list.get(i));
+if (pf.x < packing) list.addLast(pt = JS.UnitCell.newPt(pt, pf.x + 1, pf.y, pf.z, pf.i));
+if (pf.x > 1 - packing) list.addLast(pt = JS.UnitCell.newPt(pt, pf.x - 1, pf.y, pf.z, pf.i));
+}
+}if (adjustB) {
+n = list.size();
+for (var i = n0; i < n; i++) {
+pf.setT(list.get(i));
+if (pf.y < packing) list.addLast(JS.UnitCell.newPt(pt, pf.x, pf.y + 1, pf.z, pf.i));
+if (pf.y > 1 - packing) list.addLast(JS.UnitCell.newPt(pt, pf.x, pf.y - 1, pf.z, pf.i));
+}
+}if (adjustC) {
+n = list.size();
+for (var i = n0; i < n; i++) {
+pf.setT(list.get(i));
+if (pf.z < packing) list.addLast(JS.UnitCell.newPt(pt, pf.x, pf.y, pf.z + 1, pf.i));
+if (pf.z > 1 - packing) list.addLast(JS.UnitCell.newPt(pt, pf.x, pf.y, pf.z - 1, pf.i));
+}
+}}n = list.size();
 if (!adjustA) {
 var offset = JU.P3.new3(-0.5, 0, 0);
 for (var i = n0; i < n; i++) {
 list.get(i).add(offset);
 }
 }if (!adjustB) {
-n = list.size();
 var offset = JU.P3.new3(0, -0.5, 0);
 for (var i = n0; i < n; i++) {
 list.get(i).add(offset);
 }
 }if (!adjustC) {
-n = list.size();
 var offset = JU.P3.new3(0, 0, -0.5);
 for (var i = n0; i < n; i++) {
 list.get(i).add(offset);
@@ -203,7 +241,17 @@ if (!tofractional) {
 for (var i = list.size(); --i >= n0; ) this.toCartesian(list.get(i), true);
 
 }return list;
-}, "JU.P3,~S,~A,JU.Lst,~N,~N,~N,~N");
+}, "JU.Point3fi,~S,~A,JU.Lst,~N,~N,~N,~N,~N");
+c$.newPt = Clazz.defineMethod(c$, "newPt", 
+function(pt, x, y, z, i){
+var p = JU.Point3fi.new4(x, y, z, i);
+p.sX = pt.sX;
+p.sY = pt.sY;
+p.sZ = pt.sZ;
+p.sD = pt.sD;
+p.mi = pt.mi;
+return p;
+}, "JU.Point3fi,~N,~N,~N,~N");
 Clazz.defineMethod(c$, "getFractionalOffset", 
 function(){
 return this.fractionalOffset;
@@ -213,11 +261,25 @@ function(){
 var m = this.getUnitCellMultiplied();
 if (m !== this) return m.getInfo();
 var info =  new java.util.Hashtable();
-info.put("params", this.unitCellParams);
+var a =  Clazz.newFloatArray (18, 0);
+System.arraycopy(this.getUnitCellAsArray(false), 0, a, 0, 18);
+info.put("params", a);
 info.put("oabc", this.getUnitCellVectors());
 info.put("volume", Float.$valueOf(this.volume));
 info.put("matFtoC", this.matrixFractionalToCartesian);
 info.put("matCtoF", this.matrixCartesianToFractional);
+info.put("dimension", Integer.$valueOf(this.dimension));
+info.put("dimensionType", Integer.$valueOf(this.dimensionType));
+info.put("isHexagonal", Boolean.$valueOf(this.getInfo(8) != 0));
+info.put("isRhombohedral", Boolean.$valueOf(this.getInfo(9) != 0));
+if (this.fractionalOffset != null) {
+info.put("cartesianOffset", this.cartesianOffset);
+info.put("fractionalOffset", this.fractionalOffset);
+}if (this.unitCellMultiplier != null) {
+info.put("unitCellMultiplier", this.unitCellMultiplier);
+}if (this.unitCellMultiplied != null) {
+info.put("unitCellMultiplied", this.unitCellMultiplied);
+}info.put("slop", Float.$valueOf(this.slop));
 return info;
 });
 Clazz.defineMethod(c$, "getQuaternionRotation", 
@@ -240,7 +302,7 @@ abc = abc.substring(0, 1);
 var axis = "abcABCDEF".indexOf(abc);
 var v1;
 var v2;
-var P3;
+var v3;
 switch (axis) {
 case 7:
 mul = -mul;
@@ -251,7 +313,7 @@ case 0:
 default:
 v1 = a;
 v2 = c;
-P3 = b;
+v3 = b;
 break;
 case 8:
 mul = -mul;
@@ -262,7 +324,7 @@ quadrant = ((2 + quadrant) % 4) + 1;
 case 1:
 v1 = b;
 v2 = a;
-P3 = c;
+v3 = c;
 mul = -mul;
 break;
 case 3:
@@ -273,14 +335,14 @@ if (isEven) quadrant = 6 - quadrant;
 case 2:
 v1 = c;
 v2 = a;
-P3 = b;
+v3 = b;
 if (!isFace && quadrant > 0) {
 quadrant = 5 - quadrant;
 }break;
 }
 if (quadrant > 0) {
 if (mul > 0 != isEven) {
-v2 = P3;
+v2 = v3;
 v1.scale(-1);
 }}switch (quadrant) {
 case 0:
@@ -481,7 +543,6 @@ symTemp.setSpaceGroup(false);
 var i = symTemp.addSpaceGroupOperation("=" + sdef, 0);
 if (i < 0) return null;
 m = symTemp.getSpaceGroupOperation(i);
-if ((m).isFinalized) System.out.println("OHOH");
 (m).doFinalize();
 var t =  new JU.P3();
 JS.UnitCell.addTrans(strans, t);
@@ -639,18 +700,6 @@ for (var i = 0; i < 3; i++) this.matrixFractionalToCartesian.getRow(i, this.f2c[
 
 }return this.f2c;
 });
-Clazz.defineMethod(c$, "isWithinUnitCell", 
-function(a, b, c, pt){
-switch (this.dimension) {
-case 3:
-if (pt.z < c - 1 - this.slop || pt.z > c + this.slop) return false;
-case 2:
-if (pt.y < b - 1 - this.slop || pt.y > b + this.slop) return false;
-case 1:
-if (pt.x < a - 1 - this.slop || pt.x > a + this.slop) return false;
-}
-return true;
-}, "~N,~N,~N,JU.P3");
 Clazz.defineMethod(c$, "setCartesianOffset", 
 function(origin){
 this.cartesianOffset.setT(origin);
@@ -902,7 +951,80 @@ Clazz.defineMethod(c$, "getMoreInfo",
 function(){
 return this.moreInfo;
 });
+c$.setSymmetryMinMax = Clazz.defineMethod(c$, "setSymmetryMinMax", 
+function(c, rmin, rmax){
+if (rmin.x > c.x) rmin.x = c.x;
+if (rmin.y > c.y) rmin.y = c.y;
+if (rmin.z > c.z) rmin.z = c.z;
+if (rmax.x < c.x) rmax.x = c.x;
+if (rmax.y < c.y) rmax.y = c.y;
+if (rmax.z < c.z) rmax.z = c.z;
+}, "JU.P3,JU.P3,JU.P3");
+Clazz.defineMethod(c$, "adjustRangeMinMax", 
+function(oabc, packingRange, minXYZ, maxXYZ, rmin, rmax, newMin, newMax){
+if (rmin == null) {
+rmin = JU.P3.new3(3.4028235E38, 3.4028235E38, 3.4028235E38);
+rmax = JU.P3.new3(-3.4028235E38, -3.4028235E38, -3.4028235E38);
+}var pa =  new JU.P3();
+var pb =  new JU.P3();
+var pc =  new JU.P3();
+if (!Float.isNaN(packingRange)) {
+pa.setT(oabc[1]);
+pb.setT(oabc[2]);
+pc.setT(oabc[3]);
+pa.scale(packingRange);
+pb.scale(packingRange);
+pc.scale(packingRange);
+}if (minXYZ != null) {
+oabc[0].scaleAdd2(minXYZ.x, oabc[1], oabc[0]);
+oabc[0].scaleAdd2(minXYZ.y, oabc[2], oabc[0]);
+oabc[0].scaleAdd2(minXYZ.z, oabc[3], oabc[0]);
+}oabc[0].sub(pa);
+oabc[0].sub(pb);
+oabc[0].sub(pc);
+var pt = JU.P3.newP(oabc[0]);
+this.toFractional(pt, true);
+JS.UnitCell.setSymmetryMinMax(pt, rmin, rmax);
+if (minXYZ != null) {
+oabc[1].scale(maxXYZ.x - minXYZ.x);
+oabc[2].scale(maxXYZ.y - minXYZ.y);
+oabc[3].scale(maxXYZ.z - minXYZ.z);
+}oabc[1].scaleAdd2(2, pa, oabc[1]);
+oabc[2].scaleAdd2(2, pb, oabc[2]);
+oabc[3].scaleAdd2(2, pc, oabc[3]);
+for (var i = 0; i < 3; i++) {
+for (var j = i + 1; j < 4; j++) {
+pt.add2(oabc[i], oabc[j]);
+if (i != 0) pt.add(oabc[0]);
+this.toFractional(pt, false);
+JS.UnitCell.setSymmetryMinMax(pt, rmin, rmax);
+}
+}
+this.toCartesian(pt, false);
+pt.add(oabc[1]);
+this.toFractional(pt, false);
+JS.UnitCell.setSymmetryMinMax(pt, rmin, rmax);
+newMin.set(Clazz.doubleToInt(Math.min(0, Math.floor(rmin.x + 0.001))), Clazz.doubleToInt(Math.min(0, Math.floor(rmin.y + 0.001))), Clazz.doubleToInt(Math.min(0, Math.floor(rmin.z + 0.001))));
+newMax.set(Clazz.doubleToInt(Math.max(1, Math.ceil(rmax.x - 0.001))), Clazz.doubleToInt(Math.max(1, Math.ceil(rmax.y - 0.001))), Clazz.doubleToInt(Math.max(1, Math.ceil(rmax.z - 0.001))));
+}, "~A,~N,JU.P3i,JU.P3i,JU.P3,JU.P3,JU.P3i,JU.P3i");
+Clazz.defineMethod(c$, "toFractionalSpin", 
+function(v){
+if (this.spinFrameToCartXYZ == null) {
+this.toFractional(v, true);
+return;
+}if (this.spinFrameFromCartXYZ == null) {
+this.spinFrameFromCartXYZ = JU.M3.newM3(this.spinFrameToCartXYZ);
+this.spinFrameFromCartXYZ.invert();
+}this.spinFrameFromCartXYZ.rotate(v);
+}, "JU.T3");
+Clazz.defineMethod(c$, "toCartesianSpin", 
+function(v){
+if (this.spinFrameFromCartXYZ == null) {
+this.toCartesian(v, true);
+return;
+}this.spinFrameToCartXYZ.rotate(v);
+}, "JU.T3");
 c$.unitVectors =  Clazz.newArray(-1, [JV.JC.axisX, JV.JC.axisY, JV.JC.axisZ]);
 c$.v0 = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Wed Mar 25 10:34:32 CDT 2026

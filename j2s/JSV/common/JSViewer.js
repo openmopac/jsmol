@@ -1,6 +1,7 @@
 Clazz.declarePackage("JSV.common");
-Clazz.load(["javajs.api.BytePoster", "J.api.PlatformViewer", "JSV.common.Spectrum"], "JSV.common.JSViewer", ["java.io.File", "java.net.URL", "java.util.Arrays", "$.Hashtable", "JU.CU", "$.Lst", "$.OC", "$.PT", "$.SB", "JSV.common.Annotation", "$.ExportType", "$.JSVFileManager", "$.PanelData", "$.PanelNode", "$.Parameters", "$.PeakInfo", "$.PrintLayout", "$.RepaintManager", "$.ScriptToken", "$.ScriptTokenizer", "JSV.source.JDXReader", "$.JDXSource", "JSV.tree.SimpleTree", "JU.Logger"], function(){
+Clazz.load(["javajs.api.BytePoster", "J.api.PlatformViewer", "JSV.common.Spectrum"], "JSV.common.JSViewer", ["java.io.File", "java.net.URL", "java.util.Arrays", "$.Hashtable", "JU.CU", "$.Lst", "$.OC", "$.PT", "$.SB", "JSV.common.Annotation", "$.ExportType", "$.JSVFileManager", "$.PanelData", "$.PanelNode", "$.Parameters", "$.PeakInfo", "$.PrintLayout", "$.RepaintManager", "$.ScriptToken", "$.ScriptTokenizer", "$.SyncManager", "JSV.source.JDXReader", "$.JDXSource", "JSV.tree.SimpleTree", "JU.Logger"], function(){
 var c$ = Clazz.decorateAsClass(function(){
+this.parentFrame = null;
 this.si = null;
 this.g2d = null;
 this.spectraTree = null;
@@ -18,6 +19,7 @@ this.dialogManager = null;
 this.viewDialog = null;
 this.overlayLegendDialog = null;
 this.irMode = null;
+this.isEmbedded = false;
 this.loadImaginary = false;
 this.interfaceOverlaid = false;
 this.autoIntegrate = false;
@@ -41,17 +43,16 @@ this.screenWidth = 0;
 this.fileCount = 0;
 this.nViews = 0;
 this.scriptLevelCount = 0;
-this.returnFromJmolModel = null;
 this.integrationRatios = null;
 this.apiPlatform = null;
+this.hasDisplay = false;
+this.peakInfoModelSentToJmol = null;
 this.popupAllowMenu = true;
 this.popupZoomEnabled = true;
 this.defaultLoadScript = null;
 this.nmrMaxY = NaN;
-this.overlayLegendVisible = false;
 this.recentStackPercent = 5;
 this.lastPrintLayout = null;
-this.offWindowFrame = null;
 this.recentOpenURL = "http://";
 this.recentURL = null;
 this.recentSimulation = "tylenol";
@@ -60,14 +61,15 @@ Clazz.prepareFields (c$, function(){
 this.irMode = JSV.common.Spectrum.IRMode.NO_CONVERT;
 });
 Clazz.makeConstructor(c$, 
-function(si, isApplet, isJSApplet){
+function(si, isApplet, isJSApplet, hasDisplay){
 this.si = si;
 this.isApplet = isApplet;
+this.hasDisplay = hasDisplay;
 JSV.common.JSViewer.isJS = isApplet && isJSApplet;
 var jmol = null;
 {
 self.Jmol && (jmol = Jmol);
-}JSV.common.JSViewer.jmolObject = jmol;
+}JSV.common.JSViewer.jsmolObject = jmol;
 this.isSigned = si.isSigned();
 this.apiPlatform = this.getPlatformInterface("Platform");
 this.apiPlatform.setViewer(this, this.display);
@@ -80,7 +82,11 @@ this.isSingleThreaded = this.apiPlatform.isSingleThreaded();
 this.panelNodes =  new JU.Lst();
 this.repaintManager =  new JSV.common.RepaintManager(this);
 if (!isApplet) this.setPopupMenu(true, true);
-}, "JSV.api.ScriptInterface,~B,~B");
+}, "JSV.api.ScriptInterface,~B,~B,~B");
+Clazz.defineMethod(c$, "setParentFrame", 
+function(parentFrame){
+this.parentFrame = parentFrame;
+}, "javax.swing.JFrame");
 Clazz.defineMethod(c$, "setProperty", 
 function(key, value){
 if (this.properties != null) this.properties.setProperty(key, value);
@@ -117,6 +123,8 @@ throw e;
 Clazz.defineMethod(c$, "runScriptNow", 
 function(script){
 System.out.println(this.checkScript(script));
+var pt = script.indexOf("JSpecView:");
+if (pt >= 0) script = script.substring(pt + 10);
 this.scriptLevelCount++;
 if (script == null) script = "";
 script = script.trim();
@@ -197,7 +205,7 @@ case JSV.common.ScriptToken.INVERTY:
 this.execZoom("invertY");
 break;
 case JSV.common.ScriptToken.JMOL:
-this.si.syncToJmol(value);
+this.syncToJmol(value);
 break;
 case JSV.common.ScriptToken.JSV:
 this.syncScript(JU.PT.trimQuotes(value));
@@ -264,7 +272,6 @@ case JSV.common.ScriptToken.SHIFTX:
 case JSV.common.ScriptToken.SHOWERRORS:
 case JSV.common.ScriptToken.SHOWMEASUREMENTS:
 case JSV.common.ScriptToken.SHOWMENU:
-case JSV.common.ScriptToken.SHOWKEY:
 case JSV.common.ScriptToken.SHOWPEAKLIST:
 case JSV.common.ScriptToken.SHOWINTEGRATION:
 case JSV.common.ScriptToken.SHOWPROPERTIES:
@@ -313,9 +320,6 @@ this.show("errors");
 break;
 case JSV.common.ScriptToken.SHOWINTEGRATION:
 this.pd().showAnnotation(JSV.common.Annotation.AType.Integration, JSV.common.Parameters.getTFToggle(value));
-break;
-case JSV.common.ScriptToken.SHOWKEY:
-this.setOverlayLegendVisibility(JSV.common.Parameters.getTFToggle(value), true);
 break;
 case JSV.common.ScriptToken.SHOWMEASUREMENTS:
 this.pd().showAnnotation(JSV.common.Annotation.AType.Measurements, JSV.common.Parameters.getTFToggle(value));
@@ -575,6 +579,15 @@ throw e;
 }
 }
 return;
+}var isFirst = value.equalsIgnoreCase("first");
+var isLast = value.equalsIgnoreCase("last");
+if (isFirst || isLast) {
+var pd = this.selectedPanel.getPanelData();
+var gsets = pd.graphSets;
+if (gsets == null || gsets.size() == 0) return;
+var gs = gsets.get(isFirst ? 0 : gsets.size() - 1);
+pd.setCurrentGraphSet(gs, -1);
+return;
 }var nodes = this.panelNodes;
 for (var i = nodes.size(); --i >= 0; ) nodes.get(i).pd().selectFromEntireSet(-2147483648);
 
@@ -645,160 +658,11 @@ if (JSV.common.Spectrum.areXScalesCompatible(spec, node.getSpectrum(), false, fa
 } else {
 this.pd().setZoom(0, y1, 0, y2);
 }}, "~S");
-Clazz.defineMethod(c$, "setOverlayLegendVisibility", 
-function(tftoggle, doSet){
-if (doSet) this.overlayLegendVisible = (tftoggle == null ? !this.overlayLegendVisible : tftoggle === Boolean.TRUE);
-var node = JSV.common.PanelNode.findNode(this.selectedPanel, this.panelNodes);
-for (var i = this.panelNodes.size(); --i >= 0; ) this.showOverlayLegend(this.panelNodes.get(i), this.panelNodes.get(i) === node && this.overlayLegendVisible);
-
-}, "Boolean,~B");
-Clazz.defineMethod(c$, "showOverlayLegend", 
-function(node, visible){
-var legend = node.legend;
-if (legend == null && visible) {
-legend = node.setLegend(node.pd().getNumberOfSpectraInCurrentSet() > 1 && node.pd().getNumberOfGraphSets() == 1 ? this.getDialog(JSV.common.Annotation.AType.OverlayLegend, null) : null);
-}if (legend != null) legend.setVisible(visible);
-}, "JSV.common.PanelNode,~B");
-Clazz.defineMethod(c$, "syncScript", 
-function(peakScript){
-if (peakScript.equals("TEST")) peakScript = JSV.common.JSViewer.testScript;
-JU.Logger.info("JSViewer.syncScript Jmol>JSV " + peakScript);
-if (peakScript.indexOf("<PeakData") < 0) {
-if (peakScript.startsWith("JSVSTR:")) {
-this.si.syncToJmol(peakScript);
-return;
-}this.runScriptNow(peakScript);
-if (peakScript.indexOf("#SYNC_PEAKS") >= 0) this.syncPeaksAfterSyncScript();
-return;
-}JU.Logger.info(">>toJSV>> " + peakScript);
-var sourceID = JU.PT.getQuotedAttribute(peakScript, "sourceID");
-var type;
-var model;
-var file;
-var jmolSource;
-var index;
-var atomKey;
-if (sourceID == null) {
-file = JU.PT.getQuotedAttribute(peakScript, "file");
-index = JU.PT.getQuotedAttribute(peakScript, "index");
-if (file == null || index == null) return;
-file = JU.PT.rep(file, "#molfile", "");
-model = JU.PT.getQuotedAttribute(peakScript, "model");
-jmolSource = JU.PT.getQuotedAttribute(peakScript, "src");
-var modelSent = (jmolSource != null && jmolSource.startsWith("Jmol") ? null : this.returnFromJmolModel);
-if (model != null && modelSent != null && !model.equals(modelSent)) {
-JU.Logger.info("JSV ignoring model " + model + "; should be " + modelSent);
-return;
-}this.returnFromJmolModel = null;
-if (this.panelNodes.size() == 0 || !this.checkFileAlreadyLoaded(file)) {
-JU.Logger.info("file " + file + " not found -- JSViewer closing all and reopening");
-this.si.siSyncLoad(file);
-}type = JU.PT.getQuotedAttribute(peakScript, "type");
-atomKey = null;
-} else {
-file = null;
-index = model = sourceID;
-atomKey = "," + JU.PT.getQuotedAttribute(peakScript, "atom") + ",";
-type = "ID";
-jmolSource = sourceID;
-}var pi = this.selectPanelByPeak(file, index, atomKey);
-var pd = this.pd();
-pd.selectSpectrum(file, type, model, true);
-this.si.siSendPanelChange();
-pd.addPeakHighlight(pi);
-this.repaint(true);
-if (jmolSource == null || (pi != null && pi.getAtoms() != null)) this.si.syncToJmol(this.jmolSelect(pi));
-}, "~S");
-Clazz.defineMethod(c$, "syncPeaksAfterSyncScript", 
-function(){
-var source = this.currentSource;
-if (source == null) return;
-try {
-var file = "file=" + JU.PT.esc(source.getFilePath());
-var peaks = source.getSpectra().get(0).getPeakList();
-var sb =  new JU.SB();
-sb.append("[");
-var n = peaks.size();
-for (var i = 0; i < n; i++) {
-var s = peaks.get(i).toString();
-s = s + " " + file;
-sb.append(JU.PT.esc(s));
-if (i > 0) sb.append(",");
-}
-sb.append("]");
-this.si.syncToJmol("Peaks: " + sb);
-} catch (e) {
-if (Clazz.exceptionOf(e, Exception)){
-} else {
-throw e;
-}
-}
-});
-Clazz.defineMethod(c$, "checkFileAlreadyLoaded", 
-function(fileName){
-if (this.isClosed()) return false;
-if (this.pd().hasFileLoaded(fileName)) return true;
-for (var i = this.panelNodes.size(); --i >= 0; ) if (this.panelNodes.get(i).pd().hasFileLoaded(fileName)) {
-this.si.siSetSelectedPanel(this.panelNodes.get(i).jsvp);
-return true;
-}
-return false;
-}, "~S");
-Clazz.defineMethod(c$, "selectPanelByPeak", 
-function(file, index, atomKey){
-if (this.panelNodes == null) return null;
-var pi = null;
-for (var i = this.panelNodes.size(); --i >= 0; ) this.panelNodes.get(i).pd().addPeakHighlight(null);
-
-pi = this.pd().selectPeakByFileIndex(file, index, atomKey);
-if (pi != null) {
-this.setNode(JSV.common.PanelNode.findNode(this.selectedPanel, this.panelNodes));
-} else {
-for (var i = this.panelNodes.size(); --i >= 0; ) {
-var node = this.panelNodes.get(i);
-if ((pi = node.pd().selectPeakByFileIndex(file, index, atomKey)) != null) {
-this.setNode(node);
-break;
-}}
-}return pi;
-}, "~S,~S,~S");
-Clazz.defineMethod(c$, "processPeakPickEvent", 
-function(eventObj, isApp){
-var pi;
-if (Clazz.instanceOf(eventObj,"JSV.common.PeakInfo")) {
-pi = eventObj;
-var pi2 = this.pd().findMatchingPeakInfo(pi);
-if (pi2 == null) {
-if (!"ALL".equals(pi.getTitle())) return;
-var node = null;
-for (var i = 0; i < this.panelNodes.size(); i++) if ((pi2 = this.panelNodes.get(i).pd().findMatchingPeakInfo(pi)) != null) {
-node = this.panelNodes.get(i);
-break;
-}
-if (node == null) return;
-this.setNode(node);
-}pi = pi2;
-} else {
-var e = (eventObj);
-this.si.siSetSelectedPanel(e.getSource());
-pi = e.getPeakInfo();
-}this.pd().addPeakHighlight(pi);
-this.syncToJmol(pi);
-if (pi.isClearAll()) this.repaint(false);
- else this.pd().selectSpectrum(pi.getFilePath(), pi.getType(), pi.getModel(), true);
-this.si.siCheckCallbacks(pi.getTitle());
-}, "~O,~B");
 Clazz.defineMethod(c$, "newStructToJmol", 
 function(data){
 JU.Logger.info("sending new structure to Jmol:\n" + data);
-this.si.syncToJmol("struct:" + data);
+this.syncToJmol("struct:" + data);
 }, "~S");
-Clazz.defineMethod(c$, "syncToJmol", 
-function(pi){
-this.repaint(true);
-this.returnFromJmolModel = pi.getModel();
-this.si.syncToJmol(this.jmolSelect(pi));
-}, "JSV.common.PeakInfo");
 Clazz.defineMethod(c$, "sendPanelChange", 
 function(){
 var pd = this.pd();
@@ -808,13 +672,8 @@ if (pi == null) pi = spec.getModelPeakInfoForAutoSelectOnLoad();
 if (pi == null) pi = spec.getBasePeakInfo();
 pd.addPeakHighlight(pi);
 JU.Logger.info(Thread.currentThread() + "JSViewer sendFrameChange " + this.selectedPanel);
-this.syncToJmol(pi);
+this.notifyJmol(pi);
 });
-Clazz.defineMethod(c$, "jmolSelect", 
-function(pi){
-var script = ("IR".equals(pi.getType()) || "RAMAN".equals(pi.getType()) ? "vibration ON; selectionHalos OFF;" : "vibration OFF; selectionhalos " + (pi.getAtoms() == null ? "OFF" : "ON"));
-return "Select: " + pi + " script=\"" + script + " \" sourceID=\"" + this.pd().getSpectrum().sourceID + "\"";
-}, "JSV.common.PeakInfo");
 Clazz.defineMethod(c$, "getPropertyAsJavaObject", 
 function(key){
 var map =  new java.util.Hashtable();
@@ -1095,8 +954,11 @@ id = JU.PT.trimQuotes(tokens.get(1));
 filename = tokens.get(2);
 pt = 2;
 }var isAppend = filename.equalsIgnoreCase("APPEND");
-var isCheck = filename.equalsIgnoreCase("CHECK");
-if (isAppend || isCheck) pt++;
+if (isAppend) {
+pt++;
+if (pt > 0) filename = tokens.get(pt);
+}var isCheck = filename.equalsIgnoreCase("CHECK");
+if (isCheck) pt++;
 if (pt > 0) filename = tokens.get(pt);
 if (script == null) script = this.defaultLoadScript;
 if (filename.equals("?")) {
@@ -1141,7 +1003,7 @@ break;
 var jsvp = this.si.siGetNewJSVPanel2(specs);
 jsvp.setTitle(source.getTitle());
 if (jsvp.getTitle().equals("")) {
-jsvp.getPanelData().setViewTitle(source.getFilePath());
+jsvp.getPanelData().setViewTitle("");
 jsvp.setTitle(name);
 }this.si.siSetPropertiesFromPreferences(jsvp, true);
 this.spectraTree.createTree(++this.fileCount, source,  Clazz.newArray(-1, [jsvp])).getPanelNode().isView = true;
@@ -1199,7 +1061,6 @@ function(jsvp){
 var node = JSV.common.PanelNode.findNode(jsvp, this.panelNodes);
 if (node == null) return null;
 this.spectraTree.setPath(this.spectraTree.newTreePath(node.treeNode.getPath()));
-this.setOverlayLegendVisibility(null, false);
 return node;
 }, "JSV.api.JSVPanel");
 Clazz.defineMethod(c$, "setSpectrum", 
@@ -1337,6 +1198,10 @@ Clazz.defineMethod(c$, "processTwoPointGesture",
 function(touches){
 if (!this.isClosed()) this.selectedPanel.processTwoPointGesture(touches);
 }, "~A");
+Clazz.defineMethod(c$, "processKeyEvent", 
+function(event){
+if (!this.isClosed()) this.selectedPanel.processKeyEvent(event);
+}, "~O");
 Clazz.defineMethod(c$, "getApplet", 
 function(){
 return this.html5Applet;
@@ -1411,10 +1276,10 @@ this.dialogManager.showMessage(this, "<div style='width:100%;height:100%;" + msg
 } else {
 this.selectedPanel.showMessage("<html><body style='" + msg + "</body></html>", "Predicted Colour");
 }}}, "~S");
-Clazz.defineMethod(c$, "getDialogPrint", 
+Clazz.defineMethod(c$, "getPrintLayout", 
 function(isJob){
-if (!JSV.common.JSViewer.isJS) try {
-var pl = (this.getPlatformInterface("PrintDialog")).set(this.offWindowFrame, this.lastPrintLayout, isJob).getPrintLayout();
+if (!JSV.common.JSViewer.isJS && this.hasDisplay) try {
+var pl = (this.getPlatformInterface("PrintDialog")).set(this.parentFrame, this.lastPrintLayout, isJob).getPrintLayout();
 if (pl != null) this.lastPrintLayout = pl;
 return pl;
 } catch (e) {
@@ -1502,18 +1367,26 @@ function(isAppend, isURL, simulationType, script){
 var url = null;
 if (simulationType != null) {
 url = this.fileHelper.getUrlFromDialog("Enter the name or identifier of a compound", this.recentSimulation);
-if (url == null) return;
+if (url == null) return false;
 this.recentSimulation = url;
-url = "$" + simulationType + "/" + url;
+if (url.equals("<this structure>")) {
+if (this.isEmbedded) {
+this.syncToJmol("sync . \"" + simulationType + "Simulate:\";");
+return true;
+}return false;
+}url = "$" + simulationType + "/" + url;
 } else if (isURL) {
 url = this.fileHelper.getUrlFromDialog("Enter the URL of a JCAMP-DX File", this.recentURL == null ? this.recentOpenURL : this.recentURL);
-if (url == null) return;
+if (url == null) return false;
 this.recentOpenURL = url;
 } else {
 var userData =  Clazz.newArray(-1, [Boolean.$valueOf(isAppend), script]);
-var file = this.fileHelper.showFileOpenDialog(this.mainPanel, userData);
+var file = (this.hasDisplay ? this.fileHelper.showFileOpenDialog(this.mainPanel, userData) : null);
 if (file != null) url = file.getFullPath();
-}if (url != null) this.runScriptNow("load " + (isAppend ? "APPEND " : "") + "\"" + url + "\"" + (script == null ? "" : ";" + script));
+}if (url != null) {
+this.runScriptNow("load " + (isAppend ? "APPEND " : "") + "\"" + url + "\"" + (script == null ? "" : ";" + script));
+return true;
+}return false;
 }, "~B,~B,~S,~S");
 Clazz.defineMethod(c$, "openFile", 
 function(fileName, closeFirst){
@@ -1536,6 +1409,8 @@ j.setFocusable(false);
 j.getPanelData().closeAllDialogsExcept(JSV.common.Annotation.AType.NONE);
 }}
 this.markSelectedPanels(panelNodes, iPanel);
+this.selectedPanel = jsvp;
+if (jsvp != null) jsvp.getPanelData().clearMouseSet(null);
 }return iPanel;
 }, "JSV.api.JSVPanel,JU.Lst");
 Clazz.defineMethod(c$, "checkAutoIntegrate", 
@@ -1689,9 +1564,74 @@ this.getDialogManager().showMessage(null, s, "HELP " + value);
 this.selectedPanel.showMessage(s, "Help " + value);
 }System.out.println(s);
 }, "~S");
-c$.testScript = "<PeakData  index=\"1\" title=\"\" model=\"~1.1\" type=\"1HNMR\" xMin=\"3.2915\" xMax=\"3.2965\" atoms=\"15,16,17,18,19,20\" multiplicity=\"\" integral=\"1\"> src=\"JPECVIEW\" file=\"http://SIMULATION/$caffeine\"";
+Clazz.defineMethod(c$, "setRecentSimulation", 
+function(name){
+if (name == null) name = "<this structure>";
+this.recentSimulation = name;
+}, "~S");
+Clazz.defineMethod(c$, "setCreatingImage", 
+function(isSaving){
+this.pd().creatingImage = isSaving;
+}, "~B");
+Clazz.defineMethod(c$, "checkFileAlreadyLoaded", 
+function(fileName){
+if (this.isClosed()) return false;
+if (this.pd().hasFileLoaded(fileName)) return true;
+for (var i = this.panelNodes.size(); --i >= 0; ) if (this.panelNodes.get(i).pd().hasFileLoaded(fileName)) {
+this.si.siSetSelectedPanel(this.panelNodes.get(i).jsvp);
+return true;
+}
+return false;
+}, "~S");
+Clazz.defineMethod(c$, "advanceSpectrumBy", 
+function(n){
+var i = this.panelNodes.size();
+for (; --i >= 0; ) if (this.panelNodes.get(i).jsvp === this.selectedPanel) break;
+
+this.setFrameAndTreeNode(i + n);
+this.selectedPanel.getFocusNow(false);
+}, "~N");
+Clazz.defineMethod(c$, "processPeakPickEvent", 
+function(eventObj, isApp){
+var pi;
+if (Clazz.instanceOf(eventObj,"JSV.common.PeakInfo")) {
+pi = eventObj;
+var pi2 = this.pd().findMatchingPeakInfo(pi);
+if (pi2 == null) {
+if (!"ALL".equals(pi.getTitle())) return;
+var node = null;
+for (var i = 0; i < this.panelNodes.size(); i++) if ((pi2 = this.panelNodes.get(i).pd().findMatchingPeakInfo(pi)) != null) {
+node = this.panelNodes.get(i);
+break;
+}
+if (node == null) return;
+this.setNode(node);
+}pi = pi2;
+} else {
+var e = (eventObj);
+this.si.siSetSelectedPanel(e.getSource());
+pi = e.getPeakInfo();
+}this.pd().addPeakHighlight(pi);
+this.notifyJmol(pi);
+if (pi.isClearAll()) this.repaint(false);
+ else this.pd().selectSpectrum(pi.getFilePath(), pi.getType(), pi.getModel(), true);
+this.si.siCheckCallbacks(pi.getTitle());
+}, "~O,~B");
+Clazz.defineMethod(c$, "syncScript", 
+function(peakScript){
+JSV.common.SyncManager.syncFromJmol(this, peakScript);
+}, "~S");
+Clazz.defineMethod(c$, "syncToJmol", 
+function(msg){
+this.si.syncToJmol(msg);
+}, "~S");
+Clazz.defineMethod(c$, "notifyJmol", 
+function(pi){
+this.repaint(true);
+JSV.common.SyncManager.syncToJmol(this, pi);
+}, "JSV.common.PeakInfo");
 c$.isJS = false;
 c$.isSwingJS = false;
-c$.jmolObject = null;
+c$.jsmolObject = null;
 });
-;//5.0.1-v7 Wed Jul 30 21:51:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

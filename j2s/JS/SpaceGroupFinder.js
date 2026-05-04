@@ -1,5 +1,5 @@
 Clazz.declarePackage("JS");
-Clazz.load(["JU.P3"], "JS.SpaceGroupFinder", ["java.util.Arrays", "JU.BS", "$.Lst", "$.M4", "$.Measure", "$.PT", "$.V3", "J.api.Interface", "JS.SpaceGroup", "$.SymmetryOperation", "JU.BSUtil", "JV.FileManager"], function(){
+Clazz.load(["JU.P3"], "JS.SpaceGroupFinder", ["java.util.Arrays", "JU.BS", "$.Lst", "$.M4", "$.Measure", "$.PT", "$.V3", "J.api.Interface", "JS.SpaceGroup", "$.SymmetryOperation", "$.UnitCell", "JU.BSUtil", "JV.FileManager"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.vwr = null;
 this.uc = null;
@@ -30,6 +30,7 @@ this.vectorBA = null;
 this.vectorBC = null;
 this.zero = null;
 this.isQuery = false;
+this.isTransformOnly = false;
 if (!Clazz.isClassDefined("JS.SpaceGroupFinder.SGAtom")) {
 JS.SpaceGroupFinder.$SpaceGroupFinder$SGAtom$ ();
 }
@@ -62,17 +63,18 @@ if (this.xyzList == null || this.isAssign) {
 this.bsAtoms = JU.BSUtil.copy(atoms0);
 this.nAtoms = this.bsAtoms.cardinality();
 }this.isQuery = (this.xyzList != null && this.xyzList.indexOf("&") >= 0);
+this.isTransformOnly = (this.xyzList != null && this.xyzList.startsWith(".:"));
 this.targets = JU.BS.newN(this.nAtoms);
 this.scaling = JU.P3.new3(1, 1, 1);
 var name;
 var basis;
 this.isUnknown = true;
-var isITA = (this.xyzList != null && this.xyzList.toUpperCase().startsWith("ITA/"));
+var isITA = (this.isTransformOnly || this.xyzList != null && this.xyzList.toUpperCase().startsWith("ITA/"));
 var isHall = (this.xyzList != null && !isITA && (this.xyzList.startsWith("[") || this.xyzList.startsWith("Hall:")));
 if (this.isAssign && isHall || !isHall && (isITA || (isITA = this.checkWyckoffHM()))) {
 this.isUnknown = false;
 if (isITA) {
-this.xyzList = JU.PT.rep(this.xyzList.substring(4), " ", "");
+this.xyzList = JU.PT.rep((this.isTransformOnly ? this.xyzList : this.xyzList.substring(4)), " ", "");
 } else if (this.xyzList.startsWith("Hall:")) {
 this.xyzList = this.xyzList.substring(5);
 } else {
@@ -169,11 +171,17 @@ if (!isJmolCode && !isHall && !hasTransform && !isITADotSetting && JU.PT.parseIn
 var genPos;
 var setting = null;
 var itaIndex = this.xyzList;
+var t0 = null;
 if (isHall) {
 genPos = this.uc.getSpaceGroupInfoObj("nameToXYZList", "Hall:" + this.xyzList, false, false);
 if (genPos == null) return null;
 } else {
 name = (hasTransform ? transform : itaIndex);
+if (this.isTransformOnly) {
+this.sg = this.uc.spaceGroup;
+t0 = this.sg.itaTransform;
+genPos = null;
+} else {
 this.sg = JS.SpaceGroup.getSpaceGroupFromJmolClegOrITA(this.vwr, hasTransform ? clegId : itaIndex);
 var allSettings = this.uc.getSpaceGroupJSON("ITA", itaIndex, 0);
 if (allSettings == null || (typeof(allSettings)=='string')) {
@@ -203,7 +211,7 @@ transform = null;
 }} else {
 name = sgdata.get("jmolId");
 }genPos = sgdata.get("gp");
-}if (this.sg != null && transform == null) {
+}}if (this.sg != null && transform == null) {
 this.sg = JS.SpaceGroup.createITASpaceGroup(this.sg.groupType, genPos, this.sg);
 return this.sg;
 }this.sg = JS.SpaceGroup.transformSpaceGroup(this.groupType, null, this.sg, genPos, (hasTransform ? transform : null), (hasTransform ?  new JU.M4() : null));
@@ -214,12 +222,32 @@ if (transform == null) {
 transform = sgdata.get("trm");
 var hm = sgdata.get("hm");
 this.sg.setHMSymbol(hm);
+} else if (this.isTransformOnly) {
+transform = this.multiplyTransforms(t0, transform);
+this.sg.setITATableNames(null, itano, null, transform);
 } else {
 this.sg.setITATableNames(null, itano, null, transform);
 }name = null;
 System.out.println("SpaceGroupFinder: new setting: " + this.sg.asString());
 }return this.sg;
 }, "~B");
+Clazz.defineMethod(c$, "multiplyTransforms", 
+function(t0, t1){
+var m0 = JS.SpaceGroupFinder.matFor(t0);
+var m1 = JS.SpaceGroupFinder.matFor(t1);
+m1.mul(m0);
+return JS.SpaceGroupFinder.abcFor(m1);
+}, "~S,~S");
+c$.abcFor = Clazz.defineMethod(c$, "abcFor", 
+function(trm){
+return JS.SymmetryOperation.getTransformABC(trm, false);
+}, "JU.M4");
+c$.matFor = Clazz.defineMethod(c$, "matFor", 
+function(trm){
+var m =  new JU.M4();
+JS.UnitCell.getMatrixAndUnitCell(null, null, trm, m);
+return m;
+}, "~S");
 Clazz.defineMethod(c$, "findGroupByOperations", 
 function(){
 var bsOps =  new JU.BS();
@@ -806,4 +834,4 @@ c$.opXYZ = null;
 c$.ops = null;
 c$.rdr = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Wed Mar 25 00:33:43 CDT 2026

@@ -1,5 +1,5 @@
 Clazz.declarePackage("J.adapter.writers");
-Clazz.load(["J.adapter.writers.CMLWriter", "java.util.Stack", "JU.SB"], "J.adapter.writers.CDXMLWriter", ["java.util.Hashtable", "JU.PT", "$.Rdr", "J.adapter.smarter.SmarterJmolAdapter"], function(){
+Clazz.load(["J.adapter.writers.CMLWriter", "JU.Lst", "$.SB"], "J.adapter.writers.CDXMLWriter", ["java.util.Hashtable", "JU.PT", "$.Rdr", "J.adapter.smarter.SmarterJmolAdapter"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.doc = null;
 this.objects = null;
@@ -8,7 +8,7 @@ this.sbpt = 0;
 this.id = 0;
 Clazz.instantialize(this, arguments);}, J.adapter.writers, "CDXMLWriter", J.adapter.writers.CMLWriter);
 Clazz.prepareFields (c$, function(){
-this.objects =  new java.util.Stack();
+this.objects =  new JU.Lst();
 this.sb =  new JU.SB();
 });
 Clazz.makeConstructor(c$, 
@@ -180,7 +180,7 @@ name = "crossingbond";
 break;
 }
 this.sbpt = this.sb.length();
-this.objects.push(name);
+this.objects.addLast(name);
 if (name != null) {
 J.adapter.writers.CMLWriter.startOpenTag(this.sb, name);
 if (id != -2147483648) {
@@ -560,4 +560,4 @@ return null;
 }, "JV.Viewer,~S,~S");
 c$.cdxAttributes =  Clazz.newArray(-1, ["HashSpacing", "2.50", "MarginWidth", "1.60", "LineWidth", "0.60", "BoldWidth", "2", "BondLength", "14.40", "BondSpacing", "18"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

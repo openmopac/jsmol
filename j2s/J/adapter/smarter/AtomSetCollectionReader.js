@@ -139,7 +139,6 @@ this.strSupercell = null;
 this.allow_a_len_1 = false;
 this.slabXY = false;
 this.polymerX = false;
-this.fixUnitCell = false;
 this.filteredPrecision = false;
 this.filter1 = null;
 this.filter2 = null;
@@ -454,7 +453,7 @@ var pt = s.indexOf('.') + 1;
 if (pt >= 0) {
 var n = s.indexOf('(');
 if (n < 0) {
-this.precision = Math.max(this.precision, s.length - pt);
+this.precision = Math.max(this.precision, s.length - 1 - pt);
 } else {
 if (this.precision == 0) this.precision = n;
 this.precision = Math.min(this.precision, n - 1 - pt);
@@ -730,7 +729,6 @@ this.noHydrogens = this.checkFilterKey("NOH");
 this.noMinimize = this.checkFilterKey("NOMIN");
 this.optimize2D = this.checkFilterKey("2D") && !this.noHydrogens && !this.noMinimize;
 if (this.filter == null) return;
-this.fixUnitCell = this.checkFilterKey("FIXUNITCELL");
 if (this.checkFilterKey("LOWPRECISION")) {
 this.setLowPrecision();
 }if (this.checkFilterKey("HETATM")) {
@@ -741,8 +739,7 @@ this.filterCased = JU.PT.rep(this.filterCased, "HETATM", "HETATM-Y");
 this.filterHetero = true;
 this.filter = JU.PT.rep(this.filter, "ATOM", "HETATM-N");
 this.filterCased = JU.PT.rep(this.filterCased, "ATOM", "HETATM-N");
-}if (this.checkFilterKey("CELL=")) this.strSupercell = this.filter.substring(this.filter.indexOf("CELL=") + 5).toLowerCase();
-this.nameRequired = JU.PT.getQuotedAttribute(this.filter, "NAME");
+}this.nameRequired = JU.PT.getQuotedAttribute(this.filter, "NAME");
 if (this.nameRequired != null) {
 if (this.nameRequired.startsWith("'")) this.nameRequired = JU.PT.split(this.nameRequired, "'")[1];
  else if (this.nameRequired.startsWith("\"")) this.nameRequired = JU.PT.split(this.nameRequired, "\"")[1];
@@ -759,20 +756,28 @@ if (this.filterEveryNth) this.filterN = this.parseIntAt(this.filter, this.filter
  else if (this.filter.startsWith("=") || this.filter.indexOf(";=") >= 0) this.filterAtomType = this.checkFilterKey("=");
 if (this.filterN == -2147483648) this.filterEveryNth = false;
 this.haveAtomFilter = this.filterAtomName || this.filterAtomType || this.filterElement || this.filterGroup3 || this.filterChain || this.filterAltLoc || this.filterHetero || this.filterEveryNth || this.checkFilterKey("/=");
-if (this.bsFilter == null) {
-this.bsFilter =  new JU.BS();
-this.htParams.put("bsFilter", this.bsFilter);
-this.filter = (";" + this.filter + ";").$replace(',', ';');
+if (this.checkFilterKey("CELL=")) this.strSupercell = this.filter.substring(this.filter.indexOf("CELL=") + 5).toLowerCase();
+this.filter = ";" + this.filter + ";";
+JU.Logger.info("filtering with " + this.filter);
+var s = this.getFilter("SYMOP=");
+if (s != null) this.filterSymop = " " + s.$replace(',', ' ') + " ";
+this.filter = this.filter.$replace(',', ';');
 var p = this.getFilter("PRECISION=");
 if (p != null) {
 var prec = JU.PT.parseInt(p);
 if (prec > 0 && prec <= 16) {
 this.precision = 1000 + prec;
 this.filteredPrecision = true;
-}}var s = this.getFilter("LATTICESCALING=");
+}}s = this.getFilter("FILESCALING=");
+if (s != null) {
+var fs = this.parseFloatStr(s);
+this.fileScaling = JU.P3.new3(fs, fs, fs);
+this.fileOffset =  new JU.P3();
+}s = this.getFilter("LATTICESCALING=");
 if (s != null && this.unitCellParams.length > 25) this.unitCellParams[25] = this.latticeScaling = this.parseFloatStr(s);
-s = this.getFilter("SYMOP=");
-if (s != null) this.filterSymop = " " + s + " ";
+if (this.bsFilter == null) {
+this.bsFilter =  new JU.BS();
+this.htParams.put("bsFilter", this.bsFilter);
 JU.Logger.info("filtering with " + this.filter);
 if (this.haveAtomFilter) {
 var ipt;
@@ -1333,4 +1338,4 @@ function(pt, prec){
 if (this.floatifyJavaDouble) JU.PT.fixPtFloats(pt, prec);
 }, "JU.P3,~N");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Fri Mar 20 21:23:40 CDT 2026

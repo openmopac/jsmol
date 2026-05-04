@@ -15,6 +15,8 @@ this.latticeType = 'P';
 this.intlTableNo = null;
 this.intlTableJmolId = null;
 this.spaceGroupIndex = 0;
+this.itaNo = null;
+this.isSpinSpaceGroup = false;
 this.spaceGroupF2CTitle = null;
 this.spaceGroupF2C = null;
 this.spaceGroupF2CParams = null;
@@ -22,11 +24,16 @@ this.strSUPERCELL = null;
 this.intlTableIndexNdotM = null;
 this.intlTableTransform = null;
 this.slop = 0;
+this.fileSpaceGroup = null;
 this.sgDerived = null;
-this.itaNo = null;
 Clazz.instantialize(this, arguments);}, JS, "SymmetryInfo", null);
-/*LV!1824 unnec constructor*/Clazz.defineMethod(c$, "setSymmetryInfoFromModelkit", 
+Clazz.makeConstructor(c$, 
 function(sg){
+this.fileSpaceGroup = sg;
+}, "JS.SpaceGroup");
+Clazz.defineMethod(c$, "setSymmetryInfoFromModelkit", 
+function(sg){
+this.fileSpaceGroup = sg;
 this.cellRange = null;
 this.sgName = sg.getName();
 this.intlTableJmolId = sg.jmolId;
@@ -38,9 +45,11 @@ this.setInfo(sg.getOperationCount());
 }, "JS.SpaceGroup");
 Clazz.defineMethod(c$, "setSymmetryInfoFromFile", 
 function(modelInfo, unitCellParams){
-this.spaceGroupIndex = (modelInfo.remove("spaceGroupIndex")).intValue();
+var index = modelInfo.remove("spaceGroupIndex");
+this.spaceGroupIndex = (index == null ? 0 : index.intValue());
 this.cellRange = modelInfo.remove("ML_unitCellRange");
 this.sgName = modelInfo.get("spaceGroup");
+this.isSpinSpaceGroup = (this.sgName != null && this.sgName.startsWith("spinSG:"));
 this.spaceGroupF2C = modelInfo.remove("f2c");
 this.spaceGroupF2CTitle = modelInfo.remove("f2cTitle");
 this.spaceGroupF2CParams = modelInfo.remove("f2cParams");
@@ -116,7 +125,8 @@ var sgName = (isPolymer ? "polymer" : isSlab ? "slab" : this.getSpaceGroupTitle(
 if (sgName == null) return null;
 if (sgName.startsWith("cell=!")) sgName = "cell=inverse[" + sgName.substring(6) + "]";
 sgName = JU.PT.rep(sgName, ";0,0,0", "");
-if (sgName.indexOf("#") < 0) {
+if (this.isSpinSpaceGroup) {
+} else if (sgName.indexOf("#") < 0) {
 var trm = this.intlTableTransform;
 var intTab = this.intlTableIndexNdotM;
 if (!isSlab && !isPolymer && intTab != null) {
@@ -142,5 +152,9 @@ var pt = this.itaNo.indexOf(".");
 this.itaNo = (pt > 0 ? this.itaNo.substring(0, pt) : this.itaNo) + ":" + this.intlTableTransform;
 }return this.itaNo;
 });
+Clazz.defineMethod(c$, "getFileSpaceGroup", 
+function(){
+return this.fileSpaceGroup;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+});
+;//5.0.1-v7 Wed Mar 25 00:33:43 CDT 2026

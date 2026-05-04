@@ -1,19 +1,26 @@
 Clazz.declarePackage("J.jsv");
-Clazz.load(["J.api.JmolJDXMOLParser"], "J.jsv.JDXMOLParser", ["java.util.Hashtable", "JU.BS", "$.Lst", "$.PT", "$.SB", "JU.Logger"], function(){
+Clazz.load(["J.api.JmolJDXMOLParser", "java.util.Hashtable"], "J.jsv.JDXMOLParser", ["JU.BS", "$.Lst", "$.PT", "$.SB", "JU.Logger"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.line = null;
 this.lastModel = "";
 this.thisModelID = null;
 this.baseModel = null;
 this.vibScale = 0;
-this.piUnitsX = null;
-this.piUnitsY = null;
+this.peakXLabel = null;
+this.peakYLabel = null;
 this.loader = null;
-this.modelIdList = "";
 this.peakIndex = null;
 this.peakFilePath = null;
+this.firstModelWithPeaks = null;
+this.mapDup = null;
 Clazz.instantialize(this, arguments);}, J.jsv, "JDXMOLParser", null, J.api.JmolJDXMOLParser);
-/*LV!1824 unnec constructor*/Clazz.overrideMethod(c$, "set", 
+Clazz.prepareFields (c$, function(){
+this.mapDup =  new java.util.Hashtable();
+});
+Clazz.makeConstructor(c$, 
+function(){
+});
+Clazz.overrideMethod(c$, "set", 
 function(loader, filePath, htParams){
 this.loader = loader;
 this.peakFilePath = filePath;
@@ -64,15 +71,17 @@ while (this.readLine() != null && !this.line.contains("$$$$")) sb.append(this.li
 return JU.PT.rep(sb.toString(), "  $$ Empty String", "");
 });
 Clazz.overrideMethod(c$, "readACDAssignments", 
-function(nPoints, isPeakAssignment){
-var list =  new JU.Lst();
+function(nPoints, isPeakAssignment, list){
+var overflow = false;
 try {
-this.readLine();
+if (this.line == null || this.line.indexOf("#") >= 0) this.readLine();
 if (nPoints < 0) nPoints = 2147483647;
 for (var i = 0; i < nPoints; i++) {
 var s = this.readLine();
-if (s == null || s.indexOf("#") == 0) break;
-if (isPeakAssignment) {
+if (s == null || s.indexOf("#") == 0) {
+overflow = true;
+break;
+}if (isPeakAssignment) {
 while (s.indexOf(">") < 0) s += " " + this.readLine();
 
 s = s.trim();
@@ -93,8 +102,8 @@ JU.Logger.error("Error reading peak assignments at " + this.line + ": " + e);
 throw e;
 }
 }
-return list;
-}, "~N,~B");
+return !overflow;
+}, "~N,~B,JU.Lst");
 Clazz.overrideMethod(c$, "setACDAssignments", 
 function(model, mytype, peakCount, acdlist, molFile){
 try {
@@ -102,8 +111,8 @@ if (peakCount >= 0) this.peakIndex =  Clazz.newIntArray(-1, [peakCount]);
 var isMS = (mytype.indexOf("MASS") == 0);
 var file = " file=" + JU.PT.esc(this.peakFilePath.$replace('\\', '/'));
 model = " model=" + JU.PT.esc(model + " (assigned)");
-this.piUnitsX = "";
-this.piUnitsY = "";
+this.peakXLabel = "";
+this.peakYLabel = "";
 var dx = this.getACDPeakWidth(mytype) / 2;
 var htSets =  new java.util.Hashtable();
 var list =  new JU.Lst();
@@ -186,10 +195,11 @@ var tag2 = (isSignals ? "<Signal" : "<PeakData");
 if (!this.findRecord(tag1)) return 0;
 var file = " file=" + JU.PT.esc(this.peakFilePath.$replace('\\', '/'));
 var model = JU.PT.getQuotedAttribute(this.line, "model");
+model = this.fixModel(model, true);
 model = " model=" + JU.PT.esc(model == null ? this.thisModelID : model);
 var mytype = JU.PT.getQuotedAttribute(this.line, "type");
-this.piUnitsX = JU.PT.getQuotedAttribute(this.line, "xLabel");
-this.piUnitsY = JU.PT.getQuotedAttribute(this.line, "yLabel");
+this.peakXLabel = JU.PT.getQuotedAttribute(this.line, "xLabel");
+this.peakYLabel = JU.PT.getQuotedAttribute(this.line, "yLabel");
 var htSets =  new java.util.Hashtable();
 var list =  new JU.Lst();
 while (this.readLine() != null && !(this.line = this.line.trim()).startsWith("</" + tag1)) {
@@ -200,7 +210,14 @@ var title = JU.PT.getQuotedAttribute(this.line, "title");
 if (mytype == null) mytype = JU.PT.getQuotedAttribute(this.line, "type");
 var atoms = JU.PT.getQuotedAttribute(this.line, "atoms");
 var key = (Clazz.floatToInt(JU.PT.parseFloat(JU.PT.getQuotedAttribute(this.line, "xMin")) * 100)) + "_" + (Clazz.floatToInt(JU.PT.parseFloat(JU.PT.getQuotedAttribute(this.line, "xMax")) * 100));
-this.getStringInfo(file, title, mytype, (JU.PT.getQuotedAttribute(this.line, "model") == null ? model : ""), atoms, htSets, key, list, this.line.substring(tag2.length).trim());
+var peakModel = JU.PT.getQuotedAttribute(this.line, "model");
+var newID = this.fixModel(peakModel, true);
+if (this.firstModelWithPeaks == null) this.firstModelWithPeaks = newID;
+if (newID != null && !newID.equals(peakModel)) {
+this.line = JU.PT.rep(this.line, "model=\"" + peakModel + "\"", "model=\"" + newID + "\"");
+JU.Logger.error("peak model changed from " + peakModel + " for " + this.line);
+}var more = this.line.substring(tag2.length).trim();
+this.getStringInfo(file, title, mytype, (peakModel == null ? model : ""), atoms, htSets, key, list, more);
 }}
 return this.setPeakData(list, offset);
 } catch (e) {
@@ -211,6 +228,28 @@ throw e;
 }
 }
 }, "~B,~N");
+Clazz.defineMethod(c$, "checkDuplicateModelID", 
+function(){
+if (false) return;
+var idup = this.mapDup.get(this.thisModelID);
+if (idup == null) {
+this.mapDup.put(this.thisModelID, Integer.$valueOf(1));
+} else {
+idup = Integer.$valueOf(idup.intValue() + 1);
+var newID = this.thisModelID + idup;
+JU.Logger.error("duplicate model id " + this.thisModelID + " now " + newID);
+this.mapDup.put(this.thisModelID, idup);
+this.thisModelID = newID;
+}});
+Clazz.defineMethod(c$, "fixModel", 
+function(model, andIncrement){
+if (model != null && JU.PT.parseInt(model) != -2147483648) model = "_" + model;
+if (false) return model;
+var idup = (model == null || !andIncrement ? null : this.mapDup.get(model));
+if (idup != null && idup.intValue() > 1) {
+model = this.thisModelID;
+}return model;
+}, "~S,~B");
 Clazz.defineMethod(c$, "setPeakData", 
 function(list, offset){
 var nH = 0;
@@ -231,7 +270,7 @@ info = JU.PT.rep(info, "%NATOMS%", "" + na);
 }JU.Logger.info("adding PeakData " + info);
 this.loader.addPeakData(info);
 }
-this.loader.setSpectrumPeaks(nH, this.piUnitsX, this.piUnitsY);
+this.loader.setSpectrumPeaks(nH, this.peakXLabel, this.peakYLabel);
 return n;
 }, "JU.Lst,~N");
 Clazz.defineMethod(c$, "getStringInfo", 
@@ -256,14 +295,10 @@ bs.or(JU.BS.unescape("({" + atoms + "})"));
 }}, "~S,~S,~S,~S,~S,java.util.Map,~S,JU.Lst,~S");
 Clazz.defineMethod(c$, "getModelData", 
 function(isFirst){
+this.baseModel = this.fixModel(this.getAttribute(this.line, "baseModel"), true);
 this.lastModel = this.thisModelID;
-this.thisModelID = this.getAttribute(this.line, "id");
-var key = ";" + this.thisModelID + ";";
-if (this.modelIdList.indexOf(key) >= 0) {
-this.line = this.loader.discardLinesUntilContains("</ModelData>");
-return;
-}this.modelIdList += key;
-this.baseModel = this.getAttribute(this.line, "baseModel");
+this.thisModelID = this.fixModel(this.getAttribute(this.line, "id"), false);
+this.checkDuplicateModelID();
 while (this.line.indexOf(">") < 0 && this.line.indexOf("type") < 0) this.readLine();
 
 var modelType = this.getAttribute(this.line, "type").toLowerCase();
@@ -289,5 +324,9 @@ Clazz.overrideMethod(c$, "setLine",
 function(s){
 this.line = s;
 }, "~S");
+Clazz.overrideMethod(c$, "getFirstModelWithPeaks", 
+function(){
+return this.firstModelWithPeaks;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+});
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

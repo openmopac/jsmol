@@ -160,7 +160,7 @@ this.bsSubset = bs;
 }, "JU.BS");
 Clazz.defineMethod(c$, "isInSelectionSubset", 
 function(atomIndex){
-return (atomIndex < 0 || this.bsSubset == null || this.bsSubset.get(atomIndex));
+return (atomIndex < 0 || this.vwr.am.splitFrame && !this.vwr.am.isSplitFrameSelectable(atomIndex) || this.bsSubset == null || this.bsSubset.get(atomIndex));
 }, "~N");
 Clazz.defineMethod(c$, "invertSelection", 
 function(){
@@ -251,4 +251,4 @@ function(){
 return this.bsFixed;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

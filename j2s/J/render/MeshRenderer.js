@@ -56,7 +56,7 @@ if (!this.doRender) return mesh.title != null;
 this.latticeOffset.set(0, 0, 0);
 if (mesh.modelIndex < 0 || mesh.lattice == null && mesh.symops == null) {
 if (mesh.haveXyPoints) {
-for (var i = this.vertexCount; --i >= 0; ) if (this.vertices[i] != null) this.tm.transformPtScrT32D(this.vertices[i], this.p3Screens[i]);
+for (var i = this.vertexCount; --i >= 0; ) if (this.vertices[i] != null) this.transformPtScrT32D(this.vertices[i], this.p3Screens[i]);
 
 } else {
 for (var i = this.vertexCount; --i >= 0; ) {
@@ -77,7 +77,7 @@ var c = mesh.colix;
 for (var j = max; --j >= 0; ) {
 var m = mesh.symops[j];
 if (m == null) continue;
-if (mesh.colorType == 1296041985) mesh.colix = mesh.symopColixes[j];
+if (mesh.colorType == 1296041986) mesh.colix = mesh.symopColixes[j];
 var normals = mesh.symopNormixes[j];
 var needNormals = (normals == null);
 verticesTemp = (needNormals ?  new Array(this.vertexCount) : null);
@@ -115,6 +115,22 @@ this.render2(this.isExport);
 if (this.p3Screens != null) this.vwr.freeTempPoints(this.p3Screens);
 return true;
 }, "J.shape.Mesh");
+Clazz.defineMethod(c$, "transformPt2Df", 
+function(v, pt){
+if (v.z == -3.4028235E38 || v.z == 3.4028235E38) {
+var pi = this.tm.transformPt2D(v);
+pt.set(pi.x, pi.y, pi.z);
+} else {
+this.tm.transformPt3f(v, pt);
+}}, "JU.T3,JU.P3");
+Clazz.defineMethod(c$, "transformPtScrT32D", 
+function(v, pt){
+if (v.z == -3.4028235E38 || v.z == 3.4028235E38) {
+var pi = this.tm.transformPt2D(v);
+pt.set(pi.x, pi.y, pi.z);
+} else {
+this.tm.transformPtScrT3(v, pt);
+}}, "JU.T3,JU.P3");
 Clazz.defineMethod(c$, "setVariables", 
 function(){
 if (this.mesh.visibilityFlags == 0) return false;
@@ -125,8 +141,8 @@ if (this.mesh.colorsExplicit) this.g3d.setC(2047);
 this.isGhostPass = (this.mesh.bsSlabGhost != null && (this.isExport ? this.exportPass == 2 : this.vwr.gdata.isPass2));
 this.isTranslucentInherit = (this.isGhostPass && JU.C.getColixTranslucent3(this.mesh.slabColix, false, 0) == 1);
 this.isTranslucent = this.isGhostPass || JU.C.renderPass2(this.mesh.colix);
-if (this.isTranslucent || this.volumeRender || this.mesh.bsSlabGhost != null) this.needTranslucent = true;
-this.doRender = (this.setColix(this.mesh.colix) || this.mesh.showContourLines);
+if (this.isTranslucent || this.volumeRender || this.mesh.bsSlabGhost != null || this.mesh.hasTranslucentVertices) this.needTranslucent = true;
+this.doRender = (this.mesh.hasTranslucentVertices || this.setColix(this.mesh.colix) || this.mesh.showContourLines);
 if (!this.doRender || this.isGhostPass && !(this.doRender = this.g3d.setC(this.mesh.slabColix))) {
 this.vertices = this.mesh.vs;
 if (this.needTranslucent) this.g3d.setC(JU.C.getColixTranslucent3(4, true, 0.5));
@@ -168,7 +184,7 @@ this.render2b(generateSet);
 }, "~B");
 Clazz.defineMethod(c$, "render2b", 
 function(generateSet){
-if (!this.g3d.setC(this.isGhostPass ? this.mesh.slabColix : this.colix)) return;
+if (!this.mesh.hasTranslucentVertices && !this.g3d.setC(this.isGhostPass ? this.mesh.slabColix : this.colix)) return;
 if (this.renderLow || this.mesh.showPoints || this.mesh.pc <= 0) this.renderPoints();
 if (!this.renderLow && (this.isGhostPass ? this.mesh.slabMeshType == 1073742018 : this.mesh.drawTriangles)) this.renderTriangles(false, this.showTriangles, false);
 if (!this.renderLow && this.mesh.pc > 0 && (this.isGhostPass ? this.mesh.slabMeshType == 1073741938 : this.mesh.fillTriangles)) this.renderTriangles(true, this.showTriangles, generateSet);
@@ -322,14 +338,14 @@ return;
 }} else {
 this.pt1f.ave(vA, vB);
 this.tm.transformPtScr(this.pt1f, this.pt1i);
-if (this.width < 0 && this.allowDashed) {
+if (this.allowDashed && this.width < 0) {
 this.diameter = -1;
 } else {
 var mad = Clazz.doubleToInt(Math.floor(Math.abs(this.width) * 1000));
 this.diameter = Clazz.floatToInt(this.vwr.tm.scaleToScreen(this.pt1i.z, mad));
 }}if (this.diameter == 0) this.diameter = 1;
-this.tm.transformPt2Df(vA, this.pt1f);
-this.tm.transformPt2Df(vB, this.pt2f);
+this.transformPt2Df(vA, this.pt1f);
+this.transformPt2Df(vB, this.pt2f);
 if (this.diameter == -1) {
 this.g3d.drawLineAB(this.pt1f, this.pt2f);
 } else if (this.diameter < 0) {
@@ -348,4 +364,4 @@ this.mesh.normals = null;
 this.mesh.bsPolygons = null;
 }, "~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

@@ -527,11 +527,14 @@ case 134219777:
 case 1094713362:
 case 1086324744:
 case 2097184:
-case 1094713366:
+case 1094713369:
 case 1639976963:
 case 4:
 case 1648363544:
 key = this.theValue;
+break;
+case 1145047055:
+key = "vxyz";
 break;
 default:
 key = (this.theValue).toLowerCase();
@@ -553,6 +556,8 @@ if (tok == 1073742335 || tok == 1073742334) {
 this.addTokenToPostfixToken(this.getToken());
 if (!this.addNextTokenIf(268436992)) break;
 tok = this.tokPeek();
+} else if (tok == 2 || tok == 3) {
+allowComma = false;
 }break;
 }
 if (key == null) {
@@ -569,9 +574,14 @@ this.getToken();
 this.addTokenToPostfix(4, "$" + this.theValue);
 done = true;
 break;
+case 1814695966:
+this.getToken();
+this.addTokenToPostfix(4, JS.T.nameOf(tok));
+if (this.tokPeek() == 268435969) {
+done = true;
+}break;
 case 1086324742:
 case 1648363544:
-case 1814695966:
 this.getToken();
 this.addTokenToPostfix(4, JS.T.nameOf(tok));
 break;
@@ -1092,4 +1102,4 @@ this.errorMessageUntranslated = strUntranslated;
 return false;
 }, "~S,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -47,4 +47,4 @@ if (this.mar > 0) this.g3d.fillCylinderXYZ(this.colix, this.colix, 2, this.width
  else this.g3d.drawLineXYZ(xA, yA, zA, xB, yB, zB);
 }, "~N,~N,~N,~N,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

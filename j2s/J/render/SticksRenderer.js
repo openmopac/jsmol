@@ -455,4 +455,4 @@ this.g3d.setC(this.colixB);
 this.g3d.fillHermite(5, w, w, w, this.pointT, this.pointT2, this.pointT3, this.pointT3);
 }, "JM.Atom,JM.Atom,JU.V3,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

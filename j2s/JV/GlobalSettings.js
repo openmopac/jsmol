@@ -94,6 +94,7 @@ this.showTiming = false;
 this.zoomLarge = true;
 this.zoomHeight = false;
 this.backgroundImageFileName = null;
+this.occupancyThreshold = 50;
 this.partialDots = false;
 this.bondModeOr = false;
 this.hbondsBackbone = false;
@@ -512,6 +513,7 @@ this.setB("nboCharges", this.nboCharges);
 this.setB("noDelay", this.noDelay);
 this.setO("nmrPredictFormat", this.nmrPredictFormat);
 this.setO("nmrUrlFormat", this.nmrUrlFormat);
+this.setI("occupancyThreshold", this.occupancyThreshold);
 this.setB("partialDots", this.partialDots);
 this.setB("pdbAddHydrogens", this.pdbAddHydrogens);
 this.setB("pdbGetHeader", this.pdbGetHeader);
@@ -645,6 +647,11 @@ Clazz.defineMethod(c$, "setF",
 function(name, value){
 if (!Float.isNaN(value)) this.setO(name, Float.$valueOf(value));
 }, "~S,~N");
+Clazz.defineMethod(c$, "setOrRemoveO", 
+function(name, value){
+if (value == null) this.removeParam(name);
+ else this.setO(name, value);
+}, "~S,~O");
 Clazz.defineMethod(c$, "setO", 
 function(name, value){
 name = name.toLowerCase();
@@ -812,4 +819,4 @@ if (notify) JU.Logger.info("CIR resolver set to " + this.nihResolverFormat + " t
 }}, "~S,~B");
 c$.unreportedProperties = (";ambientpercent;animationfps;antialiasdisplay;antialiasimages;antialiastranslucent;appendnew;axescolor;axesposition;axesmolecular;axesorientationrasmol;axesunitcell;axeswindow;axis1color;axis2color;axis3color;backgroundcolor;backgroundmodel;bondsymmetryatoms;boundboxcolor;cameradepth;bondingversion;ciprule6full;contextdepthmax;debug;debugscript;defaultlatttice;defaults;defaultdropscript;diffusepercent;;exportdrivers;exportscale;_filecaching;_filecache;fontcaching;fontscaling;forcefield;language;hbondsDistanceMaximum;hbondsangleminimum;jmolinJSV;legacyautobonding;legacyhaddition;legacyjavafloat;loglevel;logfile;loggestures;logcommands;measurestylechime;loadformat;loadligandformat;macrodirectory;mkaddhydrogens;minimizationmaxatoms;smilesurlformat;pubchemformat;nihresolverformat;edsurlformat;edsurlcutoff;multiprocessor;navigationmode;;nodelay;pathforallfiles;perspectivedepth;phongexponent;perspectivemodel;platformspeed;preservestate;refreshing;repaintwaitms;rotationradius;selectallmodels;showaxes;showaxis1;showaxis2;showaxis3;showboundbox;showfrank;showtiming;showunitcell;slabenabled;slab;slabrange;depth;zshade;zshadepower;specular;specularexponent;specularpercent;celshading;celshadingpower;specularpower;stateversion;statusreporting;stereo;stereostate;vibrationperiod;unitcellcolor;visualrange;windowcentered;zerobasedxyzrasmol;zoomenabled;mousedragfactor;mousewheelfactor;scriptqueue;scriptreportinglevel;syncscript;syncmouse;syncstereo;defaultdirectory;currentlocalpath;defaultdirectorylocal;ambient;bonds;colorrasmol;diffuse;fractionalrelative;frank;hetero;hidenotselected;hoverlabel;hydrogen;languagetranslation;measurementunits;navigationdepth;navigationslab;picking;pickingstyle;propertycolorscheme;radius;rgbblue;rgbgreen;rgbred;scaleangstromsperinch;selectionhalos;showscript;showselections;solvent;strandcount;spinx;spiny;spinz;spinfps;navx;navy;navz;navfps;" + J.c.CBK.getNameList() + ";undo;undoauto;undomax;atompicking;drawpicking;bondpicking;pickspinrate;picklabel" + ";modelkitmode;autoplaymovie;allowaudio;allowgestures;allowkeystrokes;allowmultitouch;allowmodelkit" + ";dodrop;hovered;historylevel;imagestate;iskiosk;useminimizationthread" + ";checkcir;resolverresolver;showkeystrokes;saveproteinstructurestate;testflag1;testflag2;testflag3;testflag4" + ";selecthetero;selecthydrogen" + ";pointgrouplineartolerance;pointgroupdistancetolerance" + ";minimizationreportsteps;labelkey;elementkey;symmetryhermannmauguin;mode2d;").toLowerCase();
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

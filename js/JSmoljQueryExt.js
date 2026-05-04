@@ -2,6 +2,8 @@
 // 9/2/2013 7:43:12 AM BH Opera/Safari fix for binary file reading
 // 3/11/2014 6:31:01 AM BH fix for MSIE not working locally
 
+;window.getClientRects = function(){return []};
+
 ;(function($) {
 
 	function createXHR(isMSIE) {

@@ -276,7 +276,7 @@ function(){
 var modelCount = this.ms.mc;
 for (var i = this.baseModelIndex; i < modelCount; i++) {
 var atomProperties = this.ms.getInfo(i, "atomProperties");
-if (this.jmolData != null) this.addJmolDataProperties(this.ms.am[i], this.ms.getInfo(i, "jmolDataProperties"));
+if (this.jmolData != null) this.addJmolDataProperties(this.ms.am[i], this.ms.getInfo(i, "jmolData"));
 var groupList = this.ms.getInfo(i, "groupPropertyList");
 if (this.ms.am[i].isBioModel && this.ms.getInfo(i, "dssr") != null) this.vwr.getAnnotationParser(true).setGroup1(this.ms, i);
 if (atomProperties == null) continue;
@@ -363,8 +363,12 @@ if (!this.merging || this.appendNew) {
 var ftype = modelAuxiliaryInfo.get("fileType");
 this.vwr.setStringProperty("_fileType", ftype);
 this.vwr.fm.setFileType(ftype);
-}if (modelName == null) modelName = (this.jmolData != null && this.jmolData.indexOf(";") > 2 ? this.jmolData.substring(this.jmolData.indexOf(":") + 2, this.jmolData.indexOf(";")) : this.appendNew ? "" + (modelNumber % 1000000) : "");
-this.setModelNameNumberProperties(ipt, iTrajectory, modelName, modelNumber, modelProperties, modelAuxiliaryInfo, this.jmolData);
+}if (modelName == null) {
+if (this.jmolData != null) {
+modelName = this.jmolData.get("header");
+modelName = (modelName.indexOf(";") > 2 ? modelName.substring(modelName.indexOf(":") + 2, modelName.indexOf(";")) : null);
+}if (modelName == null) modelName = (this.appendNew ? "" + (modelNumber % 1000000) : "");
+}this.setModelNameNumberProperties(ipt, iTrajectory, modelName, modelNumber, modelProperties, modelAuxiliaryInfo, this.jmolData);
 }
 var m = this.ms.am[this.appendToModelIndex == null ? this.baseModelIndex : this.ms.mc - 1];
 this.vwr.setSmilesString(this.ms.msInfo.get("smilesString"));
@@ -421,7 +425,7 @@ this.ms.setInfo(modelIndex, "altLocs", codes);
 models[modelIndex].insertionCount = (codes == null ? 0 : codes.length);
 var isModelKit = (this.ms.modelSetName != null && this.ms.modelSetName.startsWith("Jmol Model Kit") || modelName.startsWith("Jmol Model Kit") || "Jme".equals(this.ms.getInfo(modelIndex, "fileType")) && this.is2D);
 models[modelIndex].isModelKit = isModelKit;
-}, "~N,~N,~S,~N,java.util.Properties,java.util.Map,~S");
+}, "~N,~N,~S,~N,java.util.Properties,java.util.Map,java.util.Map");
 Clazz.defineMethod(c$, "finalizeModels", 
 function(baseModelCount){
 var modelCount = this.ms.mc;
@@ -550,9 +554,11 @@ return base;
 Clazz.defineMethod(c$, "addJmolDataProperties", 
 function(m, jmolDataProperties){
 if (jmolDataProperties == null) return;
+var props = jmolDataProperties.get("properties");
+if (props.containsKey("spinZ")) return;
 var bs = m.bsAtoms;
 var nAtoms = bs.cardinality();
-for (var e, $e = jmolDataProperties.entrySet().iterator (); $e.hasNext()&& ((e = $e.next ()) || true);) {
+for (var e, $e = props.entrySet().iterator (); $e.hasNext()&& ((e = $e.next ()) || true);) {
 var key = e.getKey();
 var data = e.getValue();
 if (data.length != nAtoms) return;
@@ -703,9 +709,10 @@ if (this.someModelsHaveUnitcells || haveMergeCells) {
 this.ms.unitCells =  new Array(this.ms.mc);
 this.ms.haveUnitCells = true;
 for (var i = 0, pt = 0; i < this.ms.mc; i++) {
+var info = this.ms.getModelAuxiliaryInfo(i);
 if (haveMergeCells && i < this.baseModelCount) {
 this.ms.unitCells[i] = this.modelSet0.unitCells[i];
-} else if (this.ms.getModelAuxiliaryInfo(i).get("spaceGroupIndex") != null) {
+} else if (info.get("spaceGroupIndex") != null) {
 this.ms.unitCells[i] = J.api.Interface.getSymmetry(this.vwr, "file");
 var notionalCell = null;
 if (this.isTrajectory) {
@@ -808,17 +815,10 @@ this.countGroup(this.ms.at[firstAtomIndex].mi, key, group3);
 if (group.isNucleic()) {
 var g1 = (this.htGroup1 == null ? null : this.htGroup1.get(group3));
 if (g1 != null) group.group1 = g1.charAt(0);
-}}this.addGroup(chain, group);
-this.groups[groupIndex] = group;
-group.groupIndex = groupIndex;
+}}this.groups[groupIndex] = chain.addGroup(group, groupIndex);
 for (var i = lastAtomIndex + 1; --i >= firstAtomIndex; ) this.ms.at[i].group = group;
 
 }, "~N,JM.Chain,~S,~N,~N,~N");
-Clazz.defineMethod(c$, "addGroup", 
-function(chain, group){
-if (chain.groupCount == chain.groups.length) chain.groups = JU.AU.doubleLength(chain.groups);
-chain.groups[chain.groupCount++] = group;
-}, "JM.Chain,JM.Group");
 Clazz.defineMethod(c$, "countGroup", 
 function(modelIndex, code, group3){
 var ptm = modelIndex + 1;
@@ -1068,4 +1068,4 @@ break;
 return null;
 }, "JV.Viewer,JM.ModelSet,~N,~O,JU.BS");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

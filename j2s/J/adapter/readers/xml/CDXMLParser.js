@@ -1,5 +1,5 @@
 Clazz.declarePackage("J.adapter.readers.xml");
-Clazz.load(["java.util.ArrayList", "$.HashMap", "$.Stack", "JU.BS"], "J.adapter.readers.xml.CDXMLParser", null, function(){
+Clazz.load(["java.util.HashMap", "JU.BS", "$.Lst"], "J.adapter.readers.xml.CDXMLParser", null, function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.minX = 3.4028235E38;
 this.minY = 3.4028235E38;
@@ -38,12 +38,12 @@ Clazz.instantialize(this, arguments);}, J.adapter.readers.xml, "CDXMLParser", nu
 Clazz.prepareFields (c$, function(){
 this.bsAtoms =  new JU.BS();
 this.bsBonds =  new JU.BS();
-this.atoms =  new java.util.ArrayList();
-this.bonds =  new java.util.ArrayList();
+this.atoms =  new JU.Lst();
+this.bonds =  new JU.Lst();
 this.bondIDMap =  new java.util.HashMap();
-this.fragments =  new java.util.Stack();
-this.nodes =  new java.util.Stack();
-this.nostereo =  new java.util.ArrayList();
+this.fragments =  new JU.Lst();
+this.nodes =  new JU.Lst();
+this.nostereo =  new JU.Lst();
 this.objectsByID =  new java.util.HashMap();
 });
 Clazz.makeConstructor(c$, 
@@ -103,13 +103,13 @@ Clazz.defineMethod(c$, "processEndElement",
 function(localName, chars){
 switch (localName) {
 case "fragment":
-this.thisFragmentID = this.fragments.pop();
+this.thisFragmentID = this.fragments.removeItemAt(this.fragments.size() - 1);
 return;
 case "objecttag":
 this.ignoreText = false;
 return;
 case "n":
-this.thisNode = (this.nodes.size() == 0 ? null : this.nodes.pop());
+this.thisNode = (this.nodes.size() == 0 ? null : this.nodes.removeItemAt(this.nodes.size() - 1));
 return;
 case "bracketedgroup":
 break;
@@ -165,7 +165,7 @@ throw e;
 Clazz.defineMethod(c$, "setNode", 
 function(id, atts){
 var nodeType = atts.get("nodetype");
-if (this.thisNode != null) this.nodes.push(this.thisNode);
+if (this.thisNode != null) this.nodes.addLast(this.thisNode);
 if ("_".equals(nodeType)) {
 this.thisAtom = this.thisNode = null;
 return null;
@@ -200,7 +200,7 @@ return (warning == null || warning.indexOf("valence") >= 0 || warning.indexOf("v
 }, "~S");
 Clazz.defineMethod(c$, "setFragment", 
 function(id, atts){
-this.fragments.push(this.thisFragmentID = id);
+this.fragments.addLast(this.thisFragmentID = id);
 var fragmentNode = (this.thisNode == null || !this.thisNode.isFragment ? null : this.thisNode);
 if (fragmentNode != null) {
 fragmentNode.setInnerFragmentID(id);
@@ -252,8 +252,8 @@ return null;
 var node1 = this.getAtom(b.atomIndex1);
 var node2 = this.getAtom(b.atomIndex2);
 if (order == this.rdr.getBondOrder("either")) {
-if (!this.nostereo.contains(node1)) this.nostereo.add(node1);
-if (!this.nostereo.contains(node2)) this.nostereo.add(node2);
+if (!this.nostereo.contains(node1)) this.nostereo.addLast(node1);
+if (!this.nostereo.contains(node2)) this.nostereo.addLast(node2);
 }if (node1.hasMultipleAttachments) {
 node1.attachedAtom = node2;
 return b;
@@ -276,11 +276,11 @@ return b;
 Clazz.defineMethod(c$, "setBracketedGroup", 
 function(id, atts){
 var usage = atts.get("bracketusage");
-if (this.bracketedGroups == null) this.bracketedGroups =  new java.util.Stack();
+if (this.bracketedGroups == null) this.bracketedGroups =  new JU.Lst();
 if ("MultipleGroup".equals(usage)) {
 var ids = this.getTokens(atts.get("bracketedobjectids"));
 var repeatCount = this.parseInt(atts.get("repeatcount"));
-this.bracketedGroups.add(Clazz.innerTypeInstance(J.adapter.readers.xml.CDXMLParser.BracketedGroup, this, null, id, ids, repeatCount));
+this.bracketedGroups.addLast(Clazz.innerTypeInstance(J.adapter.readers.xml.CDXMLParser.BracketedGroup, this, null, id, ids, repeatCount));
 }}, "~S,java.util.Map");
 Clazz.defineMethod(c$, "setAtom", 
 function(key, atts){
@@ -354,7 +354,7 @@ Clazz.defineMethod(c$, "fixBracketedGroups",
 function(){
 if (this.bracketedGroups == null) return;
 for (var i = this.bracketedGroups.size(); --i >= 0; ) {
-this.bracketedGroups.remove(i).process();
+this.bracketedGroups.removeItemAt(i).process();
 }
 });
 Clazz.defineMethod(c$, "dumpGraph", 
@@ -405,7 +405,7 @@ return this.atoms.get(i);
 }, "~N");
 Clazz.defineMethod(c$, "addAtom", 
 function(atom){
-this.atoms.add(atom);
+this.atoms.addLast(atom);
 this.bsAtoms.set(atom.index);
 return atom;
 }, "J.adapter.readers.xml.CDXMLParser.CDNode");
@@ -416,7 +416,7 @@ return this.atoms.size();
 Clazz.defineMethod(c$, "addBond", 
 function(b){
 this.bsBonds.set(b.index = this.getBondCount());
-this.bonds.add(b);
+this.bonds.addLast(b);
 return b;
 }, "J.adapter.readers.xml.CDXMLParser.CDBond");
 Clazz.defineMethod(c$, "getBond", 
@@ -486,7 +486,10 @@ this.isExternalPt = "ExternalConnectionPoint".equals(nodeType);
 if (this.isFragment) {
 this.bsFragmentAtoms =  new JU.BS();
 } else if (parent != null && !this.isExternalPt) {
-parent.bsFragmentAtoms.set(index);
+if (parent.bsFragmentAtoms == null) {
+parent.isFragment = true;
+parent.bsFragmentAtoms =  new JU.BS();
+}parent.bsFragmentAtoms.set(index);
 }}, "~N,~S,~S,~S,J.adapter.readers.xml.CDXMLParser.CDNode");
 Clazz.defineMethod(c$, "set", 
 function(x, y, z){
@@ -513,7 +516,7 @@ this.hasMultipleAttachments = true;
 }, "~A");
 Clazz.defineMethod(c$, "addExternalPoint", 
 function(externalPoint){
-if (this.orderedExternalPoints == null) this.orderedExternalPoints =  new java.util.ArrayList();
+if (this.orderedExternalPoints == null) this.orderedExternalPoints =  new JU.Lst();
 var i = this.orderedExternalPoints.size();
 while (--i >= 0 && this.orderedExternalPoints.get(i).intID >= externalPoint.internalAtom.intID) {
 }
@@ -527,7 +530,7 @@ this.parentNode.addExternalPoint(this);
 }}, "J.adapter.readers.xml.CDXMLParser.CDNode");
 Clazz.defineMethod(c$, "addAttachedAtom", 
 function(bond, pt){
-if (this.orderedConnectionBonds == null) this.orderedConnectionBonds =  new java.util.ArrayList();
+if (this.orderedConnectionBonds == null) this.orderedConnectionBonds =  new JU.Lst();
 var i = this.orderedConnectionBonds.size();
 while (--i >= 0 && (this.orderedConnectionBonds.get(i)[0]).intValue() > pt) {
 }
@@ -795,4 +798,4 @@ b1.connect(a1, a2);
 };
 Clazz.declareInterface(J.adapter.readers.xml.CDXMLParser, "CDXReaderI");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -10,7 +10,7 @@ return true;
 });
 c$.validateAndAllocateP = Clazz.defineMethod(c$, "validateAndAllocateP", 
 function(chain, group3, seqcode, firstIndex, lastIndex, specialAtomIndexes){
-return (firstIndex != lastIndex || specialAtomIndexes[13] != firstIndex ? null :  new JM.PhosphorusMonomer().set2(chain, group3, seqcode, firstIndex, lastIndex, JM.PhosphorusMonomer.phosphorusOffsets));
+return (firstIndex != lastIndex || specialAtomIndexes[13] != firstIndex ? null :  new JM.PhosphorusMonomer().set2(chain, group3, seqcode, firstIndex, lastIndex,  Clazz.newByteArray (1, 0)));
 }, "JM.Chain,~S,~N,~N,~N,~A");
 Clazz.overrideMethod(c$, "isDna", 
 function(){
@@ -74,7 +74,6 @@ Clazz.overrideMethod(c$, "getHelixData",
 function(tokType, qType, mStep){
 return this.getHelixData2(tokType, qType, mStep);
 }, "~N,~S,~N");
-c$.phosphorusOffsets =  Clazz.newByteArray(-1, [0]);
 c$.MAX_ADJACENT_PHOSPHORUS_DISTANCE = 8.0;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 09:58:50 CST 2026

@@ -1,5 +1,5 @@
 Clazz.declarePackage("JS");
-Clazz.load(["J.api.JmolScriptManager", "JU.Lst"], "JS.ScriptManager", ["java.util.Hashtable", "JU.AU", "$.PT", "$.Rdr", "$.SB", "J.api.Interface", "J.i18n.GT", "JS.ScriptQueueThread", "JU.Elements", "$.Logger", "JV.FileManager"], function(){
+Clazz.load(["J.api.JmolScriptManager", "JU.Lst"], "JS.ScriptManager", ["java.util.Hashtable", "JU.PT", "$.SB", "J.api.Interface", "JS.ScriptQueueThread", "JU.Elements", "$.Logger"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.vwr = null;
 this.eval = null;
@@ -322,116 +322,6 @@ strScript = this.vwr.wasmInchiHack(strScript);
 var sc = this.newScriptEvaluator().checkScriptSilent(strScript);
 return (returnContext || sc.errorMessage == null ? sc : sc.errorMessage);
 }, "~S,~B");
-Clazz.overrideMethod(c$, "openFileAsync", 
-function(fname, flags, type){
-var scriptOnly = ((flags & 32) != 0);
-if (!scriptOnly && (flags & 64) != 0 && JV.FileManager.isEmbeddable(fname)) this.checkResize(fname);
-var noScript = ((flags & 2) != 0);
-var noAutoPlay = ((flags & 8) != 0);
-var cmd = null;
-fname = fname.trim().$replace('\\', '/');
-var isCached = fname.startsWith("cache://");
-if (this.vwr.isApplet && fname.indexOf("://") < 0) fname = "file://" + (fname.startsWith("/") ? "" : "/") + fname;
-try {
-if (scriptOnly) {
-cmd = "script " + JU.PT.esc(fname);
-return;
-}if (fname.endsWith(".pse")) {
-cmd = (isCached ? "" : "zap;") + "load SYNC " + JU.PT.esc(fname) + (this.vwr.isApplet ? "" : " filter 'DORESIZE'");
-return;
-}if (fname.endsWith("jvxl")) {
-cmd = "isosurface ";
-} else if (!fname.toLowerCase().endsWith(".spt")) {
-if (type == null) type = this.getDragDropFileTypeName(fname);
- else if (!type.endsWith("::")) type += "::";
-if (type == null) {
-try {
-var bis = this.vwr.getBufferedInputStream(fname);
-type = JV.FileManager.determineSurfaceFileType(JU.Rdr.getBufferedReader(bis, "ISO-8859-1"));
-if (type == null) {
-cmd = "script " + JU.PT.esc(fname);
-return;
-}} catch (e) {
-if (Clazz.exceptionOf(e,"java.io.IOException")){
-return;
-} else {
-throw e;
-}
-}
-if (type === "MENU") {
-cmd = "load MENU " + JU.PT.esc(fname);
-} else {
-cmd = "if (_filetype == 'Pdb') { isosurface sigma 1.0 within 2.0 {*} " + JU.PT.esc(fname) + " mesh nofill }; else; { isosurface " + JU.PT.esc(fname) + "}";
-}return;
-}if (type.equals("spt::")) {
-cmd = "script " + JU.PT.esc((fname.startsWith("spt::") ? fname.substring(5) : fname));
-return;
-}if (type.equals("dssr")) {
-cmd = "model {visible} property dssr ";
-} else if (type.equals("Jmol")) {
-cmd = "script ";
-} else if (type.equals("Cube")) {
-cmd = "isosurface sign red blue ";
-} else if (!type.equals("spt")) {
-if (flags == 16) {
-flags = 1;
-switch (this.vwr.ms.ac == 0 ? 0 : this.vwr.confirm(J.i18n.GT.$("Would you like to replace the current model with the selected model?"), J.i18n.GT.$("Would you like to append?"))) {
-case 2:
-return;
-case 0:
-break;
-default:
-flags |= 4;
-break;
-}
-}var isAppend = ((flags & 4) != 0);
-var pdbCartoons = ((flags & 1) != 0 && !isAppend);
-if (type.endsWith("::")) {
-var pt = type.indexOf("|");
-if (pt >= 0) {
-fname += type.substring(pt, type.length - 2);
-type = "";
-}fname = type + fname;
-}cmd = this.vwr.g.defaultDropScript;
-cmd = JU.PT.rep(cmd, "%FILE", fname);
-cmd = JU.PT.rep(cmd, "%ALLOWCARTOONS", "" + pdbCartoons);
-if (cmd.toLowerCase().startsWith("zap") && (isCached || isAppend)) cmd = cmd.substring(3);
-if (isAppend) {
-cmd = JU.PT.rep(cmd, "load SYNC", "load append");
-}return;
-}}if (cmd == null && !noScript && this.vwr.scriptEditorVisible) this.vwr.showEditor( Clazz.newArray(-1, [fname, this.vwr.getFileAsString3(fname, true, null)]));
- else cmd = (cmd == null ? "script " : cmd) + JU.PT.esc(fname);
-} finally {
-if (cmd != null) this.vwr.evalString(cmd + (noAutoPlay ? "#!NOAUTOPLAY" : ""));
-}
-}, "~S,~N,~S");
-Clazz.defineMethod(c$, "checkResize", 
-function(fname){
-try {
-var data = this.vwr.fm.getEmbeddedFileState(fname, false, "state.spt");
-if (data.indexOf("preferredWidthHeight") >= 0) this.vwr.sm.resizeInnerPanelString(data);
-} catch (e) {
-}
-}, "~S");
-Clazz.defineMethod(c$, "getDragDropFileTypeName", 
-function(fileName){
-var pt = fileName.indexOf("::");
-if (pt >= 0) return fileName.substring(0, pt + 2);
-if (fileName.startsWith("=")) return "pdb";
-if (fileName.endsWith(".dssr")) return "dssr";
-var br = this.vwr.fm.getUnzippedReaderOrStreamFromName(fileName, null, true, false, true, true, null);
-var modelType = null;
-if (this.vwr.fm.isZipStream(br)) {
-var zipDirectory = this.vwr.getZipDirectoryAsString(fileName);
-if (zipDirectory.indexOf("JmolManifest") >= 0) return "Jmol";
-modelType = this.vwr.getModelAdapter().getFileTypeName(JU.Rdr.getBR(zipDirectory));
-} else if (Clazz.instanceOf(br,"java.io.BufferedReader") || Clazz.instanceOf(br,"java.io.BufferedInputStream")) {
-modelType = this.vwr.getModelAdapter().getFileTypeName(br);
-}if (modelType != null) return modelType + "::";
-if (JU.AU.isAS(br)) {
-return (br)[0];
-}return null;
-}, "~S");
 c$.setStateScriptVersion = Clazz.defineMethod(c$, "setStateScriptVersion", 
 function(vwr, version){
 if (version != null) {
@@ -518,4 +408,4 @@ this.evalStringWaitParamsStatusQueued(returnType, script, params, statusList, is
 }, "JU.Lst");
 c$.prevCovalentVersion = 0;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -63,7 +63,7 @@ var $t$;
 //var c$;
 Clazz_declarePackage("J.console");
 Clazz_declareInterface(J.console, "GenericTextArea");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.console");
 Clazz_load(["J.api.JmolAppConsoleInterface", "$.JmolCallbackListener", "java.util.Hashtable"], "J.console.GenericConsole", ["JU.PT", "J.c.CBK", "J.i18n.GT", "JS.T", "JV.Viewer"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -472,7 +472,7 @@ return sout;
 }, "~S");
 c$.labels = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("J.consolejs");
 Clazz_load(["J.console.GenericConsole"], "J.consolejs.AppletConsole", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -837,7 +837,7 @@ return s;
 }
 ;
 }}});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 })(Clazz
 ,Clazz.getClassName
 ,Clazz.newLongArray

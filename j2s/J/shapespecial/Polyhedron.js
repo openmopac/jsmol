@@ -115,8 +115,7 @@ for (var i = this.nVertices; --i >= 0; ) {
 o = lst.get(i);
 var n = (isSV ? (o).intValue : (o).intValue());
 if (n > 0) {
-var p =  new JU.Point3fi();
-p.setT(this.vertices[i]);
+var p = JU.Point3fi.newPF(this.vertices[i], 0);
 p.sD = n;
 this.vertices[i] = p;
 }}
@@ -398,4 +397,4 @@ if (this.scale != 1) sb.append("; scale:" + this.scale);
 sb.append("\n");
 }, "JU.SB");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

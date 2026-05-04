@@ -14,16 +14,12 @@ Clazz.instantialize(this, arguments);}, JSV.app, "JSVApp", null, [JSV.api.PanelL
 Clazz.makeConstructor(c$, 
 function(appletFrame, isJS){
 this.appletFrame = appletFrame;
-this.initViewer(isJS);
+this.vwr =  new JSV.common.JSViewer(this, true, isJS, true);
+appletFrame.setDropTargetListener(this.isSigned(), this.vwr);
+var path = appletFrame.getDocumentBase();
+JSV.common.JSVFileManager.setDocumentBase(this.vwr, path);
 this.initParams(appletFrame.getParameter("script"));
 }, "JSV.api.AppletFrame,~B");
-Clazz.defineMethod(c$, "initViewer", 
-function(isJS){
-this.vwr =  new JSV.common.JSViewer(this, true, isJS);
-this.appletFrame.setDropTargetListener(this.isSigned(), this.vwr);
-var path = this.appletFrame.getDocumentBase();
-JSV.common.JSVFileManager.setDocumentBase(this.vwr, path);
-}, "~B");
 Clazz.overrideMethod(c$, "isPro", 
 function(){
 return this.isSigned();
@@ -139,10 +135,10 @@ this.appletFrame.createMainPanel(this.vwr);
 Clazz.overrideMethod(c$, "repaint", 
 function(){
 var applet = (this.vwr == null ? null : this.vwr.html5Applet);
-if (JSV.common.JSViewer.jmolObject == null) {
+if (JSV.common.JSViewer.jsmolObject == null) {
 this.appletFrame.repaint();
 } else if (applet != null) {
-JSV.common.JSViewer.jmolObject.repaint(applet, true);
+JSV.common.JSViewer.jsmolObject.repaint(applet, true);
 }});
 Clazz.defineMethod(c$, "updateJS", 
 function(width, height){
@@ -180,7 +176,7 @@ function(msg){
 var applet = this.vwr.html5Applet;
 var panel = (applet == null ? null : this.vwr.selectedPanel);
 {
-applet && applet._viewSet != null && applet._updateView(panel, msg);
+if (!applet || applet._viewSet == null) return;
 }applet._updateView(panel, msg);
 }, "~S");
 Clazz.overrideMethod(c$, "syncToJmol", 
@@ -259,10 +255,9 @@ this.vwr.runScriptNow(scriptItem);
 Clazz.overrideMethod(c$, "siSetSelectedPanel", 
 function(jsvp){
 this.vwr.mainPanel.setSelectedPanel(this.vwr, jsvp, this.vwr.panelNodes);
-this.vwr.selectedPanel = jsvp;
 this.vwr.spectraTree.setSelectedPanel(this, jsvp);
 if (jsvp == null) {
-this.vwr.selectedPanel = jsvp = this.appletFrame.getJSVPanel(this.vwr, null);
+jsvp = this.appletFrame.getJSVPanel(this.vwr, null);
 this.vwr.mainPanel.setSelectedPanel(this.vwr, jsvp, null);
 }this.appletFrame.validate();
 if (jsvp != null) {
@@ -372,4 +367,4 @@ function(){
 return "JSpecView Applet " + JSV.common.JSVersion.VERSION + "\n\n" + "Authors:\nProf. Robert M. Hanson,\nD. Facey, K. Bryan, C. Walters, Prof. Robert J. Lancashire and\nvolunteer developers through sourceforge.";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

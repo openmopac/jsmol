@@ -186,4 +186,4 @@ c$.$DC_LIST = "xx    yy    zz    xy    xz    yz";
 c$.$FS_LIST = "NOT IMPLEMENTED IN THIS READER";
 c$.$FC_LIST = "xxx   yyy   zzz   yyx   xxy   xxz   zzx   zzy   yyz   xyz";
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

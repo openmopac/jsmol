@@ -69,7 +69,7 @@ var n = this.checkColixLength(colix, bs.length());
 for (var i = bs.nextSetBit(0); i >= 0 && i < n; i = bs.nextSetBit(i + 1)) this.setColixAndPalette(colix, pid, i);
 
 return;
-}if ("params" === propertyName) {
+}if ("pymolparams" === propertyName) {
 this.isActive = true;
 var data = value;
 var colixes = data[0];
@@ -145,4 +145,4 @@ function(){
 return null;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

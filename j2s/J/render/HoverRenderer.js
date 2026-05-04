@@ -9,7 +9,7 @@ this.tempXY =  Clazz.newFloatArray (3, 0);
 });
 Clazz.overrideMethod(c$, "render", 
 function(){
-if (this.tm.isNavigating()) return false;
+if (!this.vwr.showHover()) return false;
 if (this.ptTemp == null) this.ptTemp =  new JU.P3();
 var hover = this.shape;
 var antialias = this.g3d.isAntialiased();
@@ -33,7 +33,7 @@ return true;
 Clazz.defineMethod(c$, "fixLabel", 
 function(atom, label){
 if (label == null || atom == null) return null;
-return (this.ms.isJmolDataFrameForModel(atom.mi) && label.equals("%U") ? "%W" : label);
+return (this.ms.isJmolDataFrame(atom.mi) && label.equals("%U") ? "%W" : label);
 }, "JM.Atom,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

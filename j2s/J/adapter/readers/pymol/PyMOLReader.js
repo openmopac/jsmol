@@ -635,7 +635,7 @@ this.setSpaceGroupName(J.adapter.readers.pymol.PyMOLReader.stringAt(cryst, 1));
 }, "JU.Lst");
 Clazz.defineMethod(c$, "getBondList", 
 function(bonds){
-var asSingle = !this.pymolScene.getDefaultBoolean(64);
+var asSingle = !this.pymolScene.getBooleanOrDefault(64);
 var b = null;
 var vArray = null;
 var n = bonds.size();
@@ -1151,4 +1151,4 @@ return this.atoms[iPrev].chainID != this.atoms[i].chainID;
 }, "~N,~N");
 c$.nucleic = " A C G T U ADE THY CYT GUA URI DA DC DG DT DU ";
 });
-;//5.0.1-v7 Fri Aug 08 04:30:51 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

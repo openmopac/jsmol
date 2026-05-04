@@ -48,7 +48,7 @@ this.mouse = null;
 });
 Clazz.overrideMethod(c$, "setTitle", 
 function(title){
-this.pd.title = title;
+this.pd.setTitle(title);
 this.name = title;
 }, "~S");
 Clazz.defineMethod(c$, "setColorOrFont", 
@@ -105,7 +105,7 @@ this.vwr.g2d.fillBackground(contextFront, this.bgcolor);
 return;
 }if (this.pd.graphSets == null || this.pd.isPrinting) return;
 this.pd.g2d = this.pd.g2d0;
-this.pd.drawGraph(context, contextFront, contextRear, this.getWidth(), this.getHeight(), false);
+this.pd.drawGraph(context, contextFront, contextRear, this.getWidth(), this.getHeight(), false, false);
 this.vwr.repaintDone();
 }, "~O");
 Clazz.overrideMethod(c$, "printPanel", 
@@ -126,12 +126,12 @@ this.pd.setPrint(null, null);
 }
 }, "JSV.common.PrintLayout,java.io.OutputStream,~S");
 Clazz.overrideMethod(c$, "saveImage", 
-function(type, file, out){
+function(type, file, out, width, height){
 var fname = file.getName();
 if (out != null) out.cancel();
-JSV.common.JSViewer.jmolObject.saveImage(this.vwr.html5Applet, "png", fname);
+JSV.common.JSViewer.jsmolObject.saveImage(this.vwr.html5Applet, "png", fname);
 return "OK";
-}, "~S,J.api.GenericFileInterface,JU.OC");
+}, "~S,J.api.GenericFileInterface,JU.OC,~N,~N");
 Clazz.overrideMethod(c$, "hasFocus", 
 function(){
 return false;
@@ -194,4 +194,4 @@ function(x, y){
 this.vwr.showMenu(x, y);
 }, "~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

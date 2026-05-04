@@ -14,7 +14,7 @@ if (this.repaintPending) {
 return false;
 }this.repaintPending = true;
 var applet = this.vwr.html5Applet;
-var jmol = (JSV.common.JSViewer.isJS && !JSV.common.JSViewer.isSwingJS ? JSV.common.JSViewer.jmolObject : null);
+var jmol = (JSV.common.JSViewer.isJS && !JSV.common.JSViewer.isSwingJS ? JSV.common.JSViewer.jsmolObject : null);
 if (jmol == null) {
 this.vwr.selectedPanel.repaint();
 } else {
@@ -28,4 +28,4 @@ this.repaintPending = false;
 this.notify();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

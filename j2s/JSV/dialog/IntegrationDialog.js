@@ -1,6 +1,8 @@
 Clazz.declarePackage("JSV.dialog");
 Clazz.load(["JSV.dialog.JSVDialog"], "JSV.dialog.IntegrationDialog", ["JU.DF", "JSV.common.Annotation"], function(){
-var c$ = Clazz.declareType(JSV.dialog, "IntegrationDialog", JSV.dialog.JSVDialog);
+var c$ = Clazz.decorateAsClass(function(){
+this.lastNorm = 1;
+Clazz.instantialize(this, arguments);}, JSV.dialog, "IntegrationDialog", JSV.dialog.JSVDialog);
 Clazz.makeConstructor(c$, 
 function(){
 Clazz.superConstructor (this, JSV.dialog.IntegrationDialog, []);
@@ -77,4 +79,4 @@ this.applyFromFields();
 });
 c$.posXY =  Clazz.newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

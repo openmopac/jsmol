@@ -1,5 +1,5 @@
 Clazz.declarePackage("JM");
-Clazz.load(["JU.V3"], "JM.AtomCollection", ["java.util.Arrays", "$.Hashtable", "JU.A4", "$.AU", "$.BS", "$.Lst", "$.M3", "$.Measure", "$.P3", "$.PT", "J.api.Interface", "J.atomdata.RadiusData", "J.c.PAL", "$.VDW", "JM.Group", "JS.T", "JU.BSUtil", "$.Elements", "$.Logger", "$.Parser", "$.Vibration"], function(){
+Clazz.load(["JU.V3"], "JM.AtomCollection", ["java.util.Arrays", "$.Hashtable", "JU.A4", "$.AU", "$.BS", "$.Lst", "$.M3", "$.Measure", "$.P3", "$.PT", "$.SB", "J.api.Interface", "J.atomdata.RadiusData", "J.c.PAL", "$.VDW", "JM.Group", "JS.T", "JU.BSUtil", "$.Elements", "$.Logger", "$.Parser", "$.Vibration"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.vwr = null;
 this.g3d = null;
@@ -39,6 +39,7 @@ this.atomResnos = null;
 this.atomSeqIDs = null;
 this.dssrData = null;
 this.vibrations = null;
+this.vib = null;
 this.occupancies = null;
 this.bfactor100s = null;
 this.partialCharges = null;
@@ -341,8 +342,8 @@ break;
 }, "JU.BS,~N,~O");
 Clazz.defineMethod(c$, "setAtomVibrationVector", 
 function(atomIndex, vib){
-this.setVibrationVector(atomIndex, vib);
 this.taintAtom(atomIndex, 12);
+return this.setVibrationVector(atomIndex, vib);
 }, "~N,JU.T3");
 Clazz.defineMethod(c$, "setAtomCoord", 
 function(atomIndex, x, y, z){
@@ -399,7 +400,7 @@ break;
 case 1094715393:
 this.setAtomNumber(i, iValue, true);
 break;
-case 1094713365:
+case 1094713368:
 this.setAtomSeqID(i, iValue);
 break;
 case 1111492609:
@@ -470,7 +471,7 @@ break;
 case 1113589787:
 this.vwr.slm.setSelectedAtom(atom.i, (fValue != 0));
 break;
-case 1094715418:
+case 1094715420:
 atom.setValence(iValue);
 this.taintAtom(i, 10);
 break;
@@ -545,15 +546,24 @@ Clazz.defineMethod(c$, "setVibrationVector",
 function(atomIndex, vib){
 if (vib == null) {
 if (this.vibrations != null && this.vibrations.length > atomIndex) this.vibrations[atomIndex] = null;
-return;
-}if (Double.isNaN(vib.x) || Double.isNaN(vib.y) || Double.isNaN(vib.z)) return;
-if (this.vibrations == null || this.vibrations.length <= atomIndex) this.vibrations =  new Array(this.at.length);
-if (Clazz.instanceOf(vib,"JU.Vibration")) {
-this.vibrations[atomIndex] = vib;
+return null;
+}if (Double.isNaN(vib.x) || Double.isNaN(vib.y) || Double.isNaN(vib.z)) return null;
+if (atomIndex >= this.at.length) return null;
+if (this.vibrations == null) {
+this.vibrations =  new Array(this.at.length);
+} else if (this.vibrations.length <= atomIndex) {
+this.vibrations = JU.AU.arrayCopyObject(this.vibrations, this.at.length);
+}if (Clazz.instanceOf(vib,"JU.Vibration")) {
+if (this.vibrations[atomIndex] == null) {
+this.vibrations[atomIndex] = this.vib = vib;
 } else {
+this.vib = this.vibrations[atomIndex];
+this.vib.setXYZ(vib);
+}} else {
 if (this.vibrations[atomIndex] == null) this.vibrations[atomIndex] =  new JU.Vibration();
 this.vibrations[atomIndex].setXYZ(vib);
 }this.at[atomIndex].setVibrationVector();
+return this.vibrations[atomIndex];
 }, "~N,JU.T3");
 Clazz.defineMethod(c$, "setVibrationVector2", 
 function(atomIndex, tok, fValue){
@@ -702,10 +712,10 @@ var fData = null;
 var bs = null;
 switch (type) {
 case 2:
-this.loadCoordinates(dataString, false, !isDefault);
+this.loadCoordinates(dataString, 1073742329, !isDefault);
 return;
 case 12:
-this.loadCoordinates(dataString, true, true);
+this.loadCoordinates(dataString, 4166, true);
 return;
 case 18:
 fData =  Clazz.newFloatArray (this.ac, 0);
@@ -789,9 +799,9 @@ throw e;
 }
 }, "~N,~S,~S,~B");
 Clazz.defineMethod(c$, "loadCoordinates", 
-function(data, isVibrationVectors, doTaint){
+function(data, type, doTaint){
 var lines = JU.Parser.markLines(data, ';');
-var v = (isVibrationVectors ?  new JU.V3() : null);
+var v = (type == 4166 || type == 1095241729 ?  new JU.V3() : null);
 try {
 var nData = JU.PT.parseInt(data.substring(0, lines[0] - 1));
 for (var i = 1; i <= nData; i++) {
@@ -800,13 +810,20 @@ var atomIndex = JU.PT.parseInt(tokens[0]) - 1;
 var x = (tokens[3].equalsIgnoreCase("1.4E-45") ? 1.4e-45 : JU.PT.parseFloat(tokens[3]));
 var y = (tokens[4].equalsIgnoreCase("1.4E-45") ? 1.4e-45 : JU.PT.parseFloat(tokens[4]));
 var z = JU.PT.parseFloat(tokens[5]);
-if (isVibrationVectors) {
+switch (type) {
+case 4166:
 v.set(x, y, z);
-this.setAtomVibrationVector(atomIndex, v);
-} else {
+var vib = this.setAtomVibrationVector(atomIndex, v);
+if (vib != null && tokens.length > 7) {
+vib.modDim = JU.PT.parseInt(tokens[6]);
+vib.magMoment = JU.PT.parseFloat(tokens[7]);
+}break;
+default:
 this.setAtomCoord(atomIndex, x, y, z);
 if (!doTaint) this.untaint(atomIndex, 2);
-}}
+break;
+}
+}
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
 JU.Logger.error("Frame.loadCoordinate error: " + e);
@@ -814,7 +831,7 @@ JU.Logger.error("Frame.loadCoordinate error: " + e);
 throw e;
 }
 }
-}, "~S,~B,~B");
+}, "~S,~N,~B");
 Clazz.defineMethod(c$, "validateBspf", 
 function(isValid){
 if (this.bspf != null) this.bspf.isValid = isValid;
@@ -1083,7 +1100,7 @@ function(hAtoms, hPt, pt, atom, vConnect, sym, ptTemp){
 if (sym != null) {
 ptTemp.setT(pt);
 sym.toFractional(ptTemp, false);
-if (!sym.isWithinUnitCell(ptTemp, 1, 1, 1)) {
+if (!sym.isWithinUnitCell(ptTemp, 1, 1, 1, NaN)) {
 return hPt;
 }}hAtoms[hPt++] = pt;
 if (vConnect != null) vConnect.addLast(atom);
@@ -1681,7 +1698,7 @@ case 5:
 for (var i = this.ac; --i >= 0; ) if (!JM.AtomCollection.isDeleted(this.at[i]) && this.at[i].group.getInsCode() == iSpec) bs.set(i);
 
 return bs;
-case 1296041985:
+case 1296041986:
 for (var i = this.ac; --i >= 0; ) if (!JM.AtomCollection.isDeleted(this.at[i]) && this.at[i].getSymOp() == iSpec) bs.set(i);
 
 return bs;
@@ -1719,7 +1736,26 @@ this.at[i].group.setAtomBits(bs);
 bsTemp.andNot(bs);
 }
 return bs;
-case 1094713366:
+case 1095241729:
+for (var i = this.ac; --i >= 0; ) {
+var v = this.getVibration(i, false);
+if (v != null && v.modDim == -2) bs.set(i);
+}
+return bs;
+case 1145047055:
+var sb =  new JU.SB().append(";");
+for (var i = i0; i >= 0; i = bsInfo.nextSetBit(i + 1)) {
+var v = this.getVibration(i, false);
+if (v != null) {
+var s = ";" + v.getApproxString100() + ";";
+if (sb.indexOf(s) < 0) sb.append(s);
+}}
+for (var i = this.ac; --i >= 0; ) {
+var v = this.getVibration(i, false);
+if (v != null && sb.indexOf(";" + v.getApproxString100() + ";") >= 0) bs.set(i);
+}
+return bs;
+case 1094713369:
 bsTemp =  new JU.BS();
 for (var i = i0; i >= 0; i = bsInfo.nextSetBit(i + 1)) bsTemp.set(this.at[i].atomSite);
 
@@ -2050,7 +2086,7 @@ this.tainted[12].or(bsVib);
 }, "~N");
 Clazz.defineMethod(c$, "getAtomsFromAtomNumberInFrame", 
 function(atomNumber){
-var bs = this.vwr.getFrameAtoms();
+var bs = this.vwr.getVisibleFrameAtomsNoSplitData();
 for (var i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i + 1)) if (this.at[i].getAtomNumber() != atomNumber) bs.clear(i);
 
 return bs;
@@ -2081,4 +2117,4 @@ c$.sqrt3_2 = Math.sqrt(3) / 2;
 c$.vRef = JU.V3.new3(3.14159, 2.71828, 1.41421);
 c$.userSettableValues = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

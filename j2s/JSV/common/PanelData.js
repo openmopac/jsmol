@@ -36,6 +36,7 @@ this.viewTitle = null;
 this.displayFontName = null;
 this.titleFontName = null;
 this.isPrinting = false;
+this.creatingImage = false;
 this.doReset = true;
 this.printingFontName = null;
 this.printGraphPosition = "default";
@@ -48,17 +49,20 @@ this.taintedAll = true;
 this.testingJavaScript = false;
 this.currentFont = null;
 this.mouseState = null;
-this.gridOn = false;
-this.titleOn = false;
-this.peakTabsOn = false;
+this.gridOn = true;
+this.titleOn = true;
+this.peakTabsOn = true;
 this.mouseX = 0;
 this.mouseY = 0;
+this.mouseSet = null;
+this.mousePeak = null;
 this.linking = false;
 this.xPixelClicked = 0;
 this.coordinatesColor = null;
 this.gridColor = null;
 this.integralPlotColor = null;
 this.peakTabColor = null;
+this.peakOverColor = null;
 this.plotAreaColor = null;
 this.scaleColor = null;
 this.titleColor = null;
@@ -70,6 +74,7 @@ this.BLACK = null;
 this.bgcolor = null;
 this.optionsSaved = null;
 this.gMain = null;
+this.unitsDrawn = false;
 Clazz.instantialize(this, arguments);}, JSV.common, "PanelData", null, J.api.EventManager);
 Clazz.prepareFields (c$, function(){
 this.listeners =  new JU.Lst();
@@ -212,7 +217,7 @@ Clazz.defineMethod(c$, "setGraphSets",
 function(linkMode){
 this.graphSets = JSV.common.GraphSet.createGraphSetsAndSetLinkMode(this, this.jsvp, this.spectra, this.startIndex, this.endIndex, linkMode);
 this.currentGraphSet = this.graphSets.get(0);
-this.title = this.getSpectrum().getTitleLabel();
+this.setTitle(this.getSpectrum().getTitleLabel());
 }, "JSV.common.PanelData.LinkMode");
 Clazz.defineMethod(c$, "findMatchingPeakInfo", 
 function(pi){
@@ -238,10 +243,14 @@ Clazz.defineMethod(c$, "refresh",
 function(){
 this.doReset = true;
 });
+Clazz.defineMethod(c$, "setTitle", 
+function(title){
+this.title = title;
+}, "~S");
 Clazz.defineMethod(c$, "addAnnotation", 
 function(tokens){
 var title = this.currentGraphSet.addAnnotation(tokens, this.getTitle());
-if (title != null) this.title = title;
+if (title != null) this.setTitle(title);
 }, "JU.Lst");
 Clazz.defineMethod(c$, "addPeakHighlight", 
 function(peakInfo){
@@ -281,7 +290,7 @@ for (var i = this.graphSets.size(); --i >= 0; ) this.graphSets.get(i).resetViewC
 
 });
 Clazz.defineMethod(c$, "drawGraph", 
-function(gMain, gFront, gRear, width, height, addFilePath){
+function(gMain, gFront, gRear, width, height, addFilePath, addBorder){
 var withCoords;
 this.gMain = gMain;
 this.display1D = !this.isLinked && this.getBoolean(JSV.common.ScriptToken.DISPLAY1D);
@@ -294,33 +303,38 @@ if (gFront !== gMain) {
 this.g2d.fillBackground(gFront, null);
 if (gMain !== gRear) this.g2d.fillBackground(gMain, null);
 this.g2d.setStrokeBold(gMain, false);
-}if (this.isPrinting) {
-top *= 3;
-bottom *= 3;
+}this.scalingFactor = 1;
+if (this.isPrinting) {
 this.scalingFactor = 10;
 withCoords = false;
+} else if (addBorder) {
+bottom *= 2;
+withCoords = false;
 } else {
-this.scalingFactor = 1;
-withCoords = this.getBoolean(JSV.common.ScriptToken.COORDINATESON);
+withCoords = !this.creatingImage && this.getBoolean(JSV.common.ScriptToken.COORDINATESON);
 this.titleOn = this.getBoolean(JSV.common.ScriptToken.TITLEON);
 this.gridOn = this.getBoolean(JSV.common.ScriptToken.GRIDON);
 this.peakTabsOn = this.getBoolean(JSV.common.ScriptToken.PEAKTABSON);
 }var pointsOnly = this.getBoolean(JSV.common.ScriptToken.POINTSONLY);
 this.doReset = false;
 this.titleDrawn = false;
+this.unitsDrawn = false;
 this.thisWidth = width;
 this.thisHeight = height;
-for (var i = this.graphSets.size(); --i >= 0; ) this.graphSets.get(i).drawGraphSet(gMain, gFront, gRear, width, height, this.left, this.right, top, bottom, isResized, this.taintedAll, pointsOnly);
-
-if (this.titleOn && !this.titleDrawn && this.taintedAll) this.drawTitle(gMain, height * this.scalingFactor, width * this.scalingFactor, this.getDrawTitle(this.isPrinting));
-if (withCoords && this.coordStr != null) this.drawCoordinates(gFront, top, this.thisWidth - this.right, top - 20);
+for (var i = this.graphSets.size(); --i >= 0; ) {
+this.graphSets.get(i).drawGraphSet(gMain, gFront, gRear, width, height, this.left, this.right, top, bottom, isResized, this.taintedAll, pointsOnly);
+}
+if (this.isPrinting || this.creatingImage) this.titleDrawn = true;
+if (this.isPrinting && this.titleOn && !this.titleDrawn && this.taintedAll) {
+this.drawTitle(gMain, (height + 20) * this.scalingFactor, width * this.scalingFactor, this.getDrawTitle(true, -1));
+}if (withCoords && this.coordStr != null) this.drawCoordinates(gFront, top, this.thisWidth - this.right, top - 20);
 if (addFilePath && this.taintedAll) {
 this.printFilePath(gMain, this.left, height, this.commonFilePath != null ? this.commonFilePath : this.graphSets.size() == 1 && this.currentGraphSet.getTitle(true) != null ? this.getSpectrum().getFilePath() : null);
 }if (this.isPrinting) {
 this.printVersion(gMain, height);
 }if (!this.testingJavaScript && (this.isPrinting || gMain === gFront)) this.setTaintedAll();
  else this.taintedAll = false;
-}, "~O,~O,~O,~N,~N,~B");
+}, "~O,~O,~O,~N,~N,~B,~B");
 Clazz.defineMethod(c$, "drawCoordinates", 
 function(g, top, x, y){
 this.g2d.setGraphicsColor(g, this.coordinatesColor);
@@ -350,20 +364,20 @@ this.g2d.setGraphicsColor(g, this.BLACK);
 var font = this.setFont(g, 100, 0, 12, true);
 var s = this.jsvp.getApiPlatform().getDateFormat(null) + " JSpecView " + JSV.common.JSVersion.VERSION_SHORT;
 var w = font.stringWidth(s);
-this.g2d.drawString(g, s, (this.thisWidth - this.right) * this.scalingFactor - w, pageHeight * this.scalingFactor - font.getHeight() * 3);
+this.g2d.drawString(g, s, (this.thisWidth - this.right) * this.scalingFactor - w, pageHeight * this.scalingFactor + font.getHeight() * 3);
 }, "~O,~N");
 Clazz.defineMethod(c$, "drawTitle", 
-function(g, pageHeight, pageWidth, title){
-title = title.$replace('\n', ' ');
+function(g, y, pageWidth, title){
 var font = this.getFont(g, pageWidth, this.isPrinting || this.getBoolean(JSV.common.ScriptToken.TITLEBOLDON) ? 1 : 0, 14, true);
 var nPixels = font.stringWidth(title);
-if (nPixels > pageWidth) {
-var size = Clazz.doubleToInt(14.0 * pageWidth / nPixels);
+if (nPixels > pageWidth * 0.5) {
+var size = Clazz.doubleToInt(14.0 * pageWidth * 0.5 / nPixels);
 if (size < 10) size = 10;
 font = this.getFont(g, pageWidth, this.isPrinting || this.getBoolean(JSV.common.ScriptToken.TITLEBOLDON) ? 1 : 0, size, true);
 }this.g2d.setGraphicsColor(g, this.titleColor);
 this.setCurrentFont(this.g2d.setFont(g, font));
-this.g2d.drawString(g, title, (this.isPrinting ? this.left * this.scalingFactor : 5), pageHeight - Clazz.doubleToInt(font.getHeight() * (this.isPrinting ? 2 : 0.5)));
+y -= Clazz.doubleToInt(font.getHeight() * (this.isPrinting ? -0.2 : this.creatingImage ? 1.2 : 0.4));
+this.g2d.drawString(g, title, (this.isPrinting ? this.left * this.scalingFactor : 5), y);
 }, "~O,~N,~N,~S");
 Clazz.defineMethod(c$, "setCurrentFont", 
 function(font){
@@ -622,6 +636,16 @@ Clazz.defineMethod(c$, "isMouseUp",
 function(){
 return (this.mouseState === JSV.common.PanelData.Mouse.UP);
 });
+Clazz.defineMethod(c$, "clearMouseSet", 
+function(gs){
+if (gs == null) {
+this.mousePeak = null;
+}if (this.mouseSet != null && this.mouseSet !== gs) {
+this.mouseSet.mouseMovedEvent(2147483647, 0);
+}this.mouseSet = gs;
+if (gs == null && this.graphSets.size() > 0) {
+(this.mouseSet = gs = this.graphSets.get(this.graphSets.size() - 1)).setSpectrumMovedTo(gs.nSpectra - 1);
+}}, "JSV.common.GraphSet");
 Clazz.defineMethod(c$, "doMouseMoved", 
 function(xPixel, yPixel){
 this.mouseX = xPixel;
@@ -630,13 +654,27 @@ this.mouseState = JSV.common.PanelData.Mouse.UP;
 this.clickCount = 0;
 var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
 if (gs == null) return;
-gs.mouseMovedEvent(xPixel, yPixel);
-}, "~N,~N");
+this.clearMouseSet(gs);
+var peak = gs.mouseMovedEvent(xPixel, yPixel);
+if (this.mousePeak !== peak) {
+this.mousePeak = peak;
+this.setTaintedAll();
+}}, "~N,~N");
+Clazz.defineMethod(c$, "doMouseClicked", 
+function(xPixel, yPixel, isControlDown){
+var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
+if (gs == null) return;
+this.setCurrentGraphSet(gs, yPixel);
+gs.mouseClickedEvent(xPixel, yPixel, this.clickCount, isControlDown);
+this.setTaintedAll();
+this.repaint();
+}, "~N,~N,~B");
 Clazz.defineMethod(c$, "doMousePressed", 
 function(xPixel, yPixel){
 this.mouseState = JSV.common.PanelData.Mouse.DOWN;
 var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
 if (gs == null) return;
+this.clearMouseSet(gs);
 this.setCurrentGraphSet(gs, yPixel);
 this.clickCount = (++this.clickCount % 3);
 this.currentGraphSet.mousePressedEvent(xPixel, yPixel, this.clickCount);
@@ -657,15 +695,6 @@ this.currentGraphSet.mouseReleasedEvent(xPixel, yPixel);
 this.thisWidget = null;
 this.isIntegralDrag = false;
 this.integralShiftMode = 0;
-}, "~N,~N,~B");
-Clazz.defineMethod(c$, "doMouseClicked", 
-function(xPixel, yPixel, isControlDown){
-var gs = JSV.common.GraphSet.findGraphSet(this.graphSets, xPixel, yPixel);
-if (gs == null) return;
-this.setCurrentGraphSet(gs, yPixel);
-gs.mouseClickedEvent(xPixel, yPixel, this.clickCount, isControlDown);
-this.setTaintedAll();
-this.repaint();
 }, "~N,~N,~B");
 Clazz.defineMethod(c$, "hasCurrentMeasurements", 
 function(type){
@@ -722,11 +751,14 @@ throw e;
 }
 });
 Clazz.defineMethod(c$, "getDrawTitle", 
-function(isPrinting){
+function(isPrinting, iSpec){
 var title = null;
-if (isPrinting) title = this.printJobTitle;
- else if (this.nSpectra == 1) {
+if (isPrinting) {
+title = this.printJobTitle;
+} else if (this.nSpectra == 1) {
 title = this.getSpectrum().getPeakTitle();
+} else if (iSpec >= 0) {
+title = this.getSpectrumAt(iSpec).getPeakTitle();
 } else if (this.viewTitle != null) {
 if (this.currentGraphSet.getTitle(false) != null) title = this.getSpectrum().getPeakTitle();
 if (title == null) title = this.viewTitle;
@@ -734,21 +766,7 @@ if (title == null) title = this.viewTitle;
 title = this.jsvp.getTitle().trim();
 }if (title.indexOf("\n") >= 0) title = title.substring(0, title.indexOf("\n")).trim();
 return title;
-}, "~B");
-Clazz.defineMethod(c$, "getPrintJobTitle", 
-function(isPrinting){
-var title = null;
-if (this.nSpectra == 1) {
-title = this.getSpectrum().getTitle();
-} else if (this.viewTitle != null) {
-if (this.graphSets.size() == 1) title = this.currentGraphSet.getTitle(isPrinting);
-if (title == null) title = this.viewTitle;
-} else {
-title = this.jsvp.getTitle().trim();
-}if (title.indexOf("\n") >= 0) title = title.substring(0, title.indexOf("\n")).trim();
- else if (title.startsWith("$")) title = title.substring(1);
-return title;
-}, "~B");
+}, "~B,~N");
 Clazz.defineMethod(c$, "linkSpectra", 
 function(mode){
 if (mode === JSV.common.PanelData.LinkMode.ALL) mode = (this.nSpectra == 2 ? JSV.common.PanelData.LinkMode.AB : this.nSpectra == 3 ? JSV.common.PanelData.LinkMode.ABC : JSV.common.PanelData.LinkMode.NONE);
@@ -811,8 +829,7 @@ case JSV.common.ScriptToken.COORDINATESCOLOR:
 this.coordinatesColor = color;
 return;
 case JSV.common.ScriptToken.HIGHLIGHTCOLOR:
-this.highlightColor = color;
-if (this.highlightColor.getOpacity255() == 255) this.highlightColor.setOpacity255(150);
+this.highlightColor = color.addAlpha(150);
 return;
 case JSV.common.ScriptToken.ZOOMBOXCOLOR:
 this.zoomBoxColor = color;
@@ -828,6 +845,9 @@ this.gridColor = color;
 break;
 case JSV.common.ScriptToken.INTEGRALPLOTCOLOR:
 this.integralPlotColor = color;
+break;
+case JSV.common.ScriptToken.PEAKOVERCOLOR:
+this.peakOverColor = color.addAlpha(30);
 break;
 case JSV.common.ScriptToken.PEAKTABCOLOR:
 this.peakTabColor = color;
@@ -870,6 +890,8 @@ case JSV.common.ScriptToken.INTEGRALPLOTCOLOR:
 return this.integralPlotColor;
 case JSV.common.ScriptToken.GRIDCOLOR:
 return this.gridColor;
+case JSV.common.ScriptToken.PEAKOVERCOLOR:
+return this.peakOverColor;
 case JSV.common.ScriptToken.PEAKTABCOLOR:
 return this.peakTabColor;
 case JSV.common.ScriptToken.PLOTAREACOLOR:
@@ -892,12 +914,12 @@ var useFileName = f1 != null && f2 != null && !f1.equals(f2);
 for (var index = 0; index < numSpectra; index++) {
 var cols =  new Array(3);
 var spectrum = this.getSpectrumAt(index);
-this.title = spectrum.getTitle();
-if (useFileName) this.title = JSV.common.JSVFileManager.getTagName(spectrum.getFilePath()) + " - " + this.title;
+var title = spectrum.getTitle();
+if (useFileName) title = JSV.common.JSVFileManager.getTagName(spectrum.getFilePath()) + " - " + title;
 var plotColor = this.getCurrentPlotColor(index);
 cols[0] =  new Integer(index + 1);
 cols[1] = plotColor;
-cols[2] = " " + this.title;
+cols[2] = " " + title;
 data[index] = cols;
 }
 return data;
@@ -937,7 +959,7 @@ this.printGraphPosition = pl.position;
 this.optionsSaved =  new java.util.Hashtable();
 this.optionsSaved.putAll(this.options);
 this.gridOn = pl.showGrid;
-this.titleOn = pl.showTitle;
+this.titleOn = pl.showTitles;
 this.setBoolean(JSV.common.ScriptToken.XSCALEON, pl.showXScale);
 this.setBoolean(JSV.common.ScriptToken.XUNITSON, pl.showXScale);
 this.setBoolean(JSV.common.ScriptToken.YSCALEON, pl.showYScale);
@@ -948,7 +970,7 @@ function(pl){
 pl.showGrid = this.gridOn;
 pl.showXScale = this.getBoolean(JSV.common.ScriptToken.XSCALEON);
 pl.showYScale = this.getBoolean(JSV.common.ScriptToken.YSCALEON);
-pl.showTitle = this.titleOn;
+pl.showTitles = this.titleOn;
 }, "JSV.common.PrintLayout");
 Clazz.defineMethod(c$, "showDialog", 
 function(type){
@@ -973,9 +995,10 @@ var isPortrait = !pl.layout.equals("landscape");
 this.print(pdfCreator, (isPortrait ? pl.imageableHeight : pl.imageableWidth), (isPortrait ? pl.imageableWidth : pl.imageableHeight), pl.imageableX, pl.imageableY, pl.paperHeight, pl.paperWidth, isPortrait, 0);
 }, "J.api.GenericGraphics,JSV.common.PrintLayout");
 Clazz.defineMethod(c$, "print", 
-function(g, height, width, x, y, paperHeight, paperWidth, isPortrait, pi){
-this.g2d = this.g2d0;
-if (pi == 0) {
+function(g, height, width, x, y, paperHeight, paperWidth, isPortrait, pageIndex){
+if (pageIndex != 0) {
+return 1;
+}this.g2d = this.g2d0;
 this.isPrinting = true;
 var addFilePath = false;
 if (Clazz.instanceOf(g,"J.api.GenericGraphics")) {
@@ -989,7 +1012,6 @@ width = 280;
 height = 280;
 width = 450;
 }} else if (this.printGraphPosition.equals("fit to page")) {
-addFilePath = true;
 } else {
 if (isPortrait) {
 height = 450;
@@ -1001,13 +1023,14 @@ height = 280;
 width = 450;
 y = Clazz.doubleToInt(Clazz.doubleToInt(paperWidth - 280) / 2);
 x = Clazz.doubleToInt(Clazz.doubleToInt(paperHeight - 450) / 2);
-}}this.g2d.translateScale(g, x, y, 0.1);
-this.setTaintedAll();
-this.drawGraph(g, g, g, Clazz.doubleToInt(width), Clazz.doubleToInt(height), addFilePath);
+}}this.setTaintedAll();
+this.g2d.translateScale(null, x, y, 0.1);
+if (g == null) g =  new java.awt.image.BufferedImage(Clazz.doubleToInt(width), Clazz.doubleToInt(height), 2).getGraphics();
+this.drawGraph(g, g, g, Clazz.doubleToInt(width), Clazz.doubleToInt(height), addFilePath, false);
+if (this.g2d !== this.g2d0 && g !== this.gMain) (g).dispose();
+this.g2d = this.g2d0;
 this.isPrinting = false;
 return 0;
-}this.isPrinting = false;
-return 1;
 }, "~O,~N,~N,~N,~N,~N,~N,~B,~N");
 Clazz.overrideMethod(c$, "keyPressed", 
 function(code, modifiers){
@@ -1214,4 +1237,4 @@ Clazz.defineEnumConstant(c$, "UP", 0, []);
 Clazz.defineEnumConstant(c$, "DOWN", 1, []);
 /*eoif2*/})();
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

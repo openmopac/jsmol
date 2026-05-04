@@ -203,9 +203,6 @@ Clazz.overrideMethod(c$, "getJSVPanel",
 function(viewer, specs){
 return (specs == null ? JSV.js2d.JsPanel.getEmptyPanel(viewer) : JSV.js2d.JsPanel.getPanelMany(viewer, specs));
 }, "JSV.common.JSViewer,JU.Lst");
-Clazz.overrideMethod(c$, "setVisible", 
-function(b){
-}, "~B");
 Clazz.overrideMethod(c$, "getDocumentBase", 
 function(){
 try {
@@ -292,4 +289,4 @@ Clazz.overrideMethod(c$, "processKeyEvent",
 function(event){
 }, "~O");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

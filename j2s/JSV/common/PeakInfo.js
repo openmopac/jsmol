@@ -23,6 +23,7 @@ this.atomKey = null;
 Clazz.instantialize(this, arguments);}, JSV.common, "PeakInfo", null);
 /*LV!1824 unnec constructor*/Clazz.makeConstructor(c$, 
 function(s){
+if (s == null) return;
 this.stringInfo = s;
 this.type = JU.PT.getQuotedAttribute(s, "type");
 if (this.type == null) this.type = "";
@@ -34,7 +35,7 @@ if (pt >= 0) this.type = JSV.common.PeakInfo.fixType(this.type.substring(0, pt))
 this.id = JU.PT.getQuotedAttribute(s, "id");
 this.index = JU.PT.getQuotedAttribute(s, "index");
 this.file = JU.PT.getQuotedAttribute(s, "file");
-System.out.println("pi file=" + this.file);
+System.out.println("PeakInfo file=" + this.file);
 this.filePathForwardSlash = (this.file == null ? null : this.file.$replace('\\', '/'));
 this.model = JU.PT.getQuotedAttribute(s, "model");
 var isBaseModel = s.contains("baseModel=\"\"");
@@ -155,6 +156,5 @@ Clazz.defineMethod(c$, "getXPixel",
 function(){
 return Clazz.doubleToInt((this.px0 + this.px1) / 2);
 });
-c$.nullPeakInfo = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

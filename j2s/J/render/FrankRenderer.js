@@ -3,12 +3,11 @@ Clazz.load(["J.render.ShapeRenderer"], "J.render.FrankRenderer", ["J.shape.Frank
 var c$ = Clazz.declareType(J.render, "FrankRenderer", J.render.ShapeRenderer);
 Clazz.overrideMethod(c$, "render", 
 function(){
+if (this.isExport || !this.vwr.getShowFrank() || !this.g3d.setC(this.colix) || this.vwr.frankOn && !this.vwr.noFrankEcho || this.vwr.tm.splitFrameCurrentlyRendering == 0) return false;
 var frank = this.shape;
 var allowKeys = this.vwr.getBooleanProperty("allowKeyStrokes");
 var modelKitMode = this.vwr.getBoolean(603983903);
-this.colix = (modelKitMode ? 20 : this.vwr.isSignedApplet ? (allowKeys || (JV.Viewer.isJS || JV.Viewer.isSwingJS) && !this.vwr.isWebGL ? 5 : 10) : allowKeys ? 7 : 12);
-if (this.isExport || !this.vwr.getShowFrank() || !this.g3d.setC(this.colix)) return false;
-if (this.vwr.frankOn && !this.vwr.noFrankEcho) return this.vwr.noFrankEcho;
+this.colix = (modelKitMode && !this.vwr.getModelkit(false).isHidden() ? 20 : this.vwr.isSignedApplet ? (allowKeys || (JV.Viewer.isJS || JV.Viewer.isSwingJS) && !this.vwr.isWebGL ? 5 : 10) : allowKeys ? 7 : 12);
 this.vwr.noFrankEcho = true;
 var imageFontScaling = this.vwr.imageFontScaling;
 frank.getFont(imageFontScaling);
@@ -35,4 +34,4 @@ this.g3d.fillTextRect(0, h << 1, 0, 0, w, h);
 }}}return false;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

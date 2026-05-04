@@ -1,5 +1,5 @@
 Clazz.declarePackage("J.renderspecial");
-Clazz.load(["J.render.ShapeRenderer", "JU.P3", "$.V3", "JU.Point3fi"], "J.renderspecial.VectorsRenderer", ["J.shape.Shape"], function(){
+Clazz.load(["J.render.ShapeRenderer", "JU.P3", "$.V3", "JU.Point3fi"], "J.renderspecial.VectorsRenderer", ["J.shape.Shape", "JU.C"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.ptTemp = null;
 this.pointVectorStart = null;
@@ -16,7 +16,6 @@ this.vectorScale = 0;
 this.vectorSymmetry = false;
 this.headScale = 0;
 this.drawShaft = false;
-this.vibTemp = null;
 this.vectorsCentered = false;
 this.standardVector = true;
 this.vibrationOn = false;
@@ -25,6 +24,8 @@ this.showModVecs = false;
 this.vectorTrail = 0;
 this.ptTemp4 = null;
 this.ptTemp2 = null;
+this.displayVectorHalo = false;
+this.isDisplayHaloPass1 = false;
 Clazz.instantialize(this, arguments);}, J.renderspecial, "VectorsRenderer", J.render.ShapeRenderer);
 Clazz.prepareFields (c$, function(){
 this.ptTemp =  new JU.Point3fi();
@@ -44,10 +45,15 @@ if (!vectors.isActive) return false;
 var mads = vectors.mads;
 if (mads == null) return false;
 var colixes = vectors.colixes;
-var needTranslucent = false;
 this.vectorScale = this.vwr.getFloat(1648361473);
 this.vectorTrail = this.vwr.getInt(553648185);
 var atoms = this.ms.at;
+this.displayVectorHalo = (this.vwr.getSelectionHalosEnabled());
+var bsSelected = (this.displayVectorHalo ? this.vwr.bsA() : null);
+var needTranslucent = this.displayVectorHalo;
+this.isDisplayHaloPass1 =  new Boolean (this.displayVectorHalo & !this.vwr.gdata.isPass2).valueOf();
+this.displayVectorHalo = new Boolean (this.displayVectorHalo & this.vwr.gdata.isPass2).valueOf();
+this.colix = (this.displayVectorHalo ? JU.C.getColixTranslucent3(23, true, 0.5) : -1);
 if (this.vectorScale < 0) {
 var maxScale = 0;
 for (var i = this.ms.ac; --i >= 0; ) {
@@ -67,6 +73,7 @@ this.showModVecs = this.vwr.getBoolean(603979927);
 this.vibrationOn = this.vwr.tm.vibrationOn;
 this.headScale = -0.2;
 var haveModulations = false;
+var isSelected = false;
 for (var i = this.ms.ac; --i >= 0; ) {
 var atom = atoms[i];
 if (!this.isVisibleForMe(atom)) continue;
@@ -74,20 +81,22 @@ var mod = this.ms.getModulation(i);
 if (this.showModVecs && !haveModulations && mod != null) haveModulations = true;
 var vib = this.ms.getVibration(i, false);
 if (vib == null) continue;
-if (!this.transform(mads[i], atom, vib, mod)) continue;
-if (!this.g3d.setC(J.shape.Shape.getColix(colixes, i, atom))) {
+isSelected = (bsSelected != null && bsSelected.get(i));
+if (!this.transform(mads[i], atom, vib, mod, isSelected)) continue;
+if (!this.g3d.setC(this.colix == -1 || !isSelected ? J.shape.Shape.getColix(colixes, i, atom) : this.colix)) {
 needTranslucent = true;
 continue;
 }this.renderVector(atom, vib);
 if (this.vectorSymmetry) {
 this.vectorScale = -this.vectorScale;
 this.headScale = -this.headScale;
-this.transform(mads[i], atom, vib, null);
+this.transform(mads[i], atom, vib, null, false);
 this.renderVector(atom, vib);
 this.vectorScale = -this.vectorScale;
 this.headScale = -this.headScale;
 }}
-if (haveModulations) for (var i = this.ms.ac; --i >= 0; ) {
+if (haveModulations) {
+for (var i = this.ms.ac; --i >= 0; ) {
 var atom = atoms[i];
 if (!this.isVisibleForMe(atom)) continue;
 var mod = this.ms.getModulation(i);
@@ -95,23 +104,23 @@ if (mod == null) continue;
 if (!this.g3d.setC(J.shape.Shape.getColix(colixes, i, atom))) {
 needTranslucent = true;
 continue;
-}if (!this.transform(mads[i], atom, null, mod)) continue;
+}if (!this.transform(mads[i], atom, null, mod, isSelected)) continue;
 this.renderVector(atom, null);
 }
-return needTranslucent;
+}return needTranslucent;
 });
 Clazz.defineMethod(c$, "transform", 
-function(mad, atom, vib, mod2){
+function(mad, atom, vib, mod2, isSelected){
 var isMod = (vib == null || vib.modDim >= 0);
 var isSpin = (!isMod && vib.modDim == -2);
 if (vib == null) vib = mod2;
-this.drawCap = true;
+var isHighlight = isSelected && this.displayVectorHalo;
 if (!isMod) {
 var len = vib.length();
 if (Math.abs(len * this.vectorScale) < 0.01) return false;
 this.standardVector = true;
-this.drawShaft = (0.1 + Math.abs(this.headScale / len) < Math.abs(this.vectorScale));
-this.headOffsetVector.setT(vib);
+this.drawShaft = !isHighlight && (0.1 + Math.abs(this.headScale / len) < Math.abs(this.vectorScale));
+this.headOffsetVector.setT(vib.isFrom000 ? atom : vib);
 this.headOffsetVector.scale(this.headScale / len);
 }this.ptTemp.setT(atom);
 var mod = atom.getModulation();
@@ -133,7 +142,9 @@ var len = this.headOffsetVector.length();
 this.drawCap = (len + -0.2 > 0.001);
 this.drawShaft = (len > 0.01);
 this.headOffsetVector.scale(this.headScale / this.headOffsetVector.length());
-} else if (this.vectorsCentered || isSpin) {
+} else {
+this.drawCap = !isSelected || !this.isDisplayHaloPass1;
+if (this.vectorsCentered || isSpin) {
 this.standardVector = false;
 this.pointVectorEnd.scaleAdd2(0.5 * this.vectorScale, vib, this.ptTemp);
 if (this.vectorSymmetry) {
@@ -141,8 +152,13 @@ this.pointVectorStart.setP(this.ptTemp);
 } else {
 this.pointVectorStart.scaleAdd2(-0.5 * this.vectorScale, vib, this.ptTemp);
 }} else {
+if (vib.isFrom000) {
+this.pointVectorStart.set(0, 0, 0);
+this.tm.transformPtScrT3(this.pointVectorStart, this.screenVectorStart);
+this.pointVectorEnd.setP(atom);
+} else {
 this.pointVectorEnd.scaleAdd2(this.vectorScale, vib, this.ptTemp);
-this.pointArrowHead.add2(this.pointVectorEnd, this.headOffsetVector);
+}this.pointArrowHead.add2(this.pointVectorEnd, this.headOffsetVector);
 if (this.vibrationOn) {
 var screen = this.tm.transformPtVib(this.pointVectorEnd, vib);
 this.screenVectorEnd.set(screen.x, screen.y, screen.z);
@@ -151,17 +167,17 @@ this.screenArrowHead.set(screen.x, screen.y, screen.z);
 } else {
 this.tm.transformPtScrT3(this.pointVectorEnd, this.screenVectorEnd);
 this.tm.transformPtScrT3(this.pointArrowHead, this.screenArrowHead);
-}}if (!this.standardVector) {
+}}}if (!this.standardVector) {
 this.tm.transformPtScrT3(this.pointVectorEnd, this.screenVectorEnd);
 this.tm.transformPtScrT3(this.pointVectorStart, this.screenVectorStart);
-if (this.drawCap) this.pointArrowHead.add2(this.pointVectorEnd, this.headOffsetVector);
+if (this.drawCap || this.isDisplayHaloPass1) this.pointArrowHead.add2(this.pointVectorEnd, this.headOffsetVector);
  else this.pointArrowHead.setT(this.pointVectorEnd);
 this.tm.transformPtScrT3(this.pointArrowHead, this.screenArrowHead);
 }this.diameter = Clazz.floatToInt(mad < 0 ? -mad : mad < 1 ? 1 : this.vwr.tm.scaleToScreen(Clazz.floatToInt(this.screenVectorEnd.z), mad));
 this.headWidthPixels = this.diameter << 1;
 if (this.headWidthPixels < this.diameter + 2) this.headWidthPixels = this.diameter + 2;
 return true;
-}, "~N,JM.Atom,JU.Vibration,J.api.JmolModulationSet");
+}, "~N,JM.Atom,JU.Vibration,J.api.JmolModulationSet,~B");
 Clazz.defineMethod(c$, "renderVector", 
 function(atom, vib){
 if (vib != null && this.vectorTrail > 0) {
@@ -179,9 +195,9 @@ this.g3d.fillCylinderBits(2, d, this.ptTemp4, this.ptTemp2);
 }
 }if (this.drawShaft) {
 this.pTemp3.set(atom.sX, atom.sY, atom.sZ);
-if (this.standardVector) this.g3d.fillCylinderBits(2, this.diameter, this.pTemp3, this.screenArrowHead);
+if (this.standardVector && !vib.isFrom000) this.g3d.fillCylinderBits(2, this.diameter, this.pTemp3, this.screenArrowHead);
  else this.g3d.fillCylinderBits(2, this.diameter, this.screenVectorStart, this.screenArrowHead);
 }if (this.drawCap) this.g3d.fillConeScreen3f(2, this.headWidthPixels, this.screenArrowHead, this.screenVectorEnd, false);
 }, "JM.Atom,JU.Vibration");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

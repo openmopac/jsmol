@@ -1,6 +1,6 @@
-Jmol.___JmolDate="$Date: 2025-08-08 04:46:51 -0500 (Fri, 08 Aug 2025) $"
+Jmol.___JmolDate="$Date: 2026-03-20 10:03:31 -0500 (Fri, 20 Mar 2026) $"
 Jmol.___fullJmolProperties="src/org/jmol/viewer/Jmol.properties"
-Jmol.___JmolVersion="16.3.33" // (legacy) also 16.3.34 (swingJS) 
+Jmol.___JmolVersion="16.3.53" // (legacy) also 16.3.54 (swingJS) 
 // JSmolJavaExt.js
  
 // contains class declarations for 
@@ -16,6 +16,7 @@ Jmol.___JmolVersion="16.3.33" // (legacy) also 16.3.34 (swingJS)
 // (local scope) Clazz_xxx, allowing them to be further compressed using
 // Google Closure Compiler in that same ANT task.
 
+// BH 2025.11.10 removing override of String.prototype.concat
 // BH 2023.07.08 NaN.0 fix
 // BH 10/16/2017 6:51:20 AM fixing range error for MSIE in prepareCallback setting arguments.length < 0
 // BH 10/13/2017 7:03:28 AM fix for String.initialize(bytes) applying bytes as arguments
@@ -1395,13 +1396,13 @@ for(var i=0;i<srcEnd-srcBegin;i++){
 dst[dstBegin+i]=this.charAt(srcBegin+i);
 }
 };
-sp.$concat=sp.concat;
-sp.concat=function(s){
-if(s==null){
-throw new NullPointerException();
-}
-return this.$concat(s);
-};
+//sp.$concat=sp.concat;
+//sp.concat=function(s){
+//if(s==null){
+//throw new NullPointerException();
+//}
+//return this.$concat(s);
+//};
 
 sp.$lastIndexOf=sp.lastIndexOf;
 sp.lastIndexOf=function(s,last){

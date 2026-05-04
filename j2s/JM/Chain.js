@@ -1,5 +1,5 @@
 Clazz.declarePackage("JM");
-Clazz.load(["JM.Structure"], "JM.Chain", null, function(){
+Clazz.load(["JM.Structure"], "JM.Chain", ["JU.AU"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.model = null;
 this.chainID = 0;
@@ -40,5 +40,12 @@ function(bs, bsOut){
 for (var i = 0; i < this.groupCount; i++) this.groups[i].setAtomBitsAndClear(bs, bsOut);
 
 }, "JU.BS,JU.BS");
+Clazz.defineMethod(c$, "addGroup", 
+function(group, groupIndex){
+if (this.groupCount == this.groups.length) this.groups = JU.AU.doubleLength(this.groups);
+this.groups[this.groupCount++] = group;
+group.groupIndex = groupIndex;
+return group;
+}, "JM.Group,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 11:49:18 CST 2026

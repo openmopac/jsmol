@@ -22,7 +22,6 @@ this.diameter = 0;
 this.width = 0;
 this.ptCenter = null;
 this.linkedMesh = null;
-this.vertexColorMap = null;
 this.vAB = null;
 this.vTemp = null;
 this.color = 0;
@@ -54,6 +53,7 @@ this.connectedAtoms = null;
 this.isModelConnected = false;
 this.recalcAltVertices = false;
 this.symopColixes = null;
+this.hasTranslucentVertices = false;
 Clazz.instantialize(this, arguments);}, J.shape, "Mesh", JU.MeshSurface);
 Clazz.defineMethod(c$, "setVisibilityFlags", 
 function(n){
@@ -428,4 +428,4 @@ function(){
 return (this.normalsTemp == null ? (this.normalsTemp = this.getNormals(this.vs, null)) : this.normalsTemp);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

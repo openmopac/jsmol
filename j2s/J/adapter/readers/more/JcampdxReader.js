@@ -1,5 +1,5 @@
 Clazz.declarePackage("J.adapter.readers.more");
-Clazz.load(["J.adapter.readers.molxyz.MolReader", "J.api.JmolJDXMOLReader", "JU.Lst"], "J.adapter.readers.more.JcampdxReader", ["JU.BS", "$.PT", "$.Rdr", "J.adapter.smarter.SmarterJmolAdapter", "J.api.Interface", "JU.Logger", "JV.JC"], function(){
+Clazz.load(["J.adapter.readers.molxyz.MolReader", "J.api.JmolJDXMOLReader", "JU.Lst"], "J.adapter.readers.more.JcampdxReader", ["JU.BS", "$.PT", "$.Rdr", "J.adapter.smarter.SmarterJmolAdapter", "J.jsv.JDXMOLParser", "JU.Logger", "JV.JC"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.selectedModel = 0;
 this.mpr = null;
@@ -9,6 +9,8 @@ this.acdAssignments = null;
 this.title = null;
 this.nucleus = "";
 this.type = null;
+this.firstModel = null;
+this.doStartJSV = false;
 this.peakData = null;
 this.allTypes = null;
 Clazz.instantialize(this, arguments);}, J.adapter.readers.more, "JcampdxReader", J.adapter.readers.molxyz.MolReader, J.api.JmolJDXMOLReader);
@@ -17,7 +19,7 @@ this.peakData =  new JU.Lst();
 });
 Clazz.overrideMethod(c$, "initializeReader", 
 function(){
-this.vwr.setBooleanProperty("_JSpecView".toLowerCase(), true);
+this.vwr.setBooleanProperty("_JSV", true);
 if (this.isTrajectory) {
 JU.Logger.warn("TRAJECTORY keyword ignored");
 this.isTrajectory = false;
@@ -26,7 +28,7 @@ JU.Logger.warn("REVERSE keyword ignored");
 this.reverseModels = false;
 }this.selectedModel = this.desiredModelNumber;
 this.desiredModelNumber = -2147483648;
-if (!this.checkFilterKey("NOSYNC")) this.addJmolScript("sync on");
+this.doStartJSV = !this.checkFilterKey("NOSYNC");
 });
 Clazz.overrideMethod(c$, "checkLine", 
 function(){
@@ -36,8 +38,9 @@ var label = JU.PT.replaceAllCharacters(this.line.substring(0, i).trim(), " ", ""
 if (label.length > 12) label = label.substring(0, 12);
 var pt = ("##$MODELS   ##$PEAKS    ##$SIGNALS  ##$MOLFILE  ##NPOINTS   ##TITLE     ##PEAKASSIGN##$UVIR_ASSI##$MS_FRAGME##.OBSERVENU##DATATYPE  ").indexOf(label);
 if (pt < 0) return true;
-if (this.mpr == null) this.mpr = (J.api.Interface.getOption("jsv.JDXMOLParser", this.vwr, "file")).set(this, this.filePath, this.htParams);
-var value = this.line.substring(i + 1).trim();
+if (this.mpr == null) {
+this.mpr =  new J.jsv.JDXMOLParser().set(this, this.filePath, this.htParams);
+}var value = this.line.substring(i + 1).trim();
 this.mpr.setLine(value);
 switch (pt) {
 case 0:
@@ -46,7 +49,10 @@ break;
 case 12:
 case 24:
 this.mpr.readPeaks(pt == 24, -1);
-break;
+var model = this.mpr.getFirstModelWithPeaks();
+if (model != null && this.firstModel == null) {
+this.firstModel = model;
+}break;
 case 36:
 this.acdMolFile = this.mpr.readACDMolFile();
 this.processModelData(this.acdMolFile, this.title + " (assigned)", "MOL", "mol", "", 0.01, NaN, true);
@@ -63,8 +69,8 @@ break;
 case 72:
 case 84:
 case 96:
-this.acdAssignments = this.mpr.readACDAssignments(this.nPeaks, pt == 72);
-break;
+this.acdAssignments =  new JU.Lst();
+return this.mpr.readACDAssignments(this.nPeaks, pt == 72, this.acdAssignments);
 case 108:
 this.nucleus = value.substring(1);
 break;
@@ -189,10 +195,11 @@ JU.Logger.warn("cannot find model " + id + " required for " + this.line);
 continue;
 }this.addType(i, type);
 var title = type + ": " + this.mpr.getAttribute(this.line, "title");
-var key = "jdxAtomSelect_" + this.mpr.getAttribute(this.line, "type");
+var key = "jdxAtomSelect" + "_" + this.mpr.getAttribute(this.line, "type");
 bsModels.set(i);
 var s;
 if (this.mpr.getAttribute(this.line, "atoms").length != 0) {
+this.processPeakSelectModel(i, title);
 this.processPeakSelectAtom(i, key, this.line);
 s = type + ": ";
 } else if (this.processPeakSelectModel(i, title)) {
@@ -208,14 +215,31 @@ if (havePeaks && !bsModels.get(i) && id.indexOf(".") >= 0) {
 this.asc.removeAtomSet(i);
 n--;
 }}
-if (this.selectedModel == -2147483648) {
+if (false) {
+var names = "";
+for (var i = 0; i < n; i++) {
+var key = ";" + this.asc.getAtomSetAuxiliaryInfoValue(i, "modelID") + ";";
+if (names.indexOf(key) >= 0) {
+this.asc.removeAtomSet(i);
+i--;
+n--;
+} else {
+names += key;
+}}
+}if (this.selectedModel == -2147483648) {
 if (this.allTypes != null) this.appendLoadNote(this.allTypes);
 } else {
 if (this.selectedModel == 0) this.selectedModel = n - 1;
 for (var i = this.asc.atomSetCount; --i >= 0; ) if (i + 1 != this.selectedModel) this.asc.removeAtomSet(i);
 
 if (n > 0) this.appendLoadNote(this.asc.getAtomSetAuxiliaryInfoValue(0, "name"));
-}for (var i = this.asc.atomSetCount; --i >= 0; ) this.asc.setAtomSetNumber(i, i + 1);
+this.firstModel = this.asc.getAtomSetAuxiliaryInfoValue(0, "modelID");
+}if (this.doStartJSV) {
+this.addJmolScript("sync on;");
+this.asc.setInfo("_startJSpecView", Boolean.TRUE);
+if (this.firstModel != null) {
+this.addJmolScript("sync > '" + "JSpecView:" + "';model " + JU.PT.esc(this.firstModel));
+}}for (var i = this.asc.atomSetCount; --i >= 0; ) this.asc.setAtomSetNumber(i, i + 1);
 
 this.asc.centralize();
 });
@@ -259,4 +283,4 @@ Clazz.overrideMethod(c$, "setSpectrumPeaks",
 function(nH, piUnitsX, piUnitsY){
 }, "~N,~S,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

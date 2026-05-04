@@ -204,7 +204,7 @@ var isAll = (bs == null);
 var d;
 var i0 = (isAll ? data.length - 1 : bs.nextSetBit(0));
 for (var i = i0; i >= 0; i = (isAll ? i - 1 : bs.nextSetBit(i + 1))) {
-if (Float.isNaN(d = data[i])) continue;
+if (i >= data.length || Float.isNaN(d = data[i])) continue;
 this.ce.hi = Math.max(this.ce.hi, d);
 this.ce.lo = Math.min(this.ce.lo, d);
 }
@@ -237,4 +237,4 @@ c.currentPalette = c.createColorScheme(colorScheme, false, true);
 return (c.currentPalette == 2147483647 ? null : c);
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 09:56:03 CST 2026

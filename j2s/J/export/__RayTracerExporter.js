@@ -28,7 +28,7 @@ return Clazz.superCall(this, J["export"].__RayTracerExporter, "finalizeOutput2",
 Clazz.overrideMethod(c$, "outputVertex", 
 function(pt, offset){
 J["export"].___Exporter.setTempVertex(pt, offset, this.tempP1);
-this.tm.transformPt3f(this.tempP1, this.tempP1);
+this.tm.transformPt3fSafe(this.tempP1, this.tempP1);
 this.output(this.tempP1);
 }, "JU.T3,JU.T3");
 Clazz.defineMethod(c$, "getScreenNormal", 
@@ -37,8 +37,8 @@ if (Float.isNaN(normal.x)) {
 this.tempP3.set(0, 0, 0);
 return this.tempP3;
 }this.tempP1.add2(pt, normal);
-this.tm.transformPt3f(pt, this.tempP2);
-this.tm.transformPt3f(this.tempP1, this.tempP3);
+this.tm.transformPt3fSafe(pt, this.tempP2);
+this.tm.transformPt3fSafe(this.tempP1, this.tempP3);
 this.tempP3.sub(this.tempP2);
 this.tempP3.scale(factor);
 return this.tempP3;
@@ -136,4 +136,4 @@ if (radius < 1) radius = 1;
 this.outputEllipsoid(center, radius, coef, colix);
 }, "JU.P3,~A,~N,~N,~N,~N,~N,JU.M3,~A,JU.M4,~A");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

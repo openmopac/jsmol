@@ -92,9 +92,8 @@ return sb.toString().trim();
 }, "JU.Lst");
 c$.isOpen = Clazz.defineMethod(c$, "isOpen", 
 function(panelNodes, filePath){
-var pt = -1;
 if (filePath != null) for (var i = panelNodes.size(); --i >= 0; ) {
-if (panelNodes.get(i).source.matchesFilePath(filePath) || filePath.equals(panelNodes.get(i).frameTitle)) return pt;
+if (panelNodes.get(i).source.matchesFilePath(filePath) || filePath.equals(panelNodes.get(i).frameTitle)) return i;
 }
 return -1;
 }, "JU.Lst,~S");
@@ -121,4 +120,4 @@ JSV.common.Parameters.putInfo(key, info, "panelSource", this.source.getFilePath(
 return info;
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

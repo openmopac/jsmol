@@ -17,6 +17,7 @@ this.radius = NaN;
 this.isHetero = false;
 this.atomSerial = -2147483648;
 this.chainID = 0;
+this.seqIdOrWyckoffCode = 0;
 this.bondingRadius = NaN;
 this.altLoc = '\0';
 this.group3 = null;
@@ -108,6 +109,10 @@ var a = asc.newCloneAtom(this);
 a.setT(pt);
 return a;
 }, "JU.P3,J.adapter.smarter.AtomSetCollection");
+Clazz.defineMethod(c$, "getMult", 
+function(){
+return (this.seqIdOrWyckoffCode >> 16) & 0xEFFF;
+});
 c$.elementCharMasks =  Clazz.newIntArray(-1, [1972292, -2147351151, -2146019271, -2130706430, 1441792, -2147348464, 25, -2147205008, -2147344384, 0, -2147352576, 1179905, 548936, -2147434213, -2147221504, -2145759221, 0, 1056947, -2147339946, -2147477097, -2147483648, -2147483648, -2147483648, 8388624, -2147483646, 139264]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

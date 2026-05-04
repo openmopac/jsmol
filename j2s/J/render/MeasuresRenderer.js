@@ -37,7 +37,7 @@ var showMeasurementLabels = this.vwr.getBoolean(603979878);
 measures.setVisibilityInfo();
 for (var i = measures.measurementCount; --i >= 0; ) {
 this.m = measures.measurements.get(i);
-if (!this.m.isVisible || !this.m.$isValid || (this.count = this.m.count) == 1 && this.m.traceX == -2147483648) continue;
+if (!this.m.isVisible || !this.m.$isValid || (this.count = this.m.count) == 1 && this.m.traceX == -2147483648 || this.vwr.am.splitFrame && this.m.modelIndex != this.vwr.tm.splitFrameCurrentlyRendering) continue;
 this.getPoints();
 this.colix = this.m.colix;
 if (this.colix == 0) this.colix = measures.colix;
@@ -229,6 +229,7 @@ this.renderLabelOrMeasure(this.m.text, s);
 }}, "~S,JU.Point3fi,JU.Point3fi,JU.Point3fi,JU.Point3fi");
 Clazz.defineMethod(c$, "renderPendingMeasurement", 
 function(){
+if (this.vwr.am.splitFrame && this.m.modelIndex != this.vwr.tm.splitFrameCurrentlyRendering) return;
 try {
 this.getPoints();
 } catch (e) {
@@ -245,6 +246,7 @@ if ((this.m).haveTarget) {
 this.renderMeasurement(renderLabel);
 return;
 }var atomLast = this.p[this.count - 1];
+if (this.vwr.am.splitFrame && this.vwr.am.getSplitFrameModel() != atomLast.mi) return;
 if (this.count > 1) this.renderMeasurement(false);
 var lastZ = atomLast.sZ - atomLast.sD - 10;
 var x = this.vwr.getCursorX();
@@ -261,4 +263,4 @@ if (this.dotsOrDashes && (this.dashDots == null || this.dashDots === J.render.Fo
 return this.drawLine2(this.g3d, x1, y1, z1, x2, y2, z2, diameter);
 }, "~N,~N,~N,~N,~N,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

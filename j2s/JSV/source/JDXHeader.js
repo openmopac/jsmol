@@ -152,4 +152,4 @@ entry[1] = value;
 /*eoif3*/})();
 c$.typeNames =  Clazz.newArray(-1, ["ND NMR SPECTRUM   NMR", "NMR SPECTRUM      NMR", "INFRARED SPECTRUM IR", "MASS SPECTRUM     MS", "RAMAN SPECTRUM    RAMAN", "GAS CHROMATOGRAM  GC", "UV/VIS SPECTRUM   UV/VIS"]);
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -30,6 +30,7 @@ this.vwr = null;
 this.iFirstAtom = 0;
 this.justOneModel = true;
 this.htMin = null;
+this.modelIndex = 0;
 Clazz.instantialize(this, arguments);}, JM, "MeasurementData", null, J.api.JmolMeasurementClient);
 /*LV!1824 unnec constructor*/Clazz.defineMethod(c$, "init", 
 function(id, vwr, points){
@@ -49,7 +50,8 @@ this.ms = this.vwr.ms;
 this.tokAction = tokAction;
 if (this.points.size() >= 2 && Clazz.instanceOf(this.points.get(0),"JU.BS") && Clazz.instanceOf(this.points.get(1),"JU.BS")) {
 this.justOneModel = this.vwr.ms.getModelBS(this.points.get(0), false).equals(this.vwr.ms.getModelBS(this.points.get(1), false));
-}this.bsSelected = bsSelected;
+}if (this.vwr.am.splitFrame) this.justOneModel = true;
+this.bsSelected = bsSelected;
 this.htMin = htMin;
 this.radiusData = radiusData;
 this.property = property;
@@ -102,7 +104,7 @@ this.client = (client == null ? this : client);
 this.atoms = modelSet.at;
 var nPoints = this.points.size();
 if (nPoints < 2) return;
-var modelIndex = -1;
+this.modelIndex = -1;
 var pts =  new Array(4);
 var indices =  Clazz.newIntArray (5, 0);
 var m =  new JM.Measurement().setPoints(modelSet, indices, pts, null);
@@ -118,7 +120,7 @@ if (Clazz.instanceOf(obj,"JU.BS")) {
 var bs = obj;
 var nAtoms = bs.cardinality();
 if (nAtoms == 0) return;
-if (nAtoms > 1) modelIndex = 0;
+if (nAtoms > 1) this.modelIndex = 0;
 ptLastAtom = i;
 if (i == 0) this.iFirstAtom = 0;
 indices[i + 1] = bs.nextSetBit(0);
@@ -126,7 +128,7 @@ indices[i + 1] = bs.nextSetBit(0);
 pts[i] = obj;
 indices[i + 1] = -2 - i;
 }}
-this.nextMeasure(0, ptLastAtom, m, modelIndex);
+this.nextMeasure(0, ptLastAtom, m, this.modelIndex);
 }, "J.api.JmolMeasurementClient,JM.ModelSet");
 Clazz.defineMethod(c$, "nextMeasure", 
 function(thispt, ptLastAtom, m, thisModel){
@@ -146,7 +148,8 @@ var modelIndex = this.atoms[i].mi;
 if (thisModel >= 0 && this.justOneModel) {
 if (thispt == 0) thisModel = modelIndex;
  else if (thisModel != modelIndex) continue;
-}indices[thispt + 1] = i;
+}this.modelIndex = modelIndex;
+indices[thispt + 1] = i;
 if (thispt == 0) this.iFirstAtom = pt;
 haveNext = true;
 this.nextMeasure(thispt + 1, ptLastAtom, m, thisModel);
@@ -154,4 +157,4 @@ this.nextMeasure(thispt + 1, ptLastAtom, m, thisModel);
 if (!haveNext) this.nextMeasure(thispt + 1, ptLastAtom, m, thisModel);
 }, "~N,~N,JM.Measurement,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

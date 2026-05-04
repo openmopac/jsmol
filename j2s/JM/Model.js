@@ -1,5 +1,5 @@
 Clazz.declarePackage("JM");
-Clazz.load(null, "JM.Model", ["java.util.Hashtable", "JU.AU", "$.BS", "$.SB", "JU.BSUtil", "JV.FileManager"], function(){
+Clazz.load(null, "JM.Model", ["java.util.Hashtable", "JU.AU", "$.BS", "$.M3", "$.P3", "$.SB", "JS.T", "JU.BSUtil", "JV.FileManager"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.ms = null;
 this.mat4 = null;
@@ -15,9 +15,7 @@ this.orientation = null;
 this.auxiliaryInfo = null;
 this.properties = null;
 this.biosymmetry = null;
-this.dataFrames = null;
 this.translation = null;
-this.dataSourceFrame = -1;
 this.loadState = "";
 this.loadScript = null;
 this.hasRasmolHBonds = false;
@@ -43,6 +41,11 @@ this.frameDelay = 0;
 this.selectedTrajectory = -1;
 this.jmolData = null;
 this.jmolFrameType = null;
+this.jmolFrameTypeInt = 0;
+this.dataFrames = null;
+this.dataSourceFrame = 0;
+this.uvw = null;
+this.uvw0 = null;
 this.pdbID = null;
 this.bsCheck = null;
 this.hasChirality = false;
@@ -72,20 +75,23 @@ auxiliaryInfo =  new java.util.Hashtable();
 var bc = (auxiliaryInfo.get("biosymmetryCount"));
 if (bc != null) {
 this.biosymmetryCount = bc.intValue();
-this.biosymmetry = auxiliaryInfo.get("biosymmetry");
+this.biosymmetry = auxiliaryInfo.get("bioSymmetry");
 }var fname = auxiliaryInfo.get("fileName");
 if (fname != null) auxiliaryInfo.put("fileName", JV.FileManager.stripTypePrefix(fname));
 this.properties = properties;
 if (jmolData == null) {
 this.jmolFrameType = "modelSet";
 } else {
+var jmolDataHeader = jmolData.get("header");
 this.jmolData = jmolData;
 this.isJmolDataFrame = true;
 auxiliaryInfo.put("jmolData", jmolData);
-auxiliaryInfo.put("title", jmolData);
-this.jmolFrameType = (jmolData.indexOf("ramachandran") >= 0 ? "ramachandran" : jmolData.indexOf("quaternion") >= 0 ? "quaternion" : "data");
+auxiliaryInfo.put("title", jmolDataHeader);
+this.jmolFrameType = (jmolDataHeader.indexOf("ramachandran") >= 0 ? "ramachandran" : jmolDataHeader.indexOf("quaternion") >= 0 ? "quaternion" : jmolDataHeader.indexOf("spin") >= 0 ? "spin" : "data");
+this.jmolFrameTypeInt = JS.T.getTokFromName(this.jmolFrameType);
+System.out.println("JmolFrameType is " + JS.T.nameOf(this.jmolFrameTypeInt));
 }return this;
-}, "JM.ModelSet,~N,~N,~S,java.util.Properties,java.util.Map");
+}, "JM.ModelSet,~N,~N,java.util.Map,java.util.Properties,java.util.Map");
 Clazz.defineMethod(c$, "getTrueAtomCount", 
 function(){
 return JU.BSUtil.andNot(this.bsAtoms, this.bsAtomsDeleted).cardinality();
@@ -185,5 +191,17 @@ function(ucell){
 if ((this.simpleCage = ucell) != null) {
 this.auxiliaryInfo.put("unitCellParams", ucell.getUnitCellParams());
 }}, "J.api.SymmetryInterface");
+Clazz.defineMethod(c$, "getUVWMatrix", 
+function(isUVW0){
+if (this.uvw0 == null) {
+return null;
+}var m =  new JU.M3();
+for (var i = 0; i < 3; i++) {
+var p = JU.P3.newP(isUVW0 ? this.uvw0[i] : this.uvw[i]);
+p.normalize();
+m.setColumnV(i, p);
+}
+return m;
+}, "~B");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

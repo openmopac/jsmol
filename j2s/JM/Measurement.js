@@ -25,14 +25,15 @@ this.text = null;
 this.vwr = null;
 this.strMeasurement = null;
 this.type = null;
-this.tainted = false;
 this.renderAxis = null;
 this.renderArc = null;
-this.newUnits = null;
 this.fixedValue = NaN;
-this.isPending = false;
 this.inFront = false;
+this.modelIndex = 0;
+this.isPending = false;
+this.tainted = false;
 this.useDefaultLabel = false;
+this.newUnits = null;
 Clazz.instantialize(this, arguments);}, JM, "Measurement", null);
 Clazz.prepareFields (c$, function(){
 this.countPlusIndices =  Clazz.newIntArray (5, 0);
@@ -49,6 +50,7 @@ this.vwr = modelSet.vwr;
 this.colix = colix;
 this.strFormat = strFormat;
 if (m != null) {
+this.modelIndex = m.modelIndex;
 this.tickInfo = m.tickInfo;
 this.pts = m.pts;
 this.mad = m.mad;
@@ -343,6 +345,7 @@ return (atomIndex < 0 ? (withModelIndex ? "modelIndex " + this.getAtom(i).mi + "
 }, "~N,~B,~B");
 Clazz.defineMethod(c$, "setModelIndex", 
 function(modelIndex){
+this.modelIndex = modelIndex;
 if (this.pts == null) return;
 for (var i = 0; i < this.count; i++) {
 if (this.pts[i] != null) this.pts[i].mi = modelIndex;
@@ -453,12 +456,10 @@ return (this.useDefaultLabel ? null : this.strFormat);
 });
 Clazz.defineMethod(c$, "setFromMD", 
 function(md, andText){
+this.modelIndex = md.modelIndex;
 if (md.thisID != null) {
 this.thisID = md.thisID;
-this.mad = md.mad;
-if (md.colix != 0) this.colix = md.colix;
-this.strFormat = md.strFormat;
-this.text = md.text;
+if (md.text != null && md.text.text != null) this.text = md.text;
 }this.units = ("default".equals(md.units) ? null : md.units);
 this.property = md.property;
 this.fixedValue = md.fixedValue;
@@ -479,4 +480,4 @@ if (md.colix != 0) this.labelColix = this.text.colix = md.text.colix;
 }}this.formatMeasurement(null);
 }, "JM.MeasurementData,~B");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

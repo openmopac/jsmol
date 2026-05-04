@@ -1,5 +1,5 @@
 Clazz.declarePackage("J.adapter.readers.cif");
-Clazz.load(["J.adapter.smarter.MSInterface"], "J.adapter.readers.cif.MSRdr", ["java.util.Hashtable", "JU.Lst", "$.M3", "$.Matrix", "$.P3", "$.PT", "J.adapter.readers.cif.Subsystem", "J.adapter.smarter.AtomSetCollectionReader", "JU.BoxInfo", "$.Escape", "$.Logger", "$.Modulation", "$.ModulationSet", "JV.JC"], function(){
+Clazz.load(["J.adapter.smarter.MSInterface"], "J.adapter.readers.cif.MSRdr", ["java.util.Hashtable", "JU.Lst", "$.M3", "$.Matrix", "$.P3", "$.PT", "J.adapter.readers.cif.Subsystem", "J.adapter.smarter.AtomSetCollectionReader", "$.XtalSymmetry", "JU.BoxInfo", "$.Escape", "$.Logger", "$.Modulation", "$.ModulationSet", "JV.JC"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.cr = null;
 this.modDim = 0;
@@ -426,7 +426,7 @@ JU.Logger.debug("setModulation iop = " + iop + " " + this.symmetry.getSpaceGroup
 }var ms =  new JU.ModulationSet().setMod(a.index + " " + a.atomName, this.getAtomR0(this.cr.asc.atoms[a.atomSite]), this.getAtomR0(a), this.modDim, list, this.gammaE, this.getMatrices(a), this.getSymmetry(a), this.nOps, iop, Clazz.instanceOf(a.vib,"JU.Vibration") ? a.vib : null, this.isCommensurate);
 ms.calculate(this.modTUV, false);
 if (!Float.isNaN(ms.vOcc)) {
-a.foccupancy = ms.setOccupancy(this.getMod("J_O#0;" + a.atomName), a.foccupancy, (a.vib == null ? 0 : a.vib.x));
+a.foccupancy = ms.setOccupancy(this.getMod("J_O#0;" + a.atomName), a.foccupancy, a.getMult());
 }if (ms.htUij != null) {
 var t = (a.tensors == null ? null : a.tensors.get(0));
 if (t != null && t.parBorU != null) {
@@ -545,7 +545,7 @@ if (a.vib != null) pt.add(a.vib);
 this.getSymmetry(a).toCartesian(pt, false);
 sym.toFractional(pt, false);
 this.cr.fixFloatPt(pt, 100000.0);
-isOK = asc.xtalSymmetry.isWithinCell(3, pt, this.minXYZ0.x, this.maxXYZ0.x, this.minXYZ0.y, this.maxXYZ0.y, this.minXYZ0.z, this.maxXYZ0.z, packing);
+isOK = J.adapter.smarter.XtalSymmetry.isWithinSupercell(3, pt, this.minXYZ0.x, this.maxXYZ0.x, this.minXYZ0.y, this.maxXYZ0.y, this.minXYZ0.z, this.maxXYZ0.z, packing);
 }if (isOK) {
 this.cr.fixFloatPt(a, 100000.0);
 } else {
@@ -593,4 +593,4 @@ if (a != null) lattvecs.addLast(a);
 return true;
 }, "JU.Lst,~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Tue Mar 17 09:56:01 CDT 2026

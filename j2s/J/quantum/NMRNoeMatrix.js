@@ -647,4 +647,4 @@ c$.nf = java.text.NumberFormat.getInstance();
 J.quantum.NMRNoeMatrix.nf.setMinimumFractionDigits(4);
 J.quantum.NMRNoeMatrix.nf.setMaximumFractionDigits(4);
 }});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

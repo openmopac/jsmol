@@ -19,6 +19,7 @@ this.navigationShiftXY = null;
 this.navigationDepthPercent = 0;
 this.matrixTemp = null;
 this.vectorTemp = null;
+this.splitFrameCurrentlyRendering = -1;
 this.haveNotifiedNaN = false;
 this.spinX = 0;
 this.spinY = 30;
@@ -98,9 +99,12 @@ this.screenWidth = 0;
 this.screenHeight = 0;
 this.matrixTransform = null;
 this.matrixTransformInv = null;
-this.fScrPt = null;
+this.fScrPtSafe = null;
 this.iScrPt = null;
 this.ptVibTemp = null;
+this.fScrPt = null;
+this.iScrPtSafe = null;
+this.ptVibTempSafe = null;
 this.navigating = false;
 this.mode = 0;
 this.defaultMode = 0;
@@ -121,8 +125,8 @@ this.vibrationScale = 0;
 this.vibrationT = null;
 this.stereoMode = null;
 this.stereoColors = null;
-this.stereoDoubleDTI = false;
 this.stereoDoubleFull = false;
+this.stereoDoubleDTI = false;
 this.stereoDegrees = NaN;
 this.stereoRadians = 0;
 this.stereoFrame = false;
@@ -165,9 +169,12 @@ this.camera =  new JU.P3();
 this.cameraSetting =  new JU.P3();
 this.matrixTransform =  new JU.M4();
 this.matrixTransformInv =  new JU.M4();
-this.fScrPt =  new JU.P3();
+this.fScrPtSafe =  new JU.P3();
 this.iScrPt =  new JU.P3i();
 this.ptVibTemp =  new JU.Point3fi();
+this.fScrPt =  new JU.P3();
+this.iScrPtSafe =  new JU.P3i();
+this.ptVibTempSafe =  new JU.Point3fi();
 this.untransformedPoint =  new JU.P3();
 this.ptTest1 =  new JU.P3();
 this.ptTest2 =  new JU.P3();
@@ -257,7 +264,7 @@ this.fixedRotationCenter.setT(center);
 }, "JU.T3");
 Clazz.defineMethod(c$, "setRotationPointXY", 
 function(center){
-var newCenterScreen = this.transformPt(center);
+var newCenterScreen = this.transformPtSafe(center);
 this.fixedTranslation.set(newCenterScreen.x, newCenterScreen.y, 0);
 }, "JU.P3");
 Clazz.defineMethod(c$, "spinXYBy", 
@@ -268,7 +275,7 @@ return;
 }this.clearSpin();
 var pt1 = JU.P3.newP(this.fixedRotationCenter);
 var ptScreen =  new JU.P3();
-this.transformPt3f(pt1, ptScreen);
+this.transformPt3fSafe(pt1, ptScreen);
 var pt2 = JU.P3.new3(-yDelta, xDelta, 0);
 pt2.add(ptScreen);
 this.unTransformPoint(pt2, pt2);
@@ -576,7 +583,7 @@ function(x, y){
 if (x == 2147483647 || y == 2147483647) return;
 if (this.windowCentered) this.vwr.setBooleanProperty("windowCentered", false);
 var pt =  new JU.P3();
-this.transformPt3f(this.fixedRotationCenter, pt);
+this.transformPt3fSafe(this.fixedRotationCenter, pt);
 pt.set(x, y, pt.z);
 this.unTransformPoint(pt, pt);
 this.fixedTranslation.set(x, y, 0);
@@ -808,8 +815,9 @@ return (this.perspectiveDepth ? sizeAngstroms * this.getPerspectiveFactor(z) : s
 }, "~N,~N");
 Clazz.defineMethod(c$, "setNavigationMode", 
 function(TF){
+var mode = this.mode;
 this.mode = (TF ? 1 : this.defaultMode);
-this.resetNavigationPoint(true);
+this.resetNavigationPoint(TF || mode == 1);
 }, "~B");
 Clazz.defineMethod(c$, "isNavigating", 
 function(){
@@ -849,7 +857,7 @@ this.zSlabValue = this.zValueFromPercent(this.zSlabPercentSetting);
 this.zDepthValue = this.zValueFromPercent(this.zDepthPercentSetting);
 }if (this.zSlabPoint != null) {
 try {
-this.transformPt3f(this.zSlabPoint, this.pointT2);
+this.transformPt3fSafe(this.zSlabPoint, this.pointT2);
 this.zSlabValue = Clazz.floatToInt(this.pointT2.z);
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
@@ -895,57 +903,57 @@ this.matrixRotate.rotate2(pt, ptRot);
 ptRot.y = -ptRot.y;
 }, "JU.T3,JU.T3");
 Clazz.defineMethod(c$, "getScreenTemp", 
-function(ptXYZ){
-this.matrixTransform.rotTrans2(ptXYZ, this.fScrPt);
-}, "JU.T3");
+function(ptXYZ, fScrPt){
+this.matrixTransform.rotTrans2(ptXYZ, fScrPt);
+}, "JU.T3,JU.P3");
 Clazz.defineMethod(c$, "transformPtScr", 
 function(ptXYZ, pointScreen){
 pointScreen.setT(this.transformPt(ptXYZ));
 }, "JU.T3,JU.P3i");
+Clazz.defineMethod(c$, "transformPtScrSafe", 
+function(ptXYZ, pointScreen){
+pointScreen.setT(this.transformPtSafe(ptXYZ));
+}, "JU.T3,JU.P3i");
 Clazz.defineMethod(c$, "transformPtScrT3", 
 function(ptXYZ, pointScreen){
 this.transformPt(ptXYZ);
-pointScreen.setT(this.fScrPt);
+pointScreen.setT(this.fScrPtSafe);
 }, "JU.T3,JU.T3");
 Clazz.defineMethod(c$, "transformPt3f", 
 function(ptXYZ, screen){
-this.applyPerspective(ptXYZ, ptXYZ);
+this.applyPerspective(ptXYZ, ptXYZ, this.fScrPtSafe, null);
+screen.setT(this.fScrPtSafe);
+}, "JU.T3,JU.P3");
+Clazz.defineMethod(c$, "transformPt3fSafe", 
+function(ptXYZ, screen){
+this.applyPerspective(ptXYZ, ptXYZ, this.fScrPt, null);
 screen.setT(this.fScrPt);
 }, "JU.T3,JU.P3");
 Clazz.defineMethod(c$, "transformPtNoClip", 
 function(ptXYZ, pointScreen){
-this.applyPerspective(ptXYZ, null);
-pointScreen.setT(this.fScrPt);
+this.applyPerspective(ptXYZ, null, this.fScrPtSafe, null);
+pointScreen.setT(this.fScrPtSafe);
 }, "JU.T3,JU.T3");
 Clazz.defineMethod(c$, "transformPt", 
 function(ptXYZ){
-return this.applyPerspective(ptXYZ, this.internalSlab ? ptXYZ : null);
+return this.applyPerspective(ptXYZ, this.internalSlab ? ptXYZ : null, this.fScrPtSafe, this.iScrPt);
+}, "JU.T3");
+Clazz.defineMethod(c$, "transformPtSafe", 
+function(ptXYZ){
+return this.applyPerspective(ptXYZ, this.internalSlab ? ptXYZ : null, this.fScrPt, this.iScrPtSafe);
 }, "JU.T3");
 Clazz.defineMethod(c$, "transformPtVib", 
 function(ptXYZ, v){
-this.ptVibTemp.setT(ptXYZ);
-return this.applyPerspective(this.getVibrationPoint(v, this.ptVibTemp, NaN), ptXYZ);
+return this.applyPerspective(this.getVibrationPoint(v, this.ptVibTemp.setP(ptXYZ), NaN), ptXYZ, this.fScrPtSafe, this.iScrPt);
+}, "JU.P3,JU.Vibration");
+Clazz.defineMethod(c$, "transformPtVibSafe", 
+function(ptXYZ, v){
+return this.applyPerspective(this.getVibrationPoint(v, this.ptVibTempSafe.setP(ptXYZ), NaN), ptXYZ, this.fScrPt, this.iScrPtSafe);
 }, "JU.P3,JU.Vibration");
 Clazz.defineMethod(c$, "getVibrationPoint", 
 function(v, pt, scale){
 return v.setCalcPoint(pt, this.vibrationT, (Float.isNaN(scale) ? this.vibrationScale : scale), this.vwr.g.modulationScale);
 }, "JU.Vibration,JU.T3,~N");
-Clazz.defineMethod(c$, "transformPt2Df", 
-function(v, pt){
-if (v.z == -3.4028235E38 || v.z == 3.4028235E38) {
-this.transformPt2D(v);
-pt.set(this.iScrPt.x, this.iScrPt.y, this.iScrPt.z);
-} else {
-this.transformPt3f(v, pt);
-}}, "JU.T3,JU.P3");
-Clazz.defineMethod(c$, "transformPtScrT32D", 
-function(v, pt){
-if (v.z == -3.4028235E38 || v.z == 3.4028235E38) {
-this.transformPt2D(v);
-pt.set(this.iScrPt.x, this.iScrPt.y, this.iScrPt.z);
-} else {
-this.transformPtScrT3(v, pt);
-}}, "JU.T3,JU.P3");
 Clazz.defineMethod(c$, "transformPt2D", 
 function(ptXyp){
 if (ptXyp.z == -3.4028235E38) {
@@ -957,54 +965,56 @@ this.iScrPt.y = (this.screenHeight - Clazz.floatToInt(ptXyp.y));
 }if (this.antialias) {
 this.iScrPt.x <<= 1;
 this.iScrPt.y <<= 1;
-}this.matrixTransform.rotTrans2(this.fixedRotationCenter, this.fScrPt);
-this.iScrPt.z = Clazz.floatToInt(this.fScrPt.z);
+}this.matrixTransform.rotTrans2(this.fixedRotationCenter, this.fScrPtSafe);
+this.iScrPt.z = Clazz.floatToInt(this.fScrPtSafe.z);
 return this.iScrPt;
 }, "JU.T3");
 Clazz.defineMethod(c$, "applyPerspective", 
-function(ptXYZ, ptRef){
-this.getScreenTemp(ptXYZ);
-var z = this.fScrPt.z;
+function(ptXYZ, ptRef, fScrPt, iScrPt){
+this.getScreenTemp(ptXYZ, fScrPt);
+var z = fScrPt.z;
 if (Float.isNaN(z)) {
 if (!this.haveNotifiedNaN && JU.Logger.debugging) JU.Logger.debug("NaN seen in TransformPoint");
 this.haveNotifiedNaN = true;
-z = this.fScrPt.z = 1;
+z = fScrPt.z = 1;
 } else if (z <= 0) {
-z = this.fScrPt.z = 1;
+z = fScrPt.z = 1;
 }switch (this.mode) {
 case 1:
-this.fScrPt.x -= this.navigationShiftXY.x;
-this.fScrPt.y -= this.navigationShiftXY.y;
+fScrPt.x -= this.navigationShiftXY.x;
+fScrPt.y -= this.navigationShiftXY.y;
 break;
 case 2:
-this.fScrPt.x += this.perspectiveShiftXY.x;
-this.fScrPt.y += this.perspectiveShiftXY.y;
+fScrPt.x += this.perspectiveShiftXY.x;
+fScrPt.y += this.perspectiveShiftXY.y;
 break;
 }
 if (this.perspectiveDepth) {
 var factor = this.getPerspectiveFactor(z);
-this.fScrPt.x *= factor;
-this.fScrPt.y *= factor;
+fScrPt.x *= factor;
+fScrPt.y *= factor;
 }switch (this.mode) {
 case 1:
-this.fScrPt.x += this.navigationOffset.x;
-this.fScrPt.y += this.navigationOffset.y;
+fScrPt.x += this.navigationOffset.x;
+fScrPt.y += this.navigationOffset.y;
 break;
 case 2:
-this.fScrPt.x -= this.perspectiveShiftXY.x;
-this.fScrPt.y -= this.perspectiveShiftXY.y;
+fScrPt.x -= this.perspectiveShiftXY.x;
+fScrPt.y -= this.perspectiveShiftXY.y;
 case 0:
-this.fScrPt.x += this.fixedRotationOffset.x;
-this.fScrPt.y += this.fixedRotationOffset.y;
+fScrPt.x += this.fixedRotationOffset.x;
+fScrPt.y += this.fixedRotationOffset.y;
 break;
 }
-if (Float.isNaN(this.fScrPt.x) && !this.haveNotifiedNaN) {
+if (Float.isNaN(fScrPt.x) && !this.haveNotifiedNaN) {
 if (JU.Logger.debugging) JU.Logger.debug("NaN found in transformPoint ");
 this.haveNotifiedNaN = true;
-}this.iScrPt.set(Clazz.floatToInt(this.fScrPt.x), Clazz.floatToInt(this.fScrPt.y), Clazz.floatToInt(this.fScrPt.z));
-if (ptRef != null && this.xyzIsSlabbedInternal(ptRef)) this.fScrPt.z = this.iScrPt.z = 1;
-return this.iScrPt;
-}, "JU.T3,JU.T3");
+}var z1 = (ptRef != null && this.xyzIsSlabbedInternal(ptRef));
+if (z1) {
+fScrPt.z = 1;
+}if (iScrPt != null) iScrPt.set(Clazz.floatToInt(fScrPt.x), Clazz.floatToInt(fScrPt.y), (z1 ? 1 : Clazz.floatToInt(fScrPt.z)));
+return iScrPt;
+}, "JU.T3,JU.T3,JU.P3,JU.P3i");
 Clazz.defineMethod(c$, "xyzIsSlabbedInternal", 
 function(ptRef){
 return (this.slabPlane != null && ptRef.x * this.slabPlane.x + ptRef.y * this.slabPlane.y + ptRef.z * this.slabPlane.z + this.slabPlane.w > 0 || this.depthPlane != null && ptRef.x * this.depthPlane.x + ptRef.y * this.depthPlane.y + ptRef.z * this.depthPlane.z + this.depthPlane.w < 0);
@@ -1301,6 +1311,7 @@ this.setSpinOff();
 this.setNavOn(false);
 this.isSpinInternal = false;
 this.isSpinFixed = false;
+this.vectorSpinOnly = false;
 });
 Clazz.defineMethod(c$, "setSpinOn", 
 function(){
@@ -1582,8 +1593,8 @@ this.untransformedPoint.x -= this.navigationOffset.x;
 this.untransformedPoint.y -= this.navigationOffset.y;
 break;
 case 2:
-this.fScrPt.x += this.perspectiveShiftXY.x;
-this.fScrPt.y += this.perspectiveShiftXY.y;
+this.fScrPtSafe.x += this.perspectiveShiftXY.x;
+this.fScrPtSafe.y += this.perspectiveShiftXY.y;
 case 0:
 this.untransformedPoint.x -= this.fixedRotationOffset.x;
 this.untransformedPoint.y -= this.fixedRotationOffset.y;
@@ -1638,7 +1649,7 @@ this.navigationSlabOffset = percent / 50 * this.modelRadiusPixels;
 }, "~N");
 Clazz.defineMethod(c$, "getNavigationOffset", 
 function(){
-this.transformPt3f(this.navigationCenter, this.navigationOffset);
+this.transformPt3fSafe(this.navigationCenter, this.navigationOffset);
 return this.navigationOffset;
 });
 Clazz.defineMethod(c$, "getNavPtHeight", 
@@ -1715,4 +1726,4 @@ function(){
 return (this.mode == 1 && this.getNav() ? this.nav.getNavigationState() : "");
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:10:36 CDT 2026

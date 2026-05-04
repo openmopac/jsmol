@@ -1,7 +1,7 @@
 Clazz.declarePackage("JSV.common");
-Clazz.load(["JSV.api.JSVPdfWriter", "J.api.GenericGraphics"], "JSV.common.PDFWriter", ["java.util.Hashtable", "javajs.export.PDFCreator", "JU.CU", "JSV.common.JSVersion"], function(){
+Clazz.load(["JSV.api.JSVPdfWriter", "J.api.GenericGraphics"], "JSV.common.PDFWriter", ["java.util.Hashtable", "javajs.export.PDFCreator", "JSV.common.JSVersion"], function(){
 var c$ = Clazz.decorateAsClass(function(){
-this.g2d = null;
+this.g2d0 = null;
 this.date = null;
 this.pdf = null;
 this.inPath = false;
@@ -19,7 +19,7 @@ function(panel, pl, os){
 var isLandscape = pl.layout.equals("landscape");
 this.date = pl.date;
 this.pdf.setOutputStream(os);
-this.g2d = panel.getPanelData().g2d;
+this.g2d0 = panel.getPanelData().g2d0;
 try {
 this.pdf.newDocument(pl.paperWidth, pl.paperHeight, isLandscape);
 var ht =  new java.util.Hashtable();
@@ -94,7 +94,10 @@ this.pdf.lineto(x, y);
 }, "~O,~N,~N");
 Clazz.overrideMethod(c$, "setGraphicsColor", 
 function(g, c){
-JU.CU.toRGB3f(c.getRGB(), this.rgb);
+var p = c.getRGB();
+this.rgb[0] = ((p >> 16) & 0xFF) / 255;
+this.rgb[1] = ((p >> 8) & 0xFF) / 255;
+this.rgb[2] = ((p & 0xFF)) / 255;
 this.pdf.setColor(this.rgb, true);
 this.pdf.setColor(this.rgb, false);
 }, "~O,javajs.api.GenericColor");
@@ -137,15 +140,15 @@ function(width, height){
 }, "~N,~N");
 Clazz.defineMethod(c$, "getColor1", 
 function(argb){
-return this.g2d.getColor1(argb);
+return this.g2d0.getColor1(argb);
 }, "~N");
 Clazz.defineMethod(c$, "getColor3", 
 function(red, green, blue){
-return this.g2d.getColor3(red, green, blue);
+return this.g2d0.getColor3(red, green, blue);
 }, "~N,~N,~N");
 Clazz.defineMethod(c$, "getColor4", 
 function(r, g, b, a){
-return this.g2d.getColor4(r, g, b, a);
+return this.g2d0.getColor4(r, g, b, a);
 }, "~N,~N,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

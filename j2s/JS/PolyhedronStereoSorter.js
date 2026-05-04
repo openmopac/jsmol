@@ -36,4 +36,4 @@ var angle = this.align1.angle(this.align2);
 return (angle < 0.0);
 }, "JU.T3,JU.T3,JU.T3");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

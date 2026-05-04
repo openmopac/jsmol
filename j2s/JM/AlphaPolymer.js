@@ -32,9 +32,11 @@ i1 = iend;
 }var indexStart;
 var indexEnd;
 if ((indexStart = this.getIndex(startChainID, startSeqcode, i0, i1)) == -1 || (indexEnd = this.getIndex(endChainID, endSeqcode, i0, i1)) == -1) return;
-if (istart >= 0 && bsAssigned != null) {
-var pt = bsAssigned.nextSetBit(this.monomers[indexStart].firstAtomIndex);
-if (pt >= 0 && pt < this.monomers[indexEnd].lastAtomIndex) return;
+if (istart >= 0) {
+istart = this.monomers[indexStart].firstAtomIndex;
+iend = this.monomers[indexEnd].lastAtomIndex;
+var pt = bsAssigned.nextSetBit(istart);
+if (pt >= 0 && pt < iend) return;
 }if (this.addStructureProtected(type, structureID, serialID, strandCount, indexStart, indexEnd) && istart >= 0) bsAssigned.setBits(istart, iend + 1);
 }, "J.c.STR,~S,~S,~N,~N,~N,~N,~N,~N,~N,JU.BS");
 Clazz.defineMethod(c$, "addStructureProtected", 
@@ -180,4 +182,4 @@ Clazz.defineEnumConstant(c$, "RIGHT_TURN", 5, []);
 /*eoif2*/})();
 c$.dsspTypes =  Clazz.newArray(-1, ["H", null, "H", "S", "H", null, "T"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 10:50:06 CST 2026

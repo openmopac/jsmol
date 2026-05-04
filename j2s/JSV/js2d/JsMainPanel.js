@@ -1,7 +1,7 @@
 Clazz.declarePackage("JSV.js2d");
 Clazz.load(["JSV.api.JSVMainPanel"], "JSV.js2d.JsMainPanel", null, function(){
 var c$ = Clazz.decorateAsClass(function(){
-this.selectedPanel = null;
+this.mainSelectedPanel = null;
 this.currentPanelIndex = 0;
 this.title = null;
 this.visible = false;
@@ -23,20 +23,13 @@ Clazz.overrideMethod(c$, "setTitle",
 function(title){
 this.title = title;
 }, "~S");
-Clazz.overrideMethod(c$, "setSelectedPanel", 
-function(viewer, jsvp, panelNodes){
-if (jsvp !== this.selectedPanel) this.selectedPanel = jsvp;
-var i = viewer.selectPanel(jsvp, panelNodes);
-if (i >= 0) this.currentPanelIndex = i;
-this.visible = true;
-}, "JSV.common.JSViewer,JSV.api.JSVPanel,JU.Lst");
 Clazz.defineMethod(c$, "getHeight", 
 function(){
-return (this.selectedPanel == null ? 0 : this.selectedPanel.getHeight());
+return (this.mainSelectedPanel == null ? 0 : this.mainSelectedPanel.getHeight());
 });
 Clazz.defineMethod(c$, "getWidth", 
 function(){
-return (this.selectedPanel == null ? 0 : this.selectedPanel.getWidth());
+return (this.mainSelectedPanel == null ? 0 : this.mainSelectedPanel.getWidth());
 });
 Clazz.overrideMethod(c$, "isEnabled", 
 function(){
@@ -58,5 +51,13 @@ Clazz.overrideMethod(c$, "setFocusable",
 function(b){
 this.focusable = b;
 }, "~B");
+Clazz.overrideMethod(c$, "setSelectedPanel", 
+function(viewer, jsvp, panelNodes){
+if (jsvp !== this.mainSelectedPanel) {
+this.mainSelectedPanel = jsvp;
+}var i = viewer.selectPanel(jsvp, panelNodes);
+if (i >= 0) this.currentPanelIndex = i;
+this.visible = true;
+}, "JSV.common.JSViewer,JSV.api.JSVPanel,JU.Lst");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

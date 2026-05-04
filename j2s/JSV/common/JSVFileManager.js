@@ -1,5 +1,5 @@
 Clazz.declarePackage("JSV.common");
-Clazz.load(["java.util.Hashtable"], "JSV.common.JSVFileManager", ["java.io.BufferedInputStream", "$.BufferedReader", "$.InputStreamReader", "$.StringReader", "java.net.URL", "JU.AU", "$.BS", "$.Encoding", "$.JSJSONParser", "$.P3", "$.PT", "$.SB", "JSV.common.JSVersion", "$.JSViewer", "JSV.exception.JSVException", "JU.Logger"], function(){
+Clazz.load(["java.util.Hashtable"], "JSV.common.JSVFileManager", ["java.io.BufferedInputStream", "$.BufferedReader", "$.File", "$.InputStreamReader", "$.StringReader", "java.net.URL", "JU.AU", "$.BS", "$.Encoding", "$.JSJSONParser", "$.P3", "$.PT", "$.SB", "JSV.common.JSVersion", "$.JSViewer", "JSV.exception.JSVException", "JU.Logger"], function(){
 var c$ = Clazz.declareType(JSV.common, "JSVFileManager", null);
 Clazz.defineMethod(c$, "isApplet", 
 function(){
@@ -137,8 +137,23 @@ return JSV.common.JSVFileManager.cacheGet(name.startsWith("MOL=") ? name.substri
 c$.cachePut = Clazz.defineMethod(c$, "cachePut", 
 function(name, data){
 if (JU.Logger.debugging) JU.Logger.debug("JSVFileManager cachePut " + data + " for " + name);
-if (data != null) JSV.common.JSVFileManager.htCorrelationCache.put(name, data);
-}, "~S,~S");
+if (data != null) {
+JSV.common.JSVFileManager.htCorrelationCache.put(name, data);
+if (JSV.common.JSVFileManager.cacheDir != null && name.indexOf(":") < 0) {
+try {
+ new java.io.File(JSV.common.JSVFileManager.cacheDir).mkdirs();
+var f =  new java.io.File(JSV.common.JSVFileManager.cacheDir, name);
+var fos =  new java.io.FileOutputStream(f);
+fos.write(data.getBytes());
+fos.close();
+} catch (e) {
+if (Clazz.exceptionOf(e,"java.io.IOException")){
+e.printStackTrace();
+} else {
+throw e;
+}
+}
+}}}, "~S,~S");
 c$.cacheGet = Clazz.defineMethod(c$, "cacheGet", 
 function(key){
 var data = JSV.common.JSVFileManager.htCorrelationCache.get(key);
@@ -328,65 +343,62 @@ if (!isInline && (molFile = JSV.common.JSVFileManager.getFileAsString(src)) == n
 JU.Logger.error("no MOL data returned by NCI");
 return null;
 }var is13C = type.equals("C13");
-var url = (is13C ? JSV.common.JSVFileManager.nmrdbServerC13 : JSV.common.JSVFileManager.nmrdbServerH1);
-var json = JSV.common.JSVFileManager.getFileAsString(url + molFile);
-if (json.indexOf("Error:") >= 0) {
+var url;
+url = (is13C ? JSV.common.JSVFileManager.nmrdbServerC13 : JSV.common.JSVFileManager.nmrdbServerH1);
+url = url.$replace("$MOLFILE", molFile);
+JSV.common.JSVFileManager.cachePut("url", url);
+var json = JSV.common.JSVFileManager.getFileAsString(url);
+if ((json == null ? (json = "Error: Error fetching simulation") : json).indexOf("Error:") >= 0) {
 return json;
 }var map = ( new JU.JSJSONParser()).parseMap(json, true);
 JSV.common.JSVFileManager.cachePut("json", json);
-if (is13C) map = map.get("result");
+return JSV.common.JSVFileManager.processJSON(key, src, url, name, type, molFile, map, is13C, isInline);
+}, "~S");
+c$.processJSON = Clazz.defineMethod(c$, "processJSON", 
+function(key, src, url, name, type, molFile, json, is13C, isInline){
+var map = json.get("data");
 var jsonMolFile = map.get("molfile");
 if (jsonMolFile == null) {
 System.out.println("JSVFileManager: no MOL file returned from EPFL");
 jsonMolFile = molFile;
-} else {
-System.out.println("JSVFileManager: MOL file hash=" + jsonMolFile.hashCode());
 }var atomMap = JSV.common.JSVFileManager.getAtomMap(jsonMolFile, molFile);
 JSV.common.JSVFileManager.cachePut("mol", molFile);
+var bytes = (isInline || !JSV.common.JSViewer.isJS ? null : molFile.getBytes());
 {
-if (!isInline) Jmol.Cache.put("http://SIMULATION/" + type +
-"/" + name + "#molfile", molFile.getBytes());
-}var xml = "<Signals src=" + JU.PT.esc(JU.PT.rep(is13C ? JSV.common.JSVFileManager.nmrdbServerC13 : JSV.common.JSVFileManager.nmrdbServerH1, "?POST?molfile=", "")) + ">\n";
-if (is13C) {
-var spec = map.get("spectrum13C");
-jcamp = (spec.get("jcamp")).get("value");
-var lst = spec.get("predCSNuc");
+if (bytes) Jmol.Cache.put("http://SIMULATION/" + type +
+"/" + name + "#molfile", bytes);
+}var xml = "<Signals src=" + JU.PT.esc(url.substring(0, url.indexOf('?'))) + ">\n";
+var jcamp;
+type = (is13C ? "13C" : "1HNMR");
+jcamp = map.get("jcamp");
+jcamp = JSV.common.JSVFileManager.hackNewNmriumSimulationJCAMP(jcamp);
+var signals = map.get("signals");
+var bf1 = JSV.common.JSVFileManager.getval(jcamp, "##$BF1");
+var freq = (bf1 == null ? (is13C ? 100 : 400) : Float.parseFloat(bf1));
 var sb =  new JU.SB();
-for (var i = lst.size(); --i >= 0; ) {
-map = lst.get(i);
+for (var i = signals.size(); --i >= 0; ) {
+var signal = signals.get(i);
 sb.append("<Signal ");
-JSV.common.JSVFileManager.setAttr(sb, "type", "nucleus", map);
-if (atomMap == null) JSV.common.JSVFileManager.setAttr(sb, "atoms", "assignment", map);
- else sb.append("atoms=\"").appendI(atomMap[JU.PT.parseInt(map.get("assignment"))]).append("\" ");
-JSV.common.JSVFileManager.setAttr(sb, "multiplicity", "multiplicity", map);
-map = map.get("integralData");
-JSV.common.JSVFileManager.setAttr(sb, "xMin", "from", map);
-JSV.common.JSVFileManager.setAttr(sb, "xMax", "to", map);
-JSV.common.JSVFileManager.setAttr(sb, "integral", "value", map);
+JSV.common.JSVFileManager.setAttr(sb, "type", type, null);
+var index = (signal.get("atoms")).get(0);
+if (atomMap == null) {
+JSV.common.JSVFileManager.setAttr(sb, "atoms", index, null);
+} else {
+sb.append("atoms=\"").appendI(atomMap[index.intValue()]).append("\" ");
+}JSV.common.JSVFileManager.setAttr(sb, "multiplicity", "multiplicity", signal);
+var delta = signal.get("delta");
+var minmax = JSV.common.JSVFileManager.getSignalMinMax(signal, delta.floatValue(), freq, is13C);
+JSV.common.JSVFileManager.setAttr(sb, "xMin", "" + minmax[0], null);
+JSV.common.JSVFileManager.setAttr(sb, "xMax", "" + minmax[1], null);
+JSV.common.JSVFileManager.setAttr(sb, "integral", "nbAtoms", signal);
 sb.append("></Signal>\n");
 }
 sb.append("</Signals>");
 xml += sb.toString();
-} else {
-xml = JU.PT.rep(map.get("xml"), "<Signals>", xml);
-if (atomMap != null) {
-var sb =  new JU.SB();
-var signals = JU.PT.split(xml, " atoms=\"");
-sb.append(signals[0]);
-for (var i = 1; i < signals.length; i++) {
-var s = signals[i];
-var a = JU.PT.parseInt(s);
-sb.append(" atoms=\"").appendI(atomMap[a]).append(s.substring(s.indexOf("\"")));
-}
-xml = sb.toString();
-}xml = JU.PT.rep(xml, "</", "\n</");
-xml = JU.PT.rep(xml, "><", ">\n<");
-xml = JU.PT.rep(xml, "\\\"", "\"");
-jcamp = map.get("jcamp");
-}if (JU.Logger.debugging) JU.Logger.info(xml);
+if (JU.Logger.debugging) JU.Logger.info(xml);
 JSV.common.JSVFileManager.cachePut("xml", xml);
 jcamp = "##TITLE=" + (isInline ? "JMOL SIMULATION/" + type : name) + "\n" + jcamp.substring(jcamp.indexOf("\n##") + 1);
-pt = molFile.indexOf("\n");
+var pt = molFile.indexOf("\n");
 pt = molFile.indexOf("\n", pt + 1);
 if (pt > 0 && pt == molFile.indexOf("\n \n")) molFile = molFile.substring(0, pt + 1) + "Created " + JSV.common.JSVFileManager.viewer.apiPlatform.getDateFormat("8824") + " by JSpecView " + JSV.common.JSVersion.VERSION + molFile.substring(pt + 1);
 pt = 0;
@@ -394,11 +406,70 @@ pt = jcamp.indexOf("##.");
 var id = JSV.common.JSVFileManager.getAbbreviatedSimulationName(name, type, false);
 var pt1 = id.indexOf("id='");
 if (isInline && pt1 > 0) id = id.substring(pt1 + 4, (id + "'").indexOf("'", pt1 + 4));
+JSV.common.JSVFileManager.cachePut(type + "-json.jcamp", jcamp);
 jcamp = jcamp.substring(0, pt) + "##$MODELS=\n<Models>\n" + "<ModelData id=" + JU.PT.esc(id) + " type=\"MOL\" src=" + JU.PT.esc(src) + ">\n" + molFile + "</ModelData>\n</Models>\n" + "##$SIGNALS=\n" + xml + "\n" + jcamp.substring(pt);
 JSV.common.JSVFileManager.cachePut("jcamp", jcamp);
 JSV.common.JSVFileManager.cachePut(key, jcamp);
 return jcamp;
+}, "~S,~S,~S,~S,~S,~S,java.util.Map,~B,~B");
+c$.getSignalMinMax = Clazz.defineMethod(c$, "getSignalMinMax", 
+function(signal, delta, freq, is13C){
+var minmax =  Clazz.newFloatArray (2, 0);
+if (is13C) {
+minmax[0] = delta - 0.5;
+minmax[1] = delta + 0.5;
+} else {
+var js = signal.get("js");
+var d = 1;
+for (var i = js.size(); --i >= 0; ) {
+var j = js.get(i);
+var c = (j.get("coupling")).floatValue();
+switch (j.get("multiplicity")) {
+case "d":
+d += c / 2;
+break;
+default:
+case "t":
+d += c;
+break;
+}
+}
+minmax[0] = delta - d / freq;
+minmax[1] = delta + d / freq;
+}return minmax;
+}, "java.util.Map,~N,~N,~B");
+c$.hackNewNmriumSimulationJCAMP = Clazz.defineMethod(c$, "hackNewNmriumSimulationJCAMP", 
+function(jcamp){
+var shift = JSV.common.JSVFileManager.getline(jcamp, "##.SHIFT REFERENCE=INTERNAL");
+var offset = JSV.common.JSVFileManager.getval(jcamp, "##$OFFSET");
+if (shift != null && offset != null) {
+shift = shift.substring(0, shift.lastIndexOf(", ") + 2) + offset;
+jcamp = JSV.common.JSVFileManager.setline(jcamp, "##$OFFSET", null);
+jcamp = JSV.common.JSVFileManager.setline(jcamp, "##.SHIFT REFERENCE=INTERNAL", shift);
+}return jcamp;
 }, "~S");
+c$.getline = Clazz.defineMethod(c$, "getline", 
+function(jcamp, record){
+var pt = jcamp.indexOf(record);
+if (pt < 0) return null;
+return jcamp.substring(pt, jcamp.indexOf("\n", pt));
+}, "~S,~S");
+c$.getval = Clazz.defineMethod(c$, "getval", 
+function(jcamp, record){
+var pt = jcamp.indexOf(record);
+if (pt < 0) return null;
+var val = jcamp.substring(jcamp.indexOf("=", pt) + 1, jcamp.indexOf("\n", pt));
+pt = val.indexOf("$$");
+if (pt >= 0) val = val.substring(pt);
+return val.trim();
+}, "~S,~S");
+c$.setline = Clazz.defineMethod(c$, "setline", 
+function(jcamp, record, replacement){
+var pt = jcamp.indexOf(record);
+if (pt < 0) return jcamp;
+if (replacement == null) return jcamp.substring(0, pt) + jcamp.substring(jcamp.indexOf("\n", pt) + 1);
+return jcamp.substring(0, pt) + replacement + jcamp.substring(jcamp.indexOf("\n", pt));
+}, "~S,~S,~S");
 c$.getAtomMap = Clazz.defineMethod(c$, "getAtomMap", 
 function(jsonMolFile, jmolMolFile){
 var acJson = JSV.common.JSVFileManager.getCoord(jsonMolFile);
@@ -435,9 +506,9 @@ pts[i] = JU.P3.new3(data[0], data[1], data[2]);
 return pts;
 }, "~S");
 c$.setAttr = Clazz.defineMethod(c$, "setAttr", 
-function(sb, mykey, lucsKey, map){
-sb.append(mykey + "=\"").appendO(map.get(lucsKey)).append("\" ");
-}, "JU.SB,~S,~S,java.util.Map");
+function(sb, mykey, lucsKeyOrVal, map){
+sb.append(mykey + "=\"").appendO((map == null ? lucsKeyOrVal : map.get(lucsKeyOrVal))).append("\" ");
+}, "JU.SB,~S,~O,java.util.Map");
 c$.getResource = Clazz.defineMethod(c$, "getResource", 
 function(object, fileName, error){
 var url = null;
@@ -524,9 +595,10 @@ c$.viewer = null;
 c$.jsDocumentBase = "";
 c$.urlPrefixes =  Clazz.newArray(-1, ["http:", "https:", "ftp:", "http://SIMULATION/", "file:"]);
 c$.htCorrelationCache =  new java.util.Hashtable();
+c$.cacheDir = null;
 c$.nciResolver = "https://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
-c$.nmrdbServerH1 = "https://www.nmrdb.org/tools/jmol/predict.php?POST?molfile=";
-c$.nmrdbServerC13 = "https://www.nmrdb.org/service/jsmol13c?POST?molfile=";
+c$.nmrdbServerH1 = "https://nmr-prediction.service.zakodium.com/v1/predict/proton?POST?{\"molfile\":\"$MOLFILE\",\"includeJDX\":true}";
+c$.nmrdbServerC13 = "https://nmr-prediction.service.zakodium.com/v1/predict/carbon?POST?{\"molfile\":\"$MOLFILE\",\"includeJDX\":true}";
 c$.stringCount = 0;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

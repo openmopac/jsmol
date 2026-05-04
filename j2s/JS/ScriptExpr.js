@@ -1,5 +1,5 @@
 Clazz.declarePackage("JS");
-Clazz.load(["JS.ScriptParam"], "JS.ScriptExpr", ["java.util.Hashtable", "JU.BS", "$.CU", "$.Lst", "$.Measure", "$.P3", "$.PT", "$.SB", "J.api.Interface", "JM.AtomCollection", "$.BondSet", "$.Group", "$.ModelSet", "JS.SV", "$.ScriptMathProcessor", "$.T", "JU.BSUtil", "$.Edge", "$.Elements", "$.Escape"], function(){
+Clazz.load(["JS.ScriptParam"], "JS.ScriptExpr", ["java.util.Hashtable", "JU.AU", "$.BS", "$.CU", "$.Lst", "$.Measure", "$.P3", "$.PT", "$.SB", "J.api.Interface", "JM.AtomCollection", "$.BondSet", "$.Group", "$.ModelSet", "JS.SV", "$.ScriptMathProcessor", "$.T", "JU.BSUtil", "$.Edge", "$.Elements", "$.Escape"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.debugHigh = false;
 this.privateFuncs = null;
@@ -241,7 +241,7 @@ v = this.getPointOrPlane(i, 55);
 }i = this.iToken;
 break;
 case 1073742340:
-v = this.vwr.getFrameAtoms();
+v = this.vwr.getVisibleFrameAtomsNoSplitData();
 i = this.iToken;
 break;
 case 1073742325:
@@ -336,10 +336,11 @@ case 1094713360:
 case 1073742128:
 case 134218756:
 case 1086324744:
-case 1094713366:
+case 1094713369:
 case 134218757:
 case 1237320707:
 case 1639976963:
+case 1145047055:
 if (!isWhere && i == ptWithin && this.tokAt(i + 1) == 268436992) {
 rpn.addX(JS.SV.newT(this.theToken));
 break;
@@ -669,7 +670,7 @@ rpn.addXBs(this.getAtomBits(instruction.tok, value));
 break;
 case 1073742340:
 case 2097182:
-rpn.addXBs(this.vwr.am.cmi < 0 ? this.vwr.getFrameAtoms() : this.vwr.getModelUndeletedAtomsBitSet(this.vwr.am.cmi));
+rpn.addXBs(this.vwr.getVisibleFrameAtomsNoSplitData());
 break;
 case 1612709900:
 case 2097154:
@@ -962,7 +963,7 @@ var cellRange = null;
 var nOps = 0;
 var bs;
 switch (tokWhat) {
-case 1296041985:
+case 1296041986:
 switch (bitsetComparator) {
 case 268440321:
 case 268440320:
@@ -1004,12 +1005,12 @@ var atom = atoms[i];
 if (JM.AtomCollection.isDeleted(atom)) continue;
 switch (tokWhat) {
 default:
-ia = atom.atomPropertyInt(tokWhat);
+ia = atom.atomPropertyInt(this.vwr, tokWhat);
 break;
-case 1094713368:
+case 1094713371:
 case 1094717448:
 return JU.BSUtil.copy(this.vwr.ms.getConformation(-1, ival, false, null));
-case 1296041985:
+case 1296041986:
 propertyBitSet = atom.atomSymmetry;
 if (propertyBitSet == null) continue;
 if (atom.mi != iModel) {
@@ -1113,6 +1114,17 @@ break;
 }}
 return JS.SV.newSV(268442113, tok, this.paramAsStr(i));
 }, "~N,~N");
+Clazz.defineMethod(c$, "getBitsetPropertyFloat", 
+function(bs, tok, property, min, max){
+var odata = (property == null || tok == (1086325010) || tok == (1145047311) || tok == (1111490843) ? this.getBitsetProperty(bs, null, tok, null, null, property, null, false, 2147483647, false) : this.vwr.getDataObj(property, bs, 1));
+if (odata == null || !JU.AU.isAF(odata)) return (bs == null ? null :  Clazz.newFloatArray (bs.cardinality(), 0));
+var data = odata;
+if (!Float.isNaN(min)) for (var i = 0; i < data.length; i++) if (data[i] < min) data[i] = NaN;
+
+if (!Float.isNaN(max)) for (var i = 0; i < data.length; i++) if (data[i] > max) data[i] = NaN;
+
+return data;
+}, "JU.BS,~N,~S,~N,~N");
 Clazz.defineMethod(c$, "getBitsetProperty", 
 function(bs, pts, tok, ptRef, planeRef, tokenValue, opValue, useAtomMap, index, asVectorIfAll){
 var haveIndex = (index != 2147483647);
@@ -1339,7 +1351,7 @@ break;
 }
 break;
 default:
-iv = atom.atomPropertyInt(tok);
+iv = atom.atomPropertyInt(this.vwr, tok);
 break;
 }
 switch (minmaxtype) {
@@ -1378,7 +1390,10 @@ case 3:
 var t = atom.atomPropertyTuple(this.vwr, tok, this.ptTemp);
 switch (minmaxtype) {
 case 256:
-fout[i] = (pt == null ? -1 : t == null ? 0 : t.length());
+if (tok == 1145047055 && t != null && pt != null) {
+if (this.ptTemp == null) this.ptTemp =  new JU.P3();
+this.ptTemp.set(0.91, -0.41, 1);
+}fout[i] = (pt == null ? -1 : t == null ? 0 : tok == 1145047055 ? t.dot(this.ptTemp) : t.length());
 break;
 case 1073742327:
 vout.addLast(t == null ? Integer.$valueOf(-1) : JU.P3.newP(t));
@@ -1415,7 +1430,7 @@ var bond = modelSet.bo[i];
 if (bond == null) continue;
 n++;
 switch (tok) {
-case 1140850691:
+case 1275068435:
 var fv = bond.atom1.distance(bond.atom2);
 switch (minmaxtype) {
 case 32:
@@ -1960,4 +1975,4 @@ var f = (this.privateFuncs == null ? null : this.privateFuncs.get(sf));
 return (f == null ? this.vwr.getFunction(sf) : f);
 }, "~S");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -29,6 +29,13 @@ this.lastFramePainted = 0;
 this.lastModelPainted = 0;
 this.intAnimThread = 0;
 this.cai = -1;
+this.splitFrame = false;
+this.splitFrameOffsetX = 0;
+this.currentSplitFrame = -1;
+if (!Clazz.isClassDefined("JV.AnimationManager.SplitFrame")) {
+JV.AnimationManager.$AnimationManager$SplitFrame$ ();
+}
+this.splitFrames = null;
 Clazz.instantialize(this, arguments);}, JV, "AnimationManager", null);
 Clazz.prepareFields (c$, function(){
 this.bsVisibleModels =  new JU.BS();
@@ -84,6 +91,7 @@ this.setAnimationDirection(1);
 this.setAnimationFps(10);
 this.setAnimationReplayMode(1073742070, 0, 0);
 this.initializePointers(0);
+this.setSplitFrame(-1, -1);
 });
 Clazz.defineMethod(c$, "getModelSpecial", 
 function(i){
@@ -142,18 +150,17 @@ var isSameSource = false;
 if (this.cmi != modelIndex) {
 if (modelCount > 0) {
 var ms = this.vwr.ms;
-var toDataModel = ms.isJmolDataFrameForModel(modelIndex);
-var fromDataModel = ms.isJmolDataFrameForModel(this.cmi);
-if (fromDataModel) ms.setJmolDataFrame(null, -1, this.cmi);
-if (this.cmi != -1) this.vwr.saveModelOrientation();
+var toDataModel = ms.isJmolDataFrame(modelIndex);
+var fromDataModel = ms.isJmolDataFrame(this.cmi);
+if (this.cmi != -1) this.vwr.saveModelOrientation(this.cmi);
 if (fromDataModel || toDataModel) {
 ids = ms.getJmolFrameType(modelIndex) + " " + modelIndex + " <-- " + " " + this.cmi + " " + ms.getJmolFrameType(this.cmi);
 isSameSource = (ms.getJmolDataSourceFrame(modelIndex) == ms.getJmolDataSourceFrame(this.cmi));
 }}this.cmi = modelIndex;
 if (ids != null) {
 if (modelIndex >= 0) this.vwr.restoreModelOrientation(modelIndex);
-if (isSameSource && (ids.indexOf("quaternion") >= 0 || ids.indexOf("plot") < 0 && ids.indexOf("ramachandran") < 0 && ids.indexOf(" property ") < 0)) {
-this.vwr.restoreModelRotation(formerModelIndex);
+if (isSameSource && (ids.indexOf("quaternion") >= 0 || ids.indexOf("spin") >= 0 || ids.indexOf("plot") < 0 && ids.indexOf("ramachandran") < 0 && ids.indexOf(" property ") < 0)) {
+this.vwr.restoreModelRotationOnly(formerModelIndex);
 }}}this.setViewer(clearBackgroundModel);
 }, "~N,~B");
 Clazz.defineMethod(c$, "setBackgroundModelIndex", 
@@ -316,7 +323,7 @@ this.vwr.tm.setFrameOffset(this.cmi);
 if (this.cmi == -1 && clearBackgroundModel) this.setBackgroundModelIndex(-1);
 this.vwr.setTainted(true);
 var nDisplay = this.setFrameRangeVisible();
-this.vwr.setStatusFrameChanged(false, false);
+if (this.vwr.tm.splitFrameCurrentlyRendering != 1) this.vwr.setStatusFrameChanged(false, false);
 if (!this.vwr.g.selectAllModels) this.setSelectAllSubset(nDisplay < 2);
 }, "~B");
 Clazz.defineMethod(c$, "setSelectAllSubset", 
@@ -338,13 +345,13 @@ var frameDisplayed = 0;
 nDisplayed = 0;
 for (var iframe = this.firstFrameIndex; iframe != this.lastFrameIndex; iframe += this.frameStep) {
 var i = this.modelIndexForFrame(iframe);
-if (!this.vwr.ms.isJmolDataFrameForModel(i)) {
+if (!this.vwr.ms.isJmolDataFrame(i)) {
 this.bsVisibleModels.set(i);
 nDisplayed++;
 frameDisplayed = iframe;
 }}
 var i = this.modelIndexForFrame(this.lastFrameIndex);
-if (this.firstFrameIndex == this.lastFrameIndex || !this.vwr.ms.isJmolDataFrameForModel(i) || nDisplayed == 0) {
+if (this.firstFrameIndex == this.lastFrameIndex || !this.vwr.ms.isJmolDataFrame(i) || nDisplayed == 0) {
 this.bsVisibleModels.set(i);
 if (nDisplayed == 0) this.firstFrameIndex = this.lastFrameIndex;
 nDisplayed = 0;
@@ -398,5 +405,71 @@ Clazz.defineMethod(c$, "getFrameStep",
 function(direction){
 return this.frameStep * direction * this.currentDirection;
 }, "~N");
+Clazz.defineMethod(c$, "setSplitFrameOffsetX", 
+function(x){
+this.splitFrames[1].offsetX = x;
+}, "~N");
+Clazz.defineMethod(c$, "setSplitFrame", 
+function(modelIndex1, modelIndex2){
+this.splitFrame = (modelIndex1 >= 0 && modelIndex2 >= 0);
+this.splitFrames = (this.splitFrame ?  Clazz.newArray(-1, [Clazz.innerTypeInstance(JV.AnimationManager.SplitFrame, this, null, 0, modelIndex1), Clazz.innerTypeInstance(JV.AnimationManager.SplitFrame, this, null, 1, modelIndex2)]) : null);
+}, "~N,~N");
+Clazz.defineMethod(c$, "getSplitFrameModelIndex", 
+function(i){
+return (this.splitFrames == null ? -1 : this.splitFrames[i].modelIndex);
+}, "~N");
+Clazz.defineMethod(c$, "setSplitFrameMouse", 
+function(x){
+if (!this.splitFrame) {
+this.currentSplitFrame = -1;
+return x;
+}var isRight = (x >= this.splitFrames[1].offsetX);
+this.currentSplitFrame = (isRight ? 1 : 0);
+return x - this.splitFrames[this.currentSplitFrame].offsetX;
+}, "~N");
+Clazz.defineMethod(c$, "getSplitFrameModel", 
+function(){
+return (this.currentSplitFrame < 0 ? this.cmi : this.splitFrames[this.currentSplitFrame].modelIndex);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+Clazz.defineMethod(c$, "isSplitFrameSelectable", 
+function(atomIndex){
+var m = this.getSplitFrameModel();
+return (m < 0 || m == this.vwr.ms.at[atomIndex].mi);
+}, "~N");
+Clazz.defineMethod(c$, "getSplitFrameAtoms", 
+function(active){
+if (this.currentSplitFrame < 0) return null;
+var m = this.splitFrames[active ? this.currentSplitFrame : 1 - this.currentSplitFrame].modelIndex;
+return this.vwr.getModelUndeletedAtomsBitSet(m);
+}, "~B");
+Clazz.defineMethod(c$, "getCurrentSplitModelIndex", 
+function(){
+return this.currentSplitFrame < 0 ? this.cmi : this.splitFrames[this.currentSplitFrame].modelIndex;
+});
+Clazz.defineMethod(c$, "getSplitFrameModels", 
+function(){
+if (!this.splitFrame) return null;
+var bs =  new JU.BS();
+bs.set(this.splitFrames[0].modelIndex);
+bs.set(this.splitFrames[1].modelIndex);
+this.bsVisibleModels.clearAll();
+this.bsVisibleModels.or(bs);
+return bs;
+});
+c$.$AnimationManager$SplitFrame$ = function(){
+/*if4*/;(function(){
+var c$ = Clazz.decorateAsClass(function(){
+Clazz.prepareCallback(this, arguments);
+this.index = 0;
+this.modelIndex = 0;
+this.offsetX = 0;
+Clazz.instantialize(this, arguments);}, JV.AnimationManager, "SplitFrame", null);
+Clazz.makeConstructor(c$, 
+function(index, modelIndex){
+this.index = index;
+this.modelIndex = modelIndex;
+}, "~N,~N");
+/*eoif4*/})();
+};
+});
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

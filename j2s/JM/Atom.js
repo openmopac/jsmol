@@ -126,7 +126,7 @@ if (rd.factorType === J.atomdata.RadiusData.EnumType.FACTOR) f *= r;
  else f += r;
 break;
 case J.atomdata.RadiusData.EnumType.ABSOLUTE:
-if (f == 16.1) return JM.Atom.MAD_GLOBAL;
+if (f == 16.1) return 32200;
 break;
 }
 var mad = Clazz.floatToShort(f < 0 ? f : f * 2000);
@@ -176,7 +176,7 @@ return this.atomNumberFlags;
 });
 Clazz.defineMethod(c$, "setAtomicAndIsotopeNumber", 
 function(n){
-if (n < 0 || (n & 127) >= JU.Elements.elementNumberMax || n > 32767) n = 0;
+if (n < 0 || (n & 127) >= JU.Elements.elementNumberMax || n > 0xFFFF) n = 0;
 this.atomNumberFlags = n;
 }, "~N");
 Clazz.defineMethod(c$, "getElementSymbolIso", 
@@ -751,15 +751,15 @@ if (bondT.isAromatic() && a.i != notAtomIndex) return a;
 return null;
 }, "~N");
 Clazz.defineMethod(c$, "atomPropertyInt", 
-function(tokWhat){
+function(vwr, tokWhat){
 switch (tokWhat) {
 case 1094715393:
 return this.getAtomNumber();
-case 1094713365:
+case 1094713368:
 return this.getSeqID();
 case 1094713346:
 return this.atomID;
-case 1094713368:
+case 1094713371:
 return Math.max(0, this.altloc.charCodeAt(0) - 32);
 case 1094713347:
 return this.i;
@@ -768,12 +768,12 @@ return this.getCovalentBondCount();
 case 1094713351:
 return this.group.chain.chainNo;
 case 1765808134:
-return this.group.chain.model.ms.vwr.gdata.getColorArgbOrGray(this.colixAtom);
+return vwr.gdata.getColorArgbOrGray(this.colixAtom);
 case 1086326789:
 case 1094715402:
 return this.getElementNumber();
 case 1094713353:
-return this.atomNumberFlags;
+return this.getAtomicAndIsotopeNumber();
 case 1228935687:
 return this.group.chain.model.fileIndex + 1;
 case 1631586315:
@@ -785,7 +785,7 @@ return this.group.groupIndex;
 case 1094717454:
 return this.getModelNumber();
 case -1094717454:
-return this.group.chain.model.ms.modelFileNumbers[this.mi];
+return vwr.ms.modelFileNumbers[this.mi];
 case 1094713359:
 return this.mi;
 case 1094713360:
@@ -802,7 +802,13 @@ case 1665140738:
 return this.getRasMolRadius();
 case 1094715412:
 return this.getResno();
+case 1094713365:
+return Math.round(vwr.antialiased ? Clazz.doubleToInt(this.sX / 2) : this.sX);
 case 1094713366:
+return Math.round(vwr.getScreenHeight() - (vwr.antialiased ? Clazz.doubleToInt(this.sY / 2) : this.sY));
+case 1094713367:
+return Math.round(vwr.antialiased ? Clazz.doubleToInt(this.sZ / 2) : this.sZ);
+case 1094713369:
 return this.getAtomSite();
 case 1095241729:
 return this.getSpin();
@@ -810,15 +816,15 @@ case 1639976963:
 return this.group.getProteinStructureType().getId();
 case 1237320707:
 return this.group.getProteinStructureSubType().getId();
-case 1094713367:
+case 1094713370:
 return this.group.getStrucNo();
-case 1296041985:
+case 1296041986:
 return this.getSymOp();
-case 1094715418:
+case 1094715420:
 return this.getValence();
 }
 return 0;
-}, "~N");
+}, "JV.Viewer,~N");
 Clazz.defineMethod(c$, "getSpin", 
 function(){
 return this.group.chain.model.ms.getSpin(this.i);
@@ -890,7 +896,7 @@ return this.getPartialCharge();
 case 1111490569:
 case 1111490570:
 case 1111490568:
-if (this.group.chain.model.isJmolDataFrame && this.group.chain.model.jmolFrameType.startsWith("plot ramachandran")) {
+if (this.group.chain.model.isJmolDataFrame && this.group.chain.model.jmolFrameTypeInt == 4138) {
 switch (tokWhat) {
 case 1111490569:
 return this.getFractionalCoord(!vwr.g.legacyJavaFloat, 'X', false, ptTemp);
@@ -904,12 +910,6 @@ return (omega < -180 ? 360 + omega : omega);
 case 1665140738:
 case 1112152075:
 return this.getRadius();
-case 1111490571:
-return (vwr.antialiased ? Clazz.doubleToInt(this.sX / 2) : this.sX);
-case 1111490572:
-return vwr.getScreenHeight() - (vwr.antialiased ? Clazz.doubleToInt(this.sY / 2) : this.sY);
-case 1111490573:
-return (vwr.antialiased ? Clazz.doubleToInt(this.sZ / 2) : this.sZ);
 case 1113589787:
 return (vwr.slm.isAtomSelected(this.i) ? 1 : 0);
 case 1111490575:
@@ -962,7 +962,7 @@ case 1145047049:
 var v3 = this.atomPropertyTuple(vwr, tokWhat, ptTemp);
 return (v3 == null ? -1 : v3.length());
 }
-return this.atomPropertyInt(tokWhat);
+return this.atomPropertyInt(vwr, tokWhat);
 }, "JV.Viewer,~N,JU.P3");
 Clazz.defineMethod(c$, "getVib", 
 function(ch){
@@ -1047,12 +1047,10 @@ var ms = this.group.chain.model.ms;
 var a = ms.getBasisAtom(this.i, true);
 var id = a.getSeqID();
 if (id != 0) {
-var m = id >> 16;
-var c = String.fromCharCode(id & 0xFF);
-return (withMultiplicity ? "" + m : "") + c;
+return (withMultiplicity ? "" + (id >> 16) : "") + String.fromCharCode(id & 0xFF);
 }var sym = this.getUnitCell();
 var s;
-if (sym == null || (s = sym.getWyckoffPosition(ms.vwr, this, "M")) == null) {
+if (sym == null || (s = sym.getWyckoffPosition(this, "M")) == null) {
 s = "0?";
 }ms.setAtomSeqID(this.i, (JU.PT.parseInt(s) << 16) + (s.charAt(s.length - 1)).charCodeAt(0));
 return (withMultiplicity ? s : s.substring(s.length - 1));
@@ -1095,7 +1093,7 @@ return this.getFractionalCoordPt(!vwr.g.legacyJavaFloat, false, ptTemp);
 case 1145045006:
 return (this.group.chain.model.isJmolDataFrame ? this.getFractionalCoordPt(!vwr.g.legacyJavaFloat, false, ptTemp) : this.getFractionalUnitCoordPt(!vwr.g.legacyJavaFloat, false, ptTemp));
 case 1145047052:
-return JU.P3.new3(vwr.antialiased ? Clazz.doubleToInt(this.sX / 2) : this.sX, vwr.getScreenHeight() - (vwr.antialiased ? Clazz.doubleToInt(this.sY / 2) : this.sY), vwr.antialiased ? Clazz.doubleToInt(this.sZ / 2) : this.sZ);
+return JU.P3.new3(Math.round(vwr.antialiased ? Clazz.doubleToInt(this.sX / 2) : this.sX), Math.round(vwr.getScreenHeight() - (vwr.antialiased ? Clazz.doubleToInt(this.sY / 2) : this.sY)), Math.round(vwr.antialiased ? Clazz.doubleToInt(this.sZ / 2) : this.sZ));
 case 1145047055:
 return this.getVibrationVector();
 case 1145045008:
@@ -1163,6 +1161,5 @@ Clazz.overrideMethod(c$, "getExplicitHydrogenCount",
 function(){
 return 0;
 });
-c$.MAD_GLOBAL = 32200;
 });
-;//5.0.1-v7 Fri Aug 08 04:16:18 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

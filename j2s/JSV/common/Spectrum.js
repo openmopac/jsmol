@@ -67,7 +67,7 @@ return list.size();
 Clazz.defineMethod(c$, "selectPeakByFileIndex", 
 function(filePath, index, atomKey){
 if (this.peakList != null && this.peakList.size() > 0 && (atomKey == null || this.sourceID.equals(index))) for (var i = 0; i < this.peakList.size(); i++) if (this.peakList.get(i).checkFileIndex(filePath, index, atomKey)) {
-System.out.println("selecting peak by FileIndex " + this + " " + this.peakList.get(i));
+System.out.println("JSV.Spectrum selecting peak by FileIndex " + this + " " + this.peakList.get(i));
 return (this.selectedPeak = this.peakList.get(i));
 }
 return null;
@@ -75,7 +75,7 @@ return null;
 Clazz.defineMethod(c$, "selectPeakByFilePathTypeModel", 
 function(filePath, type, model){
 if (this.peakList != null && this.peakList.size() > 0) for (var i = 0; i < this.peakList.size(); i++) if (this.peakList.get(i).checkFileTypeModel(filePath, type, model)) {
-System.out.println("selecting peak byFilePathTypeModel " + this + " " + this.peakList.get(i));
+System.out.println("JSV.Spectrum selecting peak byFilePathTypeModel " + this + " " + this.peakList.get(i));
 return (this.selectedPeak = this.peakList.get(i));
 }
 return null;
@@ -127,7 +127,11 @@ if (iBest >= 0) return this.peakList.get(iBest);
 }, "~N,JSV.common.Coordinate");
 Clazz.defineMethod(c$, "getPeakTitle", 
 function(){
-return (this.selectedPeak != null ? this.selectedPeak.getTitle() : this.highlightedPeak != null ? this.highlightedPeak.getTitle() : this.getTitleLabel());
+var s = null;
+if (this.highlightedPeak != null) s = this.highlightedPeak.getTitle();
+if ((s == null || s.length == 0) && this.selectedPeak != null) s = this.selectedPeak.getTitle();
+if (s == null || s.length == 0) s = this.getTitleLabel();
+return s;
 });
 Clazz.defineMethod(c$, "getTitleLabel", 
 function(){
@@ -475,4 +479,4 @@ Clazz.defineEnumConstant(c$, "TO_ABS", 2, []);
 Clazz.defineEnumConstant(c$, "TOGGLE", 3, []);
 /*eoif2*/})();
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

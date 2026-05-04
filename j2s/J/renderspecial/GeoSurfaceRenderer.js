@@ -55,4 +55,4 @@ this.g3d.fillTriangle3CNBits(this.facePt1, this.colix, p1, this.facePt2, this.co
 }
 }, "JU.BS");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

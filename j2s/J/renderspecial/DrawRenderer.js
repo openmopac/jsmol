@@ -9,6 +9,7 @@ this.pt1 = null;
 this.pt2 = null;
 this.vTemp = null;
 this.vTemp2 = null;
+this.headFactor = 0;
 this.pt0f = null;
 this.pt0i = null;
 this.s0f = null;
@@ -32,9 +33,9 @@ function(){
 this.needTranslucent = false;
 this.imageFontScaling = this.vwr.imageFontScaling;
 var draw = this.shape;
-for (var i = draw.meshCount; --i >= 0; ) {
+for (var i = 0, n = draw.meshCount; i < n; i++) {
 var mesh = this.dmesh = draw.meshes[i];
-if (mesh == null) {
+if (mesh == null || this.dmesh.drawType == null) {
 return false;
 }if (this.dmesh.thisModelOnly && this.vwr.am.cmi < 0) continue;
 if (mesh.connectedAtoms != null) {
@@ -61,6 +62,7 @@ function(isExport){
 this.drawType = this.dmesh.drawType;
 this.diameter = this.dmesh.diameter;
 this.width = this.dmesh.width;
+this.headFactor = (this.diameter != 0 && this.width != 0 ? this.diameter : 0);
 if (this.mesh.connectedAtoms != null) this.getConnectionPoints();
 if (this.mesh.lineData != null) {
 this.drawLineData(this.mesh.lineData);
@@ -295,12 +297,13 @@ this.pt0f.setT(pt1);
 this.pt2f.setT(pt2);
 var d = this.pt0f.distance(this.pt2f);
 if (d == 0) return;
-var headScale = (fScale < 0 ? -fScale : 1);
+var isNegScale = (fScale < 0);
+var headScale = (this.headFactor == 0 && fScale < 0 ? -fScale : 1);
 if (fScale < 0) fScale = -fScale;
 var headWidth = (this.width > 0 && !this.dmesh.noHead ? this.width * headScale * 3 : 0);
 this.vTemp.sub2(this.pt2f, this.pt0f);
 this.vTemp.normalize();
-this.vTemp.scale(Math.min(headWidth == 0 ? fScale : headWidth * 1.5, fScale) / 5);
+this.vTemp.scale((this.headFactor > 0 ? this.headFactor * this.width : Math.min(headWidth == 0 ? fScale : headWidth * 1.5, fScale)) / 5);
 if (!withShaft) this.pt2f.add(this.vTemp);
 this.vTemp.scale(5);
 var len = this.vTemp.length();
@@ -389,4 +392,4 @@ break;
 }
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

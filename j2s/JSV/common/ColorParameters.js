@@ -27,6 +27,7 @@ this.setColor(JSV.common.ScriptToken.PLOTAREACOLOR, JSV.common.ColorParameters.W
 this.setColor(JSV.common.ScriptToken.BACKGROUNDCOLOR, this.getColor3(192, 192, 192));
 this.setColor(JSV.common.ScriptToken.INTEGRALPLOTCOLOR, JSV.common.ColorParameters.RED);
 this.setColor(JSV.common.ScriptToken.PEAKTABCOLOR, JSV.common.ColorParameters.RED);
+this.setColor(JSV.common.ScriptToken.PEAKOVERCOLOR, JSV.common.ColorParameters.RED);
 this.setColor(JSV.common.ScriptToken.HIGHLIGHTCOLOR, JSV.common.ColorParameters.DARK_GRAY);
 for (var i = 0; i < 8; i++) JSV.common.ColorParameters.defaultPlotColors[i] = this.getColorFromString(JSV.common.ColorParameters.defaultPlotColorNames[i]);
 
@@ -57,6 +58,7 @@ case JSV.common.ScriptToken.COORDINATESCOLOR:
 case JSV.common.ScriptToken.GRIDCOLOR:
 case JSV.common.ScriptToken.HIGHLIGHTCOLOR:
 case JSV.common.ScriptToken.INTEGRALPLOTCOLOR:
+case JSV.common.ScriptToken.PEAKOVERCOLOR:
 case JSV.common.ScriptToken.PEAKTABCOLOR:
 case JSV.common.ScriptToken.PLOTAREACOLOR:
 case JSV.common.ScriptToken.PLOTCOLOR:
@@ -140,4 +142,4 @@ c$.WHITE = null;
 c$.defaultPlotColors =  new Array(8);
 c$.defaultPlotColorNames =  Clazz.newArray(-1, ["black", "darkGreen", "darkred", "orange", "magenta", "cyan", "maroon", "darkGray"]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

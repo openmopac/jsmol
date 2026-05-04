@@ -1,95 +1,7 @@
 Clazz.declarePackage("JS");
 Clazz.load(["JU.M4"], "JS.CLEG", ["java.util.Arrays", "JU.AU", "$.BS", "$.P3", "$.PT", "JS.SV", "JS.SpaceGroup", "$.UnitCell", "JV.Viewer"], function(){
 var c$ = Clazz.declareType(JS, "CLEG", null);
-/*LV!1824 unnec constructor*/c$.standardizeTokens = Clazz.defineMethod(c$, "standardizeTokens", 
-function(tokens, isEnd){
-for (var i = tokens.length; --i >= 0; ) {
-var t = tokens[i];
-if (t.length == 0) {
-continue;
-}t = JS.CLEG.cleanCleg000(t);
-if (t.endsWith(":h")) {
-if (!t.startsWith("R")) t = t.substring(0, t.length - 2);
-} else if (!isEnd && t.endsWith(":2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c")) {
-} else if (t.endsWith(":r")) {
-if (!t.startsWith("R")) t = t.substring(0, t.length - 1) + "2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c";
-} else if (t.equals("r")) {
-t = "2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c";
-} else if (t.equals("h")) {
-t = "a-b,b-c,a+b+c";
-}tokens[i] = t;
-}
-System.out.println("MK StandardizeTokens " + java.util.Arrays.toString(tokens));
-}, "~A,~B");
-c$.cleanCleg000 = Clazz.defineMethod(c$, "cleanCleg000", 
-function(t){
-return (t.endsWith(";0,0,0") ? t.substring(0, t.length - 6) : t);
-}, "~S");
-c$.isProbableClegSetting = Clazz.defineMethod(c$, "isProbableClegSetting", 
-function(name){
-var p = name.indexOf(":");
-var type = JS.SpaceGroup.getExplicitSpecialGroupType(name);
-return (type >= 0 && p > 0 && JS.SpaceGroup.getITNo(type == 0 ? name : name.substring(2), p) > 0 && name.indexOf(",") > p ? p : 0);
-}, "~S");
-c$.checkFullSyntax = Clazz.defineMethod(c$, "checkFullSyntax", 
-function(tokens, sym, allow300){
-for (var i = 0; i < tokens.length; i++) {
-var s = tokens[i].trim();
-if (s == null || s.length == 0 || s.startsWith("sub") || s.startsWith("super")) continue;
-var groupType = JS.SpaceGroup.getExplicitSpecialGroupType(s);
-if (groupType > 0) s = s.substring(2);
-var ptColon = s.indexOf(":");
-var ptComma = s.indexOf(",", ptColon + 1);
-var ptDot = s.indexOf(".");
-var isClegSetting = (ptColon > 0 && ptComma > ptColon);
-var ptHall = s.indexOf("]");
-var isHall = (ptHall > 0 && s.charAt(0) == '[' && (ptColon < 0 || ptColon == ptHall + 1));
-var itno = (isHall ? 1 : JU.PT.parseFloatStrict(ptColon > 0 ? s.substring(0, ptColon) : s));
-if (Float.isNaN(itno)) {
-if (ptDot > 0 || isClegSetting) return false;
-} else if (!JS.SpaceGroup.isInRange(itno, groupType, !isClegSetting, allow300 && groupType == 0)) {
-return false;
-}if (ptComma < 0) continue;
-var transform = (ptColon > 0 ? s.substring(ptColon + 1) : s);
-if ((sym.convertTransform(transform, null)).determinant3() == 0) return false;
-}
-return true;
-}, "~A,J.api.SymmetryInterface,~B");
-c$.getCalcType = Clazz.defineMethod(c$, "getCalcType", 
-function(token){
-return (token.length == 0 || token.equals("sub") ? "sub" : token.charAt(0) != 's' ? null : token.startsWith("sub(") ? "sub(" : token.equals("super") ? "super" : token.startsWith("super(") ? "super(" : null);
-}, "~S");
-c$.isTransformOnly = Clazz.defineMethod(c$, "isTransformOnly", 
-function(token){
-return (JS.CLEG.isTransform(token, false) && token.indexOf(":") < 0);
-}, "~S");
-c$.isTransform = Clazz.defineMethod(c$, "isTransform", 
-function(token, checkColonRH){
-return (token.length == 0 || token.indexOf(',') > 0 || "!r!h".indexOf(token) >= 0) || checkColonRH && (token.endsWith(":r") || token.endsWith(":h"));
-}, "~S,~B");
-Clazz.defineMethod(c$, "getMatrixTransform", 
-function(vwr, cleg, retLstOrMap){
-if (cleg.length == 0) cleg = ".";
-if (cleg.indexOf(">") < 0 && !cleg.equals(".")) cleg = ">>" + cleg;
-var tokens = JU.PT.split(cleg, ">");
-if (tokens[0].length == 0) tokens[0] = "ref";
-var data =  new JS.CLEG.ClegData(vwr.getSymTemp(), tokens);
-var retMap = (Clazz.instanceOf(retLstOrMap,"java.util.Map") ? retLstOrMap : null);
-var retLst = (retMap == null && Clazz.instanceOf(retLstOrMap,"JU.Lst") ? retLstOrMap : null);
-data.setReturnMap(retMap);
-data.setReturnLst(retLst);
-var err = JS.CLEG.assignSpaceGroup(data,  new JS.CLEG.AssignedSGParams(vwr, cleg.equals(".")));
-if (err.indexOf("!") > 0) {
-System.err.println(err);
-if (retMap != null) retMap.put("error", err);
-return null;
-}if (retLst == null && retMap == null) {
-System.out.println("CLEG transform: " + JU.PT.join(tokens, '>', 0));
-cleg = data.abcFor(data.trMat);
-System.out.println("CLEG transform: " + tokens[0] + ">" + cleg + ">" + tokens[tokens.length - 1]);
-}return data.trMat;
-}, "JV.Viewer,~S,~O");
-Clazz.defineMethod(c$, "transformSpaceGroup", 
+/*LV!1824 unnec constructor*/Clazz.defineMethod(c$, "transformSpaceGroup", 
 function(vwr, bs, cleg, paramsOrUC, sb){
 var sym0 = vwr.getCurrentUnitCell();
 var sym = vwr.getOperativeSymmetry();
@@ -204,10 +116,9 @@ return data.errString;
 }}if (isTransformOnly) {
 if (isFinal) {
 isUnknown = true;
-return "CLEG pathway is incomplete!";
 }if (token.length > 0) data.addTransform(index, token);
 ++asgParams.mkIndex;
-return JS.CLEG.assignSpaceGroup(data, asgParams);
+if (!isUnknown) return JS.CLEG.assignSpaceGroup(data, asgParams);
 }if (!ignoreFirstSetting) {
 data.setSymmetry(sym);
 if (ignoreNodeTransform) node.disable();
@@ -289,6 +200,7 @@ return token;
 }if (zapped || restarted) {
 vwr.runScript("unitcell on; center unitcell;axes unitcell; axes 0.1; axes on;set perspectivedepth false;moveto 0 axis c1;draw delete;show spacegroup");
 }var finalTransform = data.abcFor(data.trMat);
+tokens[index] = sg.getClegId();
 if (!initializing) {
 JS.CLEG.standardizeTokens(tokens, true);
 var msg = JU.PT.join(tokens, '>', 0) + (basis.isEmpty() ? "" : "\n basis=" + basis);
@@ -304,6 +216,95 @@ throw e;
 }
 }
 }, "JS.CLEG.ClegData,JS.CLEG.AssignedSGParams");
+c$.standardizeTokens = Clazz.defineMethod(c$, "standardizeTokens", 
+function(tokens, isEnd){
+for (var i = tokens.length; --i >= 0; ) {
+var t = tokens[i];
+if (t.length == 0) {
+continue;
+}t = JS.CLEG.cleanCleg000(t);
+if (t.endsWith(":h")) {
+if (!t.startsWith("R")) t = t.substring(0, t.length - 2);
+} else if (!isEnd && t.endsWith(":2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c")) {
+} else if (t.endsWith(":r")) {
+if (!t.startsWith("R")) t = t.substring(0, t.length - 1) + "2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c";
+} else if (t.equals("r")) {
+t = "2/3a+1/3b+1/3c,-1/3a+1/3b+1/3c,-1/3a-2/3b+1/3c";
+} else if (t.equals("h")) {
+t = "a-b,b-c,a+b+c";
+}tokens[i] = t;
+}
+System.out.println("MK StandardizeTokens " + java.util.Arrays.toString(tokens));
+}, "~A,~B");
+c$.cleanCleg000 = Clazz.defineMethod(c$, "cleanCleg000", 
+function(t){
+return (t.endsWith(";0,0,0") ? t.substring(0, t.length - 6) : t);
+}, "~S");
+c$.isProbableClegSetting = Clazz.defineMethod(c$, "isProbableClegSetting", 
+function(name){
+var p = name.indexOf(":");
+var type = JS.SpaceGroup.getExplicitSpecialGroupType(name);
+return (type >= 0 && p > 0 && JS.SpaceGroup.getITNo(type == 0 ? name : name.substring(2), p) > 0 && name.indexOf(",") > p ? p : 0);
+}, "~S");
+c$.checkFullSyntax = Clazz.defineMethod(c$, "checkFullSyntax", 
+function(tokens, sym, allow300){
+for (var i = 0; i < tokens.length; i++) {
+var s = tokens[i].trim();
+if (s == null || s.length == 0 || s.startsWith("sub") || s.startsWith("super")) continue;
+var groupType = JS.SpaceGroup.getExplicitSpecialGroupType(s);
+if (groupType > 0) s = s.substring(2);
+var ptColon = s.indexOf(":");
+var ptComma = s.indexOf(",", ptColon + 1);
+var ptDot = s.indexOf(".");
+var isQuest = (s.indexOf("?:") == 0 || s.indexOf(".:") == 0 || s.indexOf("0:") == 0);
+var isClegSetting = (ptColon > 0 && ptComma > ptColon);
+var ptHall = s.indexOf("]");
+var isHall = (ptHall > 0 && s.charAt(0) == '[' && (ptColon < 0 || ptColon == ptHall + 1));
+var itno = (isQuest ? 0 : isHall ? 1 : JU.PT.parseFloatStrict(ptColon > 0 ? s.substring(0, ptColon) : s));
+if (Float.isNaN(itno)) {
+if (ptDot > 0 || isClegSetting) return false;
+} else if (!isQuest && !JS.SpaceGroup.isInRange(itno, groupType, !isClegSetting, allow300 && groupType == 0)) {
+return false;
+}if (ptComma < 0) continue;
+var transform = (ptColon > 0 ? s.substring(ptColon + 1) : s);
+if ((sym.convertTransform(transform, null)).determinant3() == 0) return false;
+}
+return true;
+}, "~A,J.api.SymmetryInterface,~B");
+c$.getCalcType = Clazz.defineMethod(c$, "getCalcType", 
+function(token){
+return (token.length == 0 || token.equals("sub") ? "sub" : token.charAt(0) != 's' ? null : token.startsWith("sub(") ? "sub(" : token.equals("super") ? "super" : token.startsWith("super(") ? "super(" : null);
+}, "~S");
+c$.isTransformOnly = Clazz.defineMethod(c$, "isTransformOnly", 
+function(token){
+return (JS.CLEG.isTransform(token, false) && token.indexOf(":") < 0);
+}, "~S");
+c$.isTransform = Clazz.defineMethod(c$, "isTransform", 
+function(token, checkColonRH){
+return (token.length == 0 || token.indexOf(',') > 0 || "!r!h".indexOf(token) >= 0) || checkColonRH && (token.endsWith(":r") || token.endsWith(":h"));
+}, "~S,~B");
+Clazz.defineMethod(c$, "getMatrixTransform", 
+function(vwr, cleg, retLstOrMap){
+if (cleg.length == 0) cleg = ".";
+if (cleg.indexOf(">") < 0 && !cleg.equals(".")) cleg = ">>" + cleg;
+var tokens = JU.PT.split(cleg, ">");
+if (tokens[0].length == 0) tokens[0] = "ref";
+var data =  new JS.CLEG.ClegData(vwr.getSymTemp(), tokens);
+var retMap = (Clazz.instanceOf(retLstOrMap,"java.util.Map") ? retLstOrMap : null);
+var retLst = (retMap == null && Clazz.instanceOf(retLstOrMap,"JU.Lst") ? retLstOrMap : null);
+data.setReturnMap(retMap);
+data.setReturnLst(retLst);
+var err = JS.CLEG.assignSpaceGroup(data,  new JS.CLEG.AssignedSGParams(vwr, cleg.equals(".")));
+if (err.indexOf("!") > 0) {
+System.err.println(err);
+if (retMap != null) retMap.put("error", err);
+return null;
+}if (retLst == null && retMap == null) {
+System.out.println("CLEG transform: " + JU.PT.join(tokens, '>', 0));
+cleg = data.abcFor(data.trMat);
+System.out.println("CLEG transform: " + tokens[0] + ">" + cleg + ">" + tokens[tokens.length - 1]);
+}return data.trMat;
+}, "JV.Viewer,~S,~O");
 /*if3*/;(function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.tokens = null;
@@ -365,7 +366,7 @@ function(node){
 var index = node.index;
 var s = node.name;
 if (s.startsWith("ITA/")) s = s.substring(4);
- else s = node.myIta + ":" + node.myTrm;
+ else s = (node.myIta == null ? "." : node.myIta) + ":" + node.myTrm;
 this.setToken(index, s);
 if (node.calculated != null && index > 0) this.setToken(index - 1, node.calculated);
 }, "JS.CLEG.ClegNode");
@@ -383,7 +384,7 @@ this.trLink.setIdentity();
 Clazz.defineMethod(c$, "setNodeTransform", 
 function(node){
 node.myTrm = this.abcFor(this.trMat);
-node.setITAName();
+node.setITAName(node.name);
 }, "JS.CLEG.ClegNode");
 Clazz.defineMethod(c$, "addTransform", 
 function(index, transform){
@@ -533,12 +534,12 @@ data.errString = "Could not get ITA space group for " + name + "!";
 return;
 }if (isPrimitive) {
 this.myTrm = data.addPrimitiveTransform(this.myIta, this.myTrm);
-}this.setITAName();
+}this.setITAName(name);
 }, "JS.CLEG.ClegData,~S");
 Clazz.defineMethod(c$, "setITAName", 
-function(){
-return this.name = "ITA/" + this.specialPrefix + this.myIta + ":" + this.myTrm;
-});
+function(name){
+return this.name = (".".equals(name) || this.myIta == null ? "." : "ITA/" + this.specialPrefix + this.myIta) + (this.myTrm == null ? "" : ":" + this.myTrm);
+}, "~S");
 Clazz.defineMethod(c$, "update", 
 function(data){
 if (data.errString != null) return false;
@@ -598,6 +599,7 @@ return this.name;
 });
 Clazz.defineMethod(c$, "getCleanITAName", 
 function(){
+if (this.name == null) return (this.name = ".");
 var s = (this.name.startsWith("ITA/") ? this.name.substring(4) : this.name);
 if (this.specialType != 0 && !s.startsWith(this.specialPrefix)) s = this.specialPrefix + s;
 return s;
@@ -725,4 +727,4 @@ this.mkIsAssign = isAssign;
 /*eoif3*/})();
 c$.allow300 = false;
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

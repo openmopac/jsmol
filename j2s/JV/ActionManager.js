@@ -1,5 +1,5 @@
 Clazz.declarePackage("JV");
-Clazz.load(["J.api.EventManager", "JU.Rectangle", "JV.MouseState"], ["JV.MotionPoint", "$.ActionManager", "$.Gesture"], ["JU.AU", "$.PT", "J.api.Interface", "J.i18n.GT", "JS.SV", "$.ScriptEval", "J.thread.HoverWatcherThread", "JU.BSUtil", "$.Escape", "$.Logger", "$.Point3fi", "JV.Viewer", "JV.binding.Binding", "$.JmolBinding"], function(){
+Clazz.load(["J.api.EventManager", "JU.Rectangle"], ["JV.MotionPoint", "$.ActionManager", "$.Gesture"], ["JU.AU", "$.PT", "J.api.Interface", "J.i18n.GT", "JS.SV", "$.ScriptEval", "J.thread.HoverWatcherThread", "JU.BSUtil", "$.Escape", "$.Logger", "$.Point3fi", "JV.MouseState", "$.Viewer", "JV.binding.Binding", "$.JmolBinding"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.vwr = null;
 this.haveMultiTouchInput = false;
@@ -11,6 +11,11 @@ this.dragBinding = null;
 this.rasmolBinding = null;
 this.predragBinding = null;
 this.LEFT_DRAGGED = 0;
+this.current = null;
+this.moved = null;
+this.clicked = null;
+this.pressed = null;
+this.dragged = null;
 this.hoverable = false;
 this.hoverWatcherThread = null;
 this.dragGesture = null;
@@ -23,11 +28,6 @@ this.rootPickingStyle = 0;
 this.gestureSwipeFactor = 1.0;
 this.mouseDragFactor = 1.0;
 this.mouseWheelFactor = 1.15;
-this.current = null;
-this.moved = null;
-this.clicked = null;
-this.pressed = null;
-this.dragged = null;
 this.pressedCount = 0;
 this.clickedCount = 0;
 this.drawMode = false;
@@ -53,16 +53,16 @@ this.zoomTrigger = false;
 this.selectionWorking = false;
 Clazz.instantialize(this, arguments);}, JV, "ActionManager", null, J.api.EventManager);
 Clazz.prepareFields (c$, function(){
-this.current =  new JV.MouseState("current");
-this.moved =  new JV.MouseState("moved");
-this.clicked =  new JV.MouseState("clicked");
-this.pressed =  new JV.MouseState("pressed");
-this.dragged =  new JV.MouseState("dragged");
 this.rectRubber =  new JU.Rectangle();
 });
 Clazz.defineMethod(c$, "setViewer", 
 function(vwr, commandOptions){
 this.vwr = vwr;
+this.current =  new JV.MouseState("current");
+this.moved =  new JV.MouseState("moved");
+this.clicked =  new JV.MouseState("clicked");
+this.pressed =  new JV.MouseState("pressed");
+this.dragged =  new JV.MouseState("dragged");
 if (!JV.Viewer.isJS) this.createActions();
 this.setBinding(this.jmolBinding =  new JV.binding.JmolBinding());
 this.LEFT_DRAGGED = JV.binding.Binding.getMouseAction(1, 16, 1);
@@ -500,7 +500,7 @@ this.moved.keybuf = 0;
 }}, "~N");
 Clazz.overrideMethod(c$, "mouseEnterExit", 
 function(time, x, y, isExit){
-if (this.vwr.tm.stereoDoubleDTI) x = x << 1;
+x = (this.vwr.tm.stereoDoubleDTI ? x << 1 : this.vwr.am.splitFrame ? this.vwr.am.setSplitFrameMouse(x) : x);
 this.setCurrent(time, x, y, 0);
 if (isExit) this.exitMeasurementMode("mouseExit");
 }, "~N,~N,~N,~B");
@@ -514,7 +514,6 @@ Clazz.overrideMethod(c$, "mouseAction",
 function(mode, time, x, y, count, buttonMods){
 if (!this.vwr.getMouseEnabled()) return;
 if (JU.Logger.debuggingHigh && mode != 0 && this.vwr.getBoolean(603979960)) this.vwr.showString("mouse action: " + mode + " " + buttonMods + " " + JV.binding.Binding.getMouseActionName(JV.binding.Binding.getMouseAction(count, buttonMods, mode), false), false);
-if (this.vwr.tm.stereoDoubleDTI) x = x << 1;
 switch (mode) {
 case 0:
 if (!this.hoverable) {
@@ -541,6 +540,8 @@ this.setCurrent(time, x, y, buttonMods);
 }this.pressAction = JV.binding.Binding.getMouseAction(this.pressedCount, buttonMods, 4);
 this.vwr.setCursor(12);
 this.pressed.setCurrent(this.current, 1);
+this.vwr.am.setSplitFrameMouse(x);
+this.pressed.setModelIndex(this.vwr.am.getCurrentSplitModelIndex());
 this.dragged.setCurrent(this.current, 1);
 this.vwr.setFocus();
 this.dragGesture.setAction(this.dragAction, time);
@@ -557,6 +558,7 @@ this.dragGesture.add(this.dragAction, x, y, time);
 this.checkDragWheelAction(this.dragAction, x, y, deltaX, deltaY, time, 1);
 return;
 case 5:
+this.pressed.setModelIndex(-1);
 this.setMouseActions(this.pressedCount, buttonMods, true);
 this.setCurrent(time, x, y, buttonMods);
 this.vwr.spinXYBy(0, 0, 0);
@@ -606,6 +608,7 @@ case 26:
 case 36:
 case 37:
 case 27:
+case 40:
 isBound = this.bnd(this.dragAction, [7, 14, 27]);
 break;
 case 29:
@@ -656,6 +659,12 @@ if (this.dragAtomIndex >= 0 || this.mkBondPressed || this.bnd(dragWheelAction, [
 if (this.dragAtomIndex >= 0) {
 this.updateModelkitBranch(bi, false);
 }this.vwr.moveSelected(deltaX, deltaY, -2147483648, x, y, null, null, null, false, false, this.dragAtomIndex >= 0 ? 0 : 16);
+return;
+}}if (this.apm == 40 || this.vwr.am.splitFrame && this.vwr.ms.isJmolDataFrame(this.pressed.modelIndex)) {
+if (this.apm == 40 || this.bnd(dragWheelAction, [29])) {
+this.vwr.rotateSpins(deltaX, deltaY);
+return;
+} else if (this.apm == 40) {
 return;
 }}var bs = null;
 if (this.dragAtomIndex >= 0 && this.apm != 2) {
@@ -998,12 +1007,11 @@ return delta / Math.min(500, isX ? this.vwr.getScreenWidth() : this.vwr.getScree
 }, "~N,~B");
 Clazz.defineMethod(c$, "isZoomArea", 
 function(x){
-return x > this.vwr.getScreenWidth() * (this.vwr.tm.stereoDoubleFull || this.vwr.tm.stereoDoubleDTI ? 2 : 1) * 98 / 100;
+return x > this.vwr.getScreenWidth() * (this.vwr.haveTwoImages() ? 2 : 1) * 98 / 100;
 }, "~N");
 Clazz.defineMethod(c$, "getPoint", 
 function(t){
-var pt =  new JU.Point3fi();
-pt.setT(t.get("pt"));
+var pt = JU.Point3fi.newPF(t.get("pt"), 0);
 pt.mi = (t.get("modelIndex")).intValue();
 return pt;
 }, "java.util.Map");
@@ -1021,6 +1029,7 @@ function(iAtom){
 this.vwr.setPicked(iAtom, true);
 this.vwr.setCursor(1);
 this.vwr.setPendingMeasurement(this.mp = this.getMP());
+if (iAtom >= 0) this.mp.setModelIndex(this.vwr.ms.at[iAtom].mi);
 this.measurementQueued = this.mp;
 }, "~N");
 Clazz.defineMethod(c$, "getMP", 
@@ -1227,6 +1236,9 @@ break;
 case 15:
 this.selectAtoms("visible and within(site, " + spec + ")");
 break;
+case 39:
+this.selectAtoms("visible and within(vxyz, " + spec + ")");
+break;
 }
 this.vwr.clearClickCount();
 this.vwr.setStatusAtomPicked(atomIndex, null, null, false);
@@ -1275,11 +1287,16 @@ if (queuedAtomCount < 2) {
 if (isSpin) this.vwr.scriptStatus(queuedAtomCount == 1 ? J.i18n.GT.$("pick one more atom in order to spin the model around an axis") : J.i18n.GT.$("pick two atoms in order to spin the model around an axis"));
  else this.vwr.scriptStatus(queuedAtomCount == 1 ? J.i18n.GT.$("pick one more atom in order to display the symmetry relationship") : J.i18n.GT.$("pick two atoms in order to display the symmetry relationship between them"));
 return;
-}var s = this.measurementQueued.getMeasurementScript(" ", false);
+}if (isSpin) {
+var s = this.measurementQueued.getMeasurementScript(" ", false);
 this.resetMeasurement();
-if (isSpin) this.runScript("spin" + s + " " + this.vwr.getInt(553648157));
- else this.runScript("draw symop " + s + ";print 'all:';show symop " + s);
-}, "JU.Point3fi,~N");
+this.runScript("spin" + s + " " + this.vwr.getInt(553648157));
+} else {
+var a1 = this.measurementQueued.getAtomIndex(1);
+var a2 = this.measurementQueued.getAtomIndex(2);
+this.resetMeasurement();
+this.vwr.getModelkit(false).drawSymop(a1, a2);
+}}, "JU.Point3fi,~N");
 Clazz.defineMethod(c$, "reset", 
 function(){
 this.runScript("!reset");
@@ -1343,7 +1360,7 @@ return !JS.SV.vF.equals(result);
 c$.actionInfo =  new Array(47);
 c$.actionNames =  new Array(47);
 {
-JV.ActionManager.pickingModeNames = "off identify label center draw spin symmetry deleteatom deletebond atom group chain molecule polymer structure site model element measure distance angle torsion sequence navigate connect struts dragselected dragmolecule dragatom dragminimize dragminimizemolecule invertstereo assignatom assignbond rotatebond identifybond dragligand dragmodel symop".$plit(" ");
+JV.ActionManager.pickingModeNames = "off identify label center draw spin symmetry deleteatom deletebond atom group chain molecule polymer structure site model element measure distance angle torsion sequence navigate connect struts dragselected dragmolecule dragatom dragminimize dragminimizemolecule invertstereo assignatom assignbond rotatebond identifybond dragligand dragmodel symop vxyz dragspin".$plit(" ");
 }{
 JV.ActionManager.pickingStyleNames = "toggle selectOrToggle extendedSelect drag measure measureoff".$plit(" ");
 }var c$ = Clazz.decorateAsClass(function(){
@@ -1448,4 +1465,4 @@ if (this.nodes.length == 0) return "" + this;
 return JV.binding.Binding.getMouseActionName(this.action, false) + " nPoints = " + this.ptNext + " " + this.nodes[0];
 });
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

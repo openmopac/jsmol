@@ -6,7 +6,7 @@ function(){
 });
 c$.validateAndAllocate = Clazz.defineMethod(c$, "validateAndAllocate", 
 function(chain, group3, seqcode, firstIndex, lastIndex){
-return  new JM.CarbohydrateMonomer().set2(chain, group3, seqcode, firstIndex, lastIndex, JM.CarbohydrateMonomer.alphaOffsets);
+return  new JM.CarbohydrateMonomer().set2(chain, group3, seqcode, firstIndex, lastIndex,  Clazz.newByteArray (1, 0));
 }, "JM.Chain,~S,~N,~N,~N");
 Clazz.overrideMethod(c$, "isCarbohydrate", 
 function(){
@@ -45,6 +45,5 @@ for (var i = this.firstAtomIndex; i <= this.lastAtomIndex; i++) if (this.getCros
 
 return false;
 });
-c$.alphaOffsets =  Clazz.newByteArray(-1, [0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 09:57:54 CST 2026

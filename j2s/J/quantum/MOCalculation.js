@@ -160,7 +160,7 @@ this.gaussianPtr = shell[2] - 1;
 this.nGaussians = shell[3];
 this.doShowShellType = this.doDebug;
 if (this.atomIndex != lastAtom && (this.thisAtom = this.qmAtoms[this.atomIndex]) != null) this.thisAtom.setXYZ(this, true);
-if (!this.allowType(basisType) || !this.setCoeffs(shell[1], true)) return;
+if (!this.setCoeffs(shell[1], true) || !this.allowType(basisType)) return;
 if (this.havePoints) this.setMinMax(-1);
 switch (basisType) {
 case 0:
@@ -761,4 +761,4 @@ JU.Logger.info("Integrated density = " + this.integration + " for volume " + (vo
 });
 c$.shellOrder =  Clazz.newArray(-1, [ Clazz.newArray(-1, ["S"]),  Clazz.newArray(-1, ["X", "Y", "Z"]),  Clazz.newArray(-1, ["S", "X", "Y", "Z"]),  Clazz.newArray(-1, ["d0/z2", "d1+/xz", "d1-/yz", "d2+/x2-y2", "d2-/xy"]),  Clazz.newArray(-1, ["XX", "YY", "ZZ", "XY", "XZ", "YZ"]),  Clazz.newArray(-1, ["f0/2z3-3x2z-3y2z", "f1+/4xz2-x3-xy2", "f1-/4yz2-x2y-y3", "f2+/x2z-y2z", "f2-/xyz", "f3+/x3-3xy2", "f3-/3x2y-y3"]),  Clazz.newArray(-1, ["XXX", "YYY", "ZZZ", "XYY", "XXY", "XXZ", "XZZ", "YZZ", "YYZ", "XYZ"])]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

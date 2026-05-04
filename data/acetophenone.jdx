@@ -15,12 +15,13 @@
 ##SPECTROMETER/DATA SYSTEM= PERKIN-ELMER 1000 FT-IR
 ##CAS REGISTRY NO=98-86-2
 ##MOLFORM=C 8 H 8 O
+##$$$$$$$$$$$$$$$$$$$$$$$$ repaired by Bob Hanson -- each ModelData id must be unique
 ##$MODELS=
 <Models>
  <ModelData id="acetophenone" type="MOL">
 acetophenone
   DSViewer          3D                             0
-
+odel
  17 17  0  0  0  0  0  0  0  0999 V2000
    -1.6931    0.0078    0.0000 C   0  0  0  0  0  0  0  0  0  1
    -0.2141    0.0078    0.0000 C   0  0  0  0  0  0  0  0  0  2
@@ -1088,7 +1089,7 @@ H    -3.492000   -1.179900   -0.005900    0.001020    0.000720   -0.442600
 ##SPECTROMETER/DATA SYSTEM= TECMAG APOLLO NTNMR
 ##$MODELS=
 <Models>
- <ModelData id="acetophenone" type="MOL">
+ <ModelData id="acetophenone2" type="MOL">
 acetophenone
   DSViewer          3D                             0
 
@@ -1132,10 +1133,10 @@ M  END
 </Models>
 ##$PEAKS=
 <Peaks type="HNMR" xUnits="ppm" yUnits="arbitrary units" >
-<PeakData id="1" title="methyl group ~2.6" peakShape="singlet" model="acetophenone" atoms="15,16,17"  xMax="2.7" xMin="2.5"  yMax="10000" yMin="0" />
-<PeakData id="2" title="meta H's ~7.4" peakShape="multiplet" model="acetophenone"  atoms="10,11"  xMax="7.5" xMin="7.3"  yMax="10000" yMin="0" />
-<PeakData id="3" title="para H ~7.5" peakShape="multiplet" model="acetophenone" atoms="12"   xMax="7.6" xMin="7.4"  yMax="10000" yMin="0" />
-<PeakData id="4" title="ortho H's ~7.9" peakShape="multiplet" model="acetophenone" atoms="8,9"   xMax="8.0" xMin="7.9"  yMax="10000" yMin="0" />
+<PeakData id="1" title="methyl group ~2.6" peakShape="singlet" model="acetophenone2" atoms="15,16,17"  xMax="2.7" xMin="2.5"  yMax="10000" yMin="0" />
+<PeakData id="2" title="meta H's ~7.4" peakShape="multiplet" model="acetophenone2"  atoms="10,11"  xMax="7.5" xMin="7.3"  yMax="10000" yMin="0" />
+<PeakData id="3" title="para H ~7.5" peakShape="multiplet" model="acetophenone2" atoms="12"   xMax="7.6" xMin="7.4"  yMax="10000" yMin="0" />
+<PeakData id="4" title="ortho H's ~7.9" peakShape="multiplet" model="acetophenone2" atoms="8,9"   xMax="8.0" xMin="7.9"  yMax="10000" yMin="0" />
 </Peaks>
 ##.OBSERVE FREQUENCY= 199.584124
 ##INSTRUMENTAL PARAMETERS= ^1H
@@ -1665,7 +1666,7 @@ M  END
 ##SPECTROMETER/DATA SYSTEM= TECMAG APOLLO NTNMR
 ##$MODELS=
 <Models>
- <ModelData id="acetophenone" type="MOL">
+ <ModelData id="acetophenone3" type="MOL">
 acetophenone
   DSViewer          3D                             0
 
@@ -1709,12 +1710,12 @@ M  END
 </Models>
 ##$PEAKS=
 <Peaks type="13CNMR" xUnits="ppm" yUnits="arbitrary units" >
-<PeakData id="1" title="methyl group ~27" peakShape="singlet" model="acetophenone" atoms="14" xMax="28" xMin="26"  yMax="10000" yMin="0" />
-<PeakData id="2" title="C3,C5 aromatic ~128" peakShape="multiplet" model="acetophenone"  atoms="6,7" xMax="129" xMin="127"  yMax="10000" yMin="0" />
-<PeakData id="3" title="C2,C6 aromatic ~129" peakShape="multiplet" model="acetophenone" atoms="4,5" xMax="130" xMin="128"  yMax="10000" yMin="0" />
-<PeakData id="4" title="C4 aromatic ~133" peakShape="multiplet" model="acetophenone" atoms="3" xMax="134" xMin="132"  yMax="10000" yMin="0" />
-<PeakData id="5" title="C1 aromatic ~137" peakShape="multiplet" model="acetophenone" atoms="2" xMax="138" xMin="136"  yMax="10000" yMin="0" />
-<PeakData id="6" title="carbonyl ~200" peakShape="multiplet" model="acetophenone" atoms="1" xMax="199" xMin="197"  yMax="10000" yMin="0" />
+<PeakData id="1" title="methyl group ~27" peakShape="singlet" model="acetophenone3" atoms="14" xMax="28" xMin="26"  yMax="10000" yMin="0" />
+<PeakData id="2" title="C3,C5 aromatic ~128" peakShape="multiplet" model="acetophenone3"  atoms="6,7" xMax="129" xMin="127"  yMax="10000" yMin="0" />
+<PeakData id="3" title="C2,C6 aromatic ~129" peakShape="multiplet" model="acetophenone3" atoms="4,5" xMax="130" xMin="128"  yMax="10000" yMin="0" />
+<PeakData id="4" title="C4 aromatic ~133" peakShape="multiplet" model="acetophenone3" atoms="3" xMax="134" xMin="132"  yMax="10000" yMin="0" />
+<PeakData id="5" title="C1 aromatic ~137" peakShape="multiplet" model="acetophenone3" atoms="2" xMax="138" xMin="136"  yMax="10000" yMin="0" />
+<PeakData id="6" title="carbonyl ~200" peakShape="multiplet" model="acetophenone3" atoms="1" xMax="199" xMin="197"  yMax="10000" yMin="0" />
 </Peaks>
 ##INSTRUMENTAL PARAMETERS= ^13C
 ##.OBSERVE FREQUENCY= 50.190625
@@ -3733,7 +3734,7 @@ M  END
 ##MOLFORM= C 8 H 8 O
 ##$MODELS=
 <Models>
-<ModelData id="acetophenone" type="MOL">
+<ModelData id="acetophenone4" type="MOL">
 acetophenone
   DSViewer          3D                             0
 
@@ -3774,7 +3775,7 @@ acetophenone
  17 14  1  0  0  0
 M  END
 </ModelData>
-<ModelData id="2" type="MOL" baseModel="acetophenone">
+<ModelData id="2" type="MOL" baseModel="acetophenone4">
 acetophenone m/z 120
   DSViewer          3D                             0
 

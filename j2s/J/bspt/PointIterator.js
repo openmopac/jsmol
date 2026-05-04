@@ -13,10 +13,7 @@ for (var i = pt3.length; --i >= 0; ) {
 var p3 = ap3[i];
 if (p3 == null) return 0;
 if (bsSelected == null) {
-p =  new JU.Point3fi();
-p.setT(p3);
-p.i = i;
-pt3[i] = p;
+pt3[i] = p = JU.Point3fi.newPF(p3, i);
 bspt.addTuple(p);
 } else {
 bspt.addTuple(p3);
@@ -93,4 +90,4 @@ ret[0] = pts;
 return 1073742001;
 }, "~N,JU.P3,~A,~A,JU.BS,~A");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

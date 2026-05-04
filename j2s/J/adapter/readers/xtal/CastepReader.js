@@ -571,4 +571,4 @@ v.z = (cosph * data[6] - sinph * data[7]);
 c$.lengthUnitIds =  Clazz.newArray(-1, ["bohr", "m", "cm", "nm", "ang", "a0"]);
 c$.lengthUnitFactors =  Clazz.newFloatArray(-1, [0.5291772, 1E10, 1E8, 1E1, 1.0, 0.5291772]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Wed Mar 25 00:33:43 CDT 2026

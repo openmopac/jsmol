@@ -63,12 +63,12 @@ var $t$;
 //var c$;
 Clazz_declarePackage("J.api");
 Clazz_declareInterface(J.api, "SC");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.LayoutManager"], "JS.BorderLayout", null, function(){
 var c$ = Clazz_declareType(JS, "BorderLayout", JS.LayoutManager);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(null, "JS.Component", ["JU.CU"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -188,7 +188,7 @@ Clazz_defineMethod(c$, "repaint",
 function(){
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.Component"], "JS.Container", ["JU.Lst"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -253,12 +253,12 @@ function(){
 return (this.list != null && this.list.size() == 1 ? this.list.get(0).getSubcomponentHeight() : 0);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 (function(){
 var c$ = Clazz_declareType(JS, "LayoutManager", null);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["J.api.SC", "JS.JComponent"], "JS.AbstractButton", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -340,10 +340,10 @@ function(){
 return " disabled=\"disabled\"";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_declareInterface(JS, "AbstractTableModel", JS.TableColumn);
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(null, "JS.ButtonGroup", ["JS.Component"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -364,7 +364,7 @@ function(){
 return this.count;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -387,18 +387,18 @@ var style = this.c.getStyle(false);
 return "<td id='" + id + "' " + (this.colspan < 2 ? "" : "colspan='" + this.colspan + "' ") + style + "><span " + this.c.getStyle(true) + ">" + this.component.toHTML() + "</span></td>";
 }, "~S");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_declareInterface(JS, "ColumnSelectionModel");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_declareInterface(JS, "Document");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.LayoutManager"], "JS.FlowLayout", null, function(){
 var c$ = Clazz_declareType(JS, "FlowLayout", JS.LayoutManager);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(null, "JS.Grid", ["JU.AU", "$.SB", "JS.Cell"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -444,7 +444,7 @@ sb.append("\n<tr><td style='height:20%;width:20%'></td></tr></table>\n");
 return sb.toString();
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(null, "JS.GridBagConstraints", ["JS.Insets"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -480,12 +480,12 @@ function(margins){
 return "style='" + (margins ? "margin:" + this.insets.top + "px " + (this.ipady + this.insets.right) + "px " + this.insets.bottom + "px " + (this.ipadx + this.insets.left) + "px;" : "text-align:" + (this.anchor == 13 ? "right" : this.anchor == 17 ? "left" : "center")) + "'";
 }, "~B");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.LayoutManager"], "JS.GridBagLayout", null, function(){
 var c$ = Clazz_declareType(JS, "GridBagLayout", JS.LayoutManager);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -502,7 +502,7 @@ this.bottom = bottom;
 this.right = right;
 }, "~N,~N,~N,~N");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.AbstractButton"], "JS.JButton", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JButton", JS.AbstractButton);
@@ -517,7 +517,7 @@ sb.append("<input type=button id='" + this.id + "' class='JButton' style='" + th
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.AbstractButton"], "JS.JCheckBox", null, function(){
 var c$ = Clazz_declareType(JS, "JCheckBox", JS.AbstractButton);
@@ -531,7 +531,7 @@ var s = "<label><input type=checkbox id='" + this.id + "' class='JCheckBox' styl
 return s;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JMenuItem"], "JS.JCheckBoxMenuItem", null, function(){
 var c$ = Clazz_declareType(JS, "JCheckBoxMenuItem", JS.JMenuItem);
@@ -540,7 +540,7 @@ function(){
 Clazz_superConstructor(this, JS.JCheckBoxMenuItem, ["chk", 2]);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.AbstractButton"], "JS.JComboBox", ["JU.SB"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -576,7 +576,7 @@ sb.append("\n</select>\n");
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.Container"], "JS.JComponent", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -601,7 +601,7 @@ function(actionCommand){
 this.actionCommand = actionCommand;
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JComponentImp", null, function(){
 var c$ = Clazz_declareType(JS, "JComponentImp", JS.JComponent);
@@ -610,7 +610,7 @@ function(){
 return null;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JContentPane", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JContentPane", JS.JComponent);
@@ -628,7 +628,7 @@ sb.append("\n</div>\n");
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.Container"], "JS.JDialog", ["JU.SB", "JS.Color", "$.JContentPane"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -714,7 +714,7 @@ function(){
 SwingController.setFront(this);
 }});
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JEditorPane", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JEditorPane", JS.JComponent);
@@ -730,7 +730,7 @@ sb.append("<textarea type=text id='" + this.id + "' class='JEditorPane' style='"
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JLabel", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JLabel", JS.JComponent);
@@ -748,7 +748,7 @@ sb.append("</span>");
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JMenuItem"], "JS.JMenu", null, function(){
 var c$ = Clazz_declareType(JS, "JMenu", JS.JMenuItem);
@@ -961,7 +961,7 @@ menu.mouseListener.handleEvent({jqevent:event,getID:function(){return event.type
 })(Jmol.Swing);
 })(Jmol.__$);
 }}});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.AbstractButton"], "JS.JMenuItem", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -991,7 +991,7 @@ function(){
 return (this.btnType == 1 ? this.text : "<label><input id=\"" + this.id + "-" + (this.btnType == 3 ? "r" : "c") + "b\" type=\"" + (this.btnType == 3 ? "radio\" name=\"" + this.htmlName : "checkbox") + "\" " + (this.selected ? "checked" : "") + " />" + this.text + "</label>");
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JPanel", ["JU.SB", "JS.Grid", "$.GridBagConstraints"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -1030,7 +1030,7 @@ sb.append("\n</div>\n");
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.AbstractButton"], "JS.JPopupMenu", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -1066,7 +1066,7 @@ return this.getMenuHTML();
 {
 SwingController.setDraggable(JS.JPopupMenu);
 }}});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JMenuItem"], "JS.JRadioButtonMenuItem", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -1077,7 +1077,7 @@ function(){
 Clazz_superConstructor(this, JS.JRadioButtonMenuItem, ["rad", 3]);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JScrollPane", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JScrollPane", JS.JComponent);
@@ -1100,7 +1100,7 @@ Clazz_overrideMethod(c$, "setMinimumSize",
 function(dimension){
 }, "JS.Dimension");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JSplitPane", ["JU.SB", "JS.JComponentImp"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -1165,7 +1165,7 @@ sb.append("</div></div>\n");
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.ColumnSelectionModel", "$.JComponent", "$.ListSelectionModel"], "JS.JTable", ["JU.BS", "$.SB"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -1232,7 +1232,7 @@ sb.append("\n</table>\n");
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.JComponent"], "JS.JTextField", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JTextField", JS.JComponent);
@@ -1248,7 +1248,7 @@ sb.append("<input type=text id='" + this.id + "' class='JTextField' style='" + t
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_load(["JS.Document", "$.JComponent"], "JS.JTextPane", ["JU.SB"], function(){
 var c$ = Clazz_declareType(JS, "JTextPane", JS.JComponent, JS.Document);
@@ -1273,21 +1273,21 @@ sb.append("<textarea type=text id='" + this.id + "' class='JTextPane' style='" +
 return sb.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_declareInterface(JS, "ListSelectionModel");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 (function(){
 var c$ = Clazz_declareType(JS, "SwingConstants", null);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_declareInterface(JS, "TableCellRenderer");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JS");
 Clazz_declareInterface(JS, "TableColumn");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 })(Clazz
 ,Clazz.getClassName
 ,Clazz.newLongArray

@@ -12,9 +12,11 @@ this.firstTranslation = 0;
 this.spinFrame = null;
 this.fullName = null;
 this.p2 = null;
+this.p1 = null;
 Clazz.instantialize(this, arguments);}, J.adapter.readers.xtal, "FSGOutputReader", J.adapter.smarter.AtomSetCollectionReader);
 Clazz.prepareFields (c$, function(){
 this.p2 =  new JU.P3();
+this.p1 =  new JU.P3();
 });
 Clazz.defineMethod(c$, "initializeReader", 
 function(){
@@ -124,7 +126,7 @@ for (var i = 0; i < n; i++) {
 var op = info.get(i);
 var mspin = this.readMatrix(this.getListItem(op, 0), null);
 var mop = this.readMatrix(this.getListItem(op, 1), this.getListItem(op, 2));
-var s = JS.SymmetryOperation.getTransformXYZ(mop) + JS.SymmetryOperation.getSpinString(mspin, true) + (this.isCoplanar ? "+" : "");
+var s = JS.SymmetryOperation.getTransformXYZ(mop) + JS.SymmetryOperation.getSpinString(mspin, true, true) + (this.isCoplanar ? "+" : "");
 var iop = this.setSymmetryOperator(s);
 if (JU.Logger.debugging) System.out.println("FSGOutput op[" + (i + 1) + "]=" + s + (iop < 0 ? " SKIPPED" : ""));
 if (iop >= 0) {
@@ -184,7 +186,13 @@ Clazz.overrideMethod(c$, "doPreSymmetry",
 function(doApplySymmetry){
 var fs = this.asc.getSymmetry();
 var bs = JU.BSUtil.newBitSet2(0, this.asc.ac);
-this.excludeAtoms(0, bs, fs);
+var i = 0;
+this.symmetry.setPrecision(1.0E-4);
+while ((i = this.excludeAtoms(i, bs, fs)) >= 0) {
+}
+for (var n = 0, j = bs.nextSetBit(0); j >= 0; j = bs.nextSetBit(j + 1)) {
+this.asc.atoms[j].atomSite = n++;
+}
 this.filterFsgAtoms(bs);
 this.preSymmetrySetMoments();
 System.out.println("FSGOutputReader using atoms " + bs);
@@ -232,6 +240,7 @@ this.applySymmetryAndSetTrajectory();
 this.addJmolScript("vectors on;vectors 0.15;");
 this.vibsFractional = true;
 var n = this.asc.getXSymmetry().setMagneticMoments(true);
+this.asc.getXSymmetry().getSymmetry().setPrecision(1.0E-4);
 this.appendLoadNote(n + " magnetic moments - use VECTORS ON/OFF or VECTOR MAX x.x or SELECT VXYZ>0");
 });
 Clazz.defineMethod(c$, "getSCIFInfo", 
@@ -278,7 +287,7 @@ var m2g0 = this.readMatrix(r0, t0);
 var abcm = JS.SymmetryOperation.getTransformABC(m2g0, false);
 J.adapter.readers.xtal.FSGOutputReader.mput(m, "msgTransform", abcm);
 this.asc.setCurrentModelInfo("unitcell_msg", abcm);
-this.symmetry.setUnitCellFromParams(this.unitCellParams, true, this.cellSlop);
+this.symmetry.setUnitCellFromParams(this.unitCellParams, true, 1.0E-4);
 this.spinFrame = this.calculateSpinFrame(this.readMatrix(J.adapter.readers.xtal.FSGOutputReader.getList(this.json, "transformation_matrix_spin_cartesian_lattice_G0"), null));
 System.out.println("FSGOutput G0 spinFrame=" + this.spinFrame);
 this.addMoreUnitCellInfo("spinFrame=" + this.spinFrame);
@@ -343,25 +352,28 @@ return m;
 }, "J.adapter.smarter.XtalSymmetry.FileSymmetry,JU.Lst");
 Clazz.defineMethod(c$, "excludeAtoms", 
 function(i0, bs, fs){
-if (i0 < 0) return;
 for (var i = bs.nextSetBit(i0 + 1); i >= 0; i = bs.nextSetBit(i + 1)) {
 if (this.findSymop(i0, i, fs)) {
 bs.clear(i);
 }}
-this.excludeAtoms(bs.nextSetBit(i0 + 1), bs, fs);
+return bs.nextSetBit(i0 + 1);
 }, "~N,JU.BS,J.adapter.smarter.XtalSymmetry.FileSymmetry");
 Clazz.defineMethod(c$, "findSymop", 
 function(i1, i2, fs){
 var a = this.asc.atoms[i1];
 var b = this.asc.atoms[i2];
 if (a.elementNumber != b.elementNumber) return false;
+this.p2.setP(b);
+this.symmetry.unitize(this.p2);
+this.symmetry.toCartesian(this.p2, true);
 var ops = fs.getSymmetryOperations();
 var nops = fs.getSpaceGroupOperationCount();
 for (var i = 1; i < nops; i++) {
-this.p2.setP(a);
-ops[i].rotTrans(this.p2);
-this.symmetry.unitize(this.p2);
-if (this.p2.distanceSquared(b) < 1e-6) {
+this.p1.setP(a);
+ops[i].rotTrans(this.p1);
+this.symmetry.unitize(this.p1);
+this.symmetry.toCartesian(this.p1, true);
+if (this.p1.distanceSquared(this.p2) < 0.01) {
 return true;
 }}
 return false;
@@ -425,4 +437,4 @@ m4.invert();
 }return JS.SymmetryOperation.getTransformABC(m4, false);
 }, "JU.M4");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Wed Mar 25 00:33:43 CDT 2026

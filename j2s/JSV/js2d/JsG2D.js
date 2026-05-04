@@ -20,7 +20,7 @@ return JS.Color.get1(rgb);
 }, "~N");
 Clazz.overrideMethod(c$, "newGrayScaleImage", 
 function(context, image, width, height, grayBuffer){
-return JSV.common.JSViewer.jmolObject.newGrayScaleImage(context, image, width, height, grayBuffer);
+return JSV.common.JSViewer.jsmolObject.newGrayScaleImage(context, image, width, height, grayBuffer);
 }, "~O,~O,~N,~N,~A");
 Clazz.overrideMethod(c$, "drawGrayScaleImage", 
 function(g, image, destX0, destY0, destX1, destY1, srcX0, srcY0, srcX1, srcY1){
@@ -177,4 +177,4 @@ function(g, x2, y2){
 g.lineTo(x2, y2);
 }}, "~O,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

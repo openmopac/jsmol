@@ -2,6 +2,7 @@
 
 // see http://peter-ertl.com/jsme
 
+// BH 2025.11.09 updates to JSME_2024-04-29; fixes "marker" option for smiles
 // BH 12/3/2017 8:56:35 PM two JSME applets on a page fail.
 // BH 2/16/2017 2:09:40 PM uses show chemical jme not show chemical/file=jme
 // BH 4/24/2016 10:51:22 PM adds getjsmeh Jmol script to derive jsme with H atoms from NCI mrv 
@@ -231,6 +232,8 @@
 		System.out.println("__loadModel")
 		if (jmeOrMolData == null)
 			return;
+		if (jmeOrMolData.indexOf("\n") == 0)
+			jmeOrMolData = "mol" + jmeOrMolData;
 		Jmol.jmeReadMolecule(this, jmeOrMolData);
 		if (this._viewSet != null)
 			Jmol.View.updateView(this, {chemID:chemID, data:jmeOrMolData, viewID: viewID});      
@@ -260,13 +263,14 @@
 	proto._updateView = function(_jme_updateView) {
 		// called from model change without chemical identifier, possibly by user action and call to Jmol.updateView(applet)
 		if (this._viewSet != null) {
-			this._search("$" + this._getSmiles())
+			this._search("$" + this._getSmiles(true, false))
     }
 		var me = this;
     // missing View.updateView?
 	}
 
 	proto._setCheck = function(b, why) {
+		console.log("setCheckEnabled " + b + " " + why);
 		this._checkEnabled = b;
 	}
 		 
@@ -329,22 +333,40 @@
 //		return (ok ? a : 0);
 //	}
 			
+	proto.__getJmeFileOrEmptyString = function() {
+		var s = this._applet.jmeFile();
+		return (s == "0 0" ? "" : s);		
+	}
+	
 	proto._myEditCallback = function(me, event,_jme_myEditCallback) {
+		setTimeout(function() {
+			me.__doEditCallback(me, event, _jme_myEditCallback)
+		}, 150);
+	}
+	
+	proto.__doEditCallback = function(me, event, _jme_myEditCallback) {
+		console.log("editcallback check=" + event.action + " " + this._checkEnabled + " edit=" + this._editEnabled + " "  );
+
 		// direct callback from JSME applet
-		var data = this._applet.jmeFile().replace(/\:1/g,"");
+		var data = this.__getJmeFileOrEmptyString().replace(/\:1/g,"");
 		this._editMol = this._editMol.replace(/\:1/g,"");
 		if (this._checkEnabled && !this._editEnabled) {
 			// data is not null, and we don't allow editing
 			// data is null, and we don't allow clearing
+			console.log("editcallback "
+					+ " data= " + data + " ; " + this._editMol);
 	 		this._editEnabled && data && (this._editMol = data); /// was .editEnabled
 			if (data && data != this._editMol) {
 				var me = this;
 				var m = me._editMol;
+				console.log("editcallback failed check " + m);
 				setTimeout(function(){
 					me._setCheck(false, "sorry");
 					(m ? me._applet.readMolecule(m) : me._applet.reset());
 					//me._setSVG();
-					me._editMol = me._applet.jmeFile();
+					me._editMol = me.__getJmeFileOrEmptyString();
+					console.log("editmol = " + me._editMol);
+					me._setCheck(true, "failed")
 				},150);
 				return;
 			}
@@ -368,14 +390,14 @@
 			return this.__clearAtomSelection(false);
 		}
 		// not a structural change
-		var data = this._applet.jmeFile();
+		var data = this.__getJmeFileOrEmptyString();
 		if (data.indexOf(":") < 0) 
 			return this.__clearAtomSelection(true);
 		data = data.split(" ");
 		var n = parseInt(data[0]);
 		var iAtom = 0;
 		for (var i = 0; i < n; i++)
-			if (!this.__atomSelection[i + 1] && data[i*3 + 2].indexOf(":") >= 0) {
+			if ((!this._atomSelection || !this.__atomSelection[i + 1]) && data[i*3 + 2].indexOf(":") >= 0) {
 				iAtom = i + 1;
 				break;
 			}
@@ -403,13 +425,23 @@
 	proto.__clearAtomSelection = function(andUpdate) {
 		System.out.println("clearAtomSelection");
 		this.__atomSelection = [];
-		this._applet.jmeFile() && this._applet.resetAtomColors(1);
+		this.__resetMarks();
 		if (andUpdate)
 			Jmol.View.updateAtomPick(this, []);
 	}	
 
+	proto.__resetMarks = function() {
+		var haveModel = !!this.__getJmeFileOrEmptyString();
+		if (haveModel) {
+			this._applet.resetAtomColors(1);
+			this._applet.resetAtomMarks(1);
+			this._applet.resetBondColors(1);
+			this._applet.resetBondMarks(1);
+		}
+	}
+	
 	proto._updateAtomPick = function(A, _jme_updateAtomPick) {
-		this._applet.jmeFile() && this._applet.resetAtomColors(1);
+		this.__resetMarks();
 		if (A.length == 0)
 			return;
 		var B = [];
@@ -421,7 +453,7 @@
 		 B.push(j);
 		 B.push(this._highlightColor);
 		}
-		System.out.println("JME setting atom colors " + B.join(","))
+		console.log("JME setting atom colors " + B.join(","))
 		this._applet.setAtomBackgroundColors(1, B.join(","));
 		this.__atomSelection = C;
 	}
@@ -495,15 +527,16 @@
 		this._setCheck(false, "readmoldata");
 		if (this._molData) {
     //alert(format + " " + data + " reading " + this._molData)
-    	Jmol.jmeReadMolecule(this, this._molData);
+    	    Jmol.jmeReadMolecule(this, this._molData);
 //			this._applet.readMolecule(this._molData);
 			this._molData = this._applet.molFile();
 			this.__updateAtomCorrelation();
 		} else {
 			this._applet.reset();
 			this._molData = "<zapped>";
-		}
-		this._editMol = this._applet.jmeFile();
+		} 
+		this._editMol = this.__getJmeFileOrEmptyString();
+		this._setCheck(true, "readmoldata2");
 		//this._setSVG();
 	}
   
@@ -546,8 +579,15 @@
 		}
 	}
 
-  proto._getSmiles = function(withStereoChemistry) {
+  proto._getSmiles = function(withStereoChemistry, withMarkers) {
+	withMarkers = (arguments.length < 2 || withMarkers); 
+	// markers indicate a highlighted atoms [H:1] for example
+	// we use false here for inputs to NCI when editing is on
+	this._applet.options(withMarkers ? "marker" : "nomarker");
   	var s = (arguments.length == 0 || withStereoChemistry ? this._applet.smiles() : this._applet.nonisomericSmiles());
+	if (!withMarkers)
+		this._applet.options("marker");
+
 //    s = s.replace(/\:1/g,"");
 //		s = s.replace(/@H/g,"@~").replace(/H/g,"")
 //		s = s.replace(/\/\[\]/g,"/[H]")
@@ -595,6 +635,7 @@
 			jme._applet.readMolFile(jmeOrMolData);   
 	 jme._molData = jme._applet.molFile();
 	 jme._editMol = jme._applet.jmeFile();
+		jme._setCheck(true, "readmolecule2");
 	 //jme._setSVG();
 	}
 

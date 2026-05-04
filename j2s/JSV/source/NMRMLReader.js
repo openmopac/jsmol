@@ -44,7 +44,8 @@ function(tagId){
 System.out.println(JSV.source.XMLReader.tagNames[tagId]);
 switch (tagId) {
 case 13:
-this.obNucleus = JU.Elements.getNmrNucleusFromName(this.parser.getAttrValueLC("name"));
+var val = this.parser.getAttrValue("name").$replace(" atom", "");
+this.obNucleus = (JU.PT.isDigit(val.charAt(0)) ? val : JU.Elements.getNmrNucleusFromName(val.toLowerCase()));
 return true;
 case 14:
 this.strObFreq = this.parser.getAttrValueLC("value");
@@ -52,12 +53,21 @@ this.obFreq = Double.parseDouble(this.strObFreq);
 return true;
 case 15:
 this.dim = 1;
+this.npoints = Integer.parseInt(this.parser.getAttrValue("numberOfDataPoints"));
 break;
 case 32:
 var type = this.parser.getAttrValue("byteFormat");
-if ("complex128".equals(type)) {
+switch (type) {
+case "complex128":
 this.getXYFromBase64Complex128(this.parser.getCharacters());
-}break;
+break;
+case "float64":
+this.getXYFromBase64Float64(this.parser.getCharacters());
+break;
+default:
+System.err.println("NMRML spectrum data array type unknown: " + type);
+}
+break;
 case 18:
 this.title = this.parser.getAttrValue("name");
 break;
@@ -87,6 +97,37 @@ return structure;
 Clazz.overrideMethod(c$, "processEndTag", 
 function(tagId){
 }, "~N");
+Clazz.defineMethod(c$, "getXYFromBase64Float64", 
+function(sdata){
+var bytes = JU.Base64.decodeBase64(sdata);
+var b = java.nio.ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).asDoubleBuffer();
+System.out.println(this.npoints + " " + Clazz.doubleToInt(bytes.length / 16));
+if ((bytes.length % 16) != 0) {
+throw  new RuntimeException("NMRMLReader byte length not multiple of 16 " + bytes.length);
+}try {
+var n = Clazz.doubleToInt(bytes.length / 16);
+this.xaxisData =  Clazz.newDoubleArray (n, 0);
+this.yaxisData =  Clazz.newDoubleArray (n, 0);
+for (var i = 0; i < n; i++) {
+this.xaxisData[i] = b.get();
+this.yaxisData[i] = b.get();
+}
+this.npoints = n;
+this.firstX = this.xaxisData[0];
+this.deltaX = this.xaxisData[1] - this.firstX;
+this.increasing = false;
+this.continuous = true;
+this.lastX = this.xaxisData[this.npoints - 1];
+this.yUnits = "";
+this.firstY = this.yaxisData[0];
+} catch (e) {
+if (Clazz.exceptionOf(e, Exception)){
+e.printStackTrace();
+} else {
+throw e;
+}
+}
+}, "~S");
 Clazz.defineMethod(c$, "getXYFromBase64Complex128", 
 function(sdata){
 var bytes = JU.Base64.decodeBase64(sdata);
@@ -118,4 +159,4 @@ throw e;
 }
 }, "~S");
 });
-;//5.0.1-v7 Wed Jul 30 21:55:42 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

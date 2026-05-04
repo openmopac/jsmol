@@ -20,4 +20,4 @@ this.axisB = JU.P3.newP(points[this.nRes]);
 JU.Measure.projectOntoAxis(this.axisB, this.axisA, this.axisUnitVector, this.vectorProjection);
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

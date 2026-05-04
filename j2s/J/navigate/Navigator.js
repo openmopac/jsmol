@@ -125,7 +125,7 @@ break;
 case 4160:
 case 268441090:
 if (tok == 4160) {
-this.tm.transformPt3f(o[2], ptTemp);
+this.tm.transformPt3fSafe(o[2], ptTemp);
 } else {
 ptTemp.x = (o[2]).floatValue();
 ptTemp.y = (o[3]).floatValue();
@@ -164,7 +164,7 @@ this.run();
 }, "~N,JU.V3,~N,JU.P3,~N,~N,~N");
 Clazz.defineMethod(c$, "setNavPercent", 
 function(pt1){
-this.tm.transformPt3f(this.tm.navigationCenter, this.tm.navigationOffset);
+this.tm.transformPt3fSafe(this.tm.navigationCenter, this.tm.navigationOffset);
 var x = pt1.x;
 var y = pt1.y;
 if (!Float.isNaN(x)) x = this.tm.width * x / 100 + (Float.isNaN(y) ? this.tm.navigationOffset.x : (this.tm.width / 2));
@@ -339,11 +339,11 @@ this.tm.modelCenterOffset += dz;
 this.tm.calcCameraFactors();
 this.tm.calcTransformMatrix();
 this.tm.matrixTransform.rotTrans2(this.tm.navigationCenter, this.tm.navigationShiftXY);
-}}this.tm.transformPt3f(this.tm.fixedRotationCenter, this.tm.fixedTranslation);
+}}this.tm.transformPt3fSafe(this.tm.fixedRotationCenter, this.tm.fixedTranslation);
 this.tm.fixedRotationOffset.setT(this.tm.fixedTranslation);
 this.tm.previousX = this.tm.fixedTranslation.x;
 this.tm.previousY = this.tm.fixedTranslation.y;
-this.tm.transformPt3f(this.tm.navigationCenter, this.tm.navigationOffset);
+this.tm.transformPt3fSafe(this.tm.navigationCenter, this.tm.navigationOffset);
 this.tm.navigationOffset.z = this.tm.referencePlaneOffset;
 this.tm.navMode = 0;
 this.calcNavSlabAndDepthValues();
@@ -359,7 +359,7 @@ Clazz.defineMethod(c$, "newNavigationCenter",
 function(){
 this.tm.mode = this.tm.defaultMode;
 var pt =  new JU.P3();
-this.tm.transformPt3f(this.tm.fixedRotationCenter, pt);
+this.tm.transformPt3fSafe(this.tm.fixedRotationCenter, pt);
 pt.x -= this.tm.navigationOffset.x;
 pt.y -= this.tm.navigationOffset.y;
 var f = -this.tm.getPerspectiveFactor(pt.z);
@@ -377,7 +377,7 @@ this.tm.navZ = 0;
 this.tm.rotateYRadians((0.017453292519943295 * .02 * this.tm.navX), null);
 var pt = this.tm.navigationCenter;
 var pts =  new JU.P3();
-this.tm.transformPt3f(pt, pts);
+this.tm.transformPt3fSafe(pt, pts);
 pts.z += this.tm.navZ;
 this.tm.unTransformPoint(pts, pt);
 this.tm.setNavigatePt(pt);
@@ -535,4 +535,4 @@ Clazz.superCall(this, J.navigate.Navigator, "oops", [e]);
 this.tm.navigating = false;
 }, "Exception");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

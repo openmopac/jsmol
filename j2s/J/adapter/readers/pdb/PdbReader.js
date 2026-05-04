@@ -255,7 +255,7 @@ if (this.doCheckUnitCell && this.isbiomol) {
 this.ignoreFileSpaceGroupName = true;
 this.sgName = this.fileSgName;
 this.fractionalizeCoordinates(true);
-this.asc.setModelInfoForSet("biosymmetry", null, this.asc.iSet);
+this.asc.setModelInfoForSet("bioSymmetry", null, this.asc.iSet);
 this.checkNearAtoms = false;
 }if (this.latticeCells != null && this.latticeCells[0] != 0) this.addJmolScript("unitcell;axes on;axes unitcell;");
 this.finalizeReaderASCR();
@@ -565,9 +565,9 @@ this.nRes++;
 if (atom.group3.equals("UNK")) this.nUNK++;
 }this.setAtomCoordXYZ(atom, x, y, z);
 atom.formalCharge = charge;
-this.setAdditionalAtomParameters(atom);
 if (this.haveMappedSerials) this.asc.addAtomWithMappedSerialNumber(atom);
  else this.asc.addAtom(atom);
+this.setAdditionalAtomParameters(atom);
 if (this.ac++ == 0 && !this.isCourseGrained) this.setModelPDB(true);
 if (atom.isHetero) {
 if (this.htHetero != null) {
@@ -730,7 +730,7 @@ endIndex = 31;
 } else return;
 if (this.lineLength < endIndex + 4) return;
 var structureID = this.line.substring(11, 15).trim();
-var serialID = this.line.substring(7, 10).trim();
+var strandID = this.line.substring(7, 10).trim();
 var startChainID = this.vwr.getChainID(this.line.substring(startChainIDIndex, startChainIDIndex + 1), true);
 var startSequenceNumber = this.parseIntRange(this.line, startIndex, startIndex + 4);
 var startInsertionCode = this.line.charAt(startIndex + 4);
@@ -739,7 +739,7 @@ var endSequenceNumber = this.parseIntRange(this.line, endIndex, endIndex + 4);
 var endInsertionCode = ' ';
 if (this.lineLength > endIndex + 4) endInsertionCode = this.line.charAt(endIndex + 4);
 if (substructureType === J.c.STR.NONE) substructureType = structureType;
-var structure =  new J.adapter.smarter.Structure(-1, structureType, substructureType, structureID, serialID, strandCount, null);
+var structure =  new J.adapter.smarter.Structure(-1, structureType, substructureType, structureID, strandID, strandCount, null);
 structure.set(startChainID, startSequenceNumber, startInsertionCode, endChainID, endSequenceNumber, endInsertionCode, 0, 0);
 this.asc.addStructure(structure);
 });
@@ -1186,4 +1186,4 @@ this.connectNextAtomSet = index + 1;
 this.connectNextAtomIndex = firstAtom;
 }, "~N,~B");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Tue Mar 17 09:56:02 CDT 2026

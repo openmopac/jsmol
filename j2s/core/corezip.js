@@ -61,6 +61,400 @@
 ){
 var $t$;
 //var c$;
+Clazz_declarePackage("JU");
+Clazz_load(["javajs.api.GenericZipTools"], "JU.ZipTools", ["java.io.BufferedInputStream", "java.util.zip.CRC32", "$.GZIPInputStream", "$.ZipEntry", "javajs.api.GenericZipInputStream", "$.Interface", "JU.BArray", "$.Lst", "$.Rdr", "$.SB"], function(){
+var c$ = Clazz_declareType(JU, "ZipTools", null, javajs.api.GenericZipTools);
+/*LV!1824 unnec constructor*/Clazz_overrideMethod(c$, "newZipInputStream", 
+function(is){
+return JU.ZipTools.newZIS(is);
+}, "java.io.InputStream");
+c$.newZIS = Clazz_defineMethod(c$, "newZIS", 
+function(is){
+return (Clazz_instanceOf(is,"java.util.zip.ZipInputStream") ? is : Clazz_instanceOf(is,"java.io.BufferedInputStream") ?  new javajs.api.GenericZipInputStream(is) :  new javajs.api.GenericZipInputStream( new java.io.BufferedInputStream(is)));
+}, "java.io.InputStream");
+Clazz_overrideMethod(c$, "getAllZipData", 
+function(is, subfileList, name0, binaryFileList, exclude, fileData){
+}, "java.io.InputStream,~A,~S,~S,~S,java.util.Map");
+Clazz_overrideMethod(c$, "getZipFileDirectory", 
+function(bis, list, listPtr, asBufferedInputStream){
+var ret;
+var justDir = (list == null || listPtr >= list.length);
+var fileName = (justDir ? "." : list[listPtr]);
+if (JU.Rdr.isTar(bis)) return JU.ZipTools.getTarFileDirectory(bis, fileName, asBufferedInputStream);
+if (justDir) return this.getZipDirectoryAsStringAndClose(bis);
+bis = JU.Rdr.getPngZipStream(bis, true);
+var zis = JU.ZipTools.newZIS(bis);
+var ze;
+try {
+var isAll = (fileName.equals("."));
+if (isAll || fileName.lastIndexOf("/") == fileName.length - 1) {
+ret =  new JU.SB();
+while ((ze = zis.getNextEntry()) != null) {
+var name = ze.getName();
+if (isAll || name.startsWith(fileName)) ret.append(name).appendC('\n');
+}
+var str = ret.toString();
+return (asBufferedInputStream ? JU.Rdr.getBIS(str.getBytes()) : str);
+}var pt = fileName.indexOf(":asBinaryString");
+var asBinaryString = (pt > 0);
+if (asBinaryString) fileName = fileName.substring(0, pt);
+fileName = fileName.$replace('\\', '/');
+while ((ze = zis.getNextEntry()) != null && !fileName.equals(ze.getName())) {
+}
+var bytes = (ze == null ? null : JU.Rdr.getLimitedStreamBytes(zis, ze.getSize()));
+ze = null;
+zis.close();
+if (bytes == null) return "";
+if (JU.Rdr.isZipB(bytes) || JU.Rdr.isPngZipB(bytes)) return this.getZipFileDirectory(JU.Rdr.getBIS(bytes), list, ++listPtr, asBufferedInputStream);
+if (asBufferedInputStream) return JU.Rdr.getBIS(bytes);
+if (asBinaryString) {
+ret =  new JU.SB();
+for (var i = 0; i < bytes.length; i++) ret.append(Integer.toHexString(bytes[i] & 0xFF)).appendC(' ');
+
+return ret.toString();
+}if (JU.Rdr.isGzipB(bytes)) bytes = JU.Rdr.getLimitedStreamBytes(this.getUnGzippedInputStream(bytes), -1);
+return JU.Rdr.fixUTF(bytes);
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+return "";
+} else {
+throw e;
+}
+}
+}, "java.io.BufferedInputStream,~A,~N,~B");
+c$.getTarFileDirectory = Clazz_defineMethod(c$, "getTarFileDirectory", 
+function(bis, fileName, asBufferedInputStream){
+var ret;
+try {
+var isAll = (fileName.equals("."));
+if (isAll || fileName.lastIndexOf("/") == fileName.length - 1) {
+ret =  new JU.SB();
+JU.ZipTools.getTarContents(bis, fileName, ret);
+var str = ret.toString();
+return (asBufferedInputStream ? JU.Rdr.getBIS(str.getBytes()) : str);
+}fileName = fileName.$replace('\\', '/');
+var bytes = JU.ZipTools.getTarContents(bis, fileName, null);
+bis.close();
+return (bytes == null ? "" : asBufferedInputStream ? JU.Rdr.getBIS(bytes) : JU.Rdr.fixUTF(bytes));
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+return "";
+} else {
+throw e;
+}
+}
+}, "java.io.BufferedInputStream,~S,~B");
+Clazz_overrideMethod(c$, "getZipFileContentsAsBytes", 
+function(bis, list, listPtr){
+var ret =  Clazz_newByteArray (0, 0);
+var fileName = list[listPtr];
+if (fileName.lastIndexOf("/") == fileName.length - 1) return ret;
+try {
+if (JU.Rdr.isTar(bis)) return JU.ZipTools.getTarContents(bis, fileName, null);
+bis = JU.Rdr.getPngZipStream(bis, true);
+var zis = JU.ZipTools.newZIS(bis);
+var ze;
+while ((ze = zis.getNextEntry()) != null) {
+if (!fileName.equals(ze.getName())) continue;
+var bytes = JU.Rdr.getLimitedStreamBytes(zis, ze.getSize());
+return ((JU.Rdr.isZipB(bytes) || JU.Rdr.isPngZipB(bytes)) && ++listPtr < list.length ? this.getZipFileContentsAsBytes(JU.Rdr.getBIS(bytes), list, listPtr) : bytes);
+}
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+} else {
+throw e;
+}
+}
+return ret;
+}, "java.io.BufferedInputStream,~A,~N");
+c$.getTarContents = Clazz_defineMethod(c$, "getTarContents", 
+function(bis, fileName, sb){
+if (JU.ZipTools.b512 == null) JU.ZipTools.b512 =  Clazz_newByteArray (512, 0);
+var len = fileName.length;
+while (bis.read(JU.ZipTools.b512, 0, 512) > 0) {
+var bytes = JU.ZipTools.getTarFile(bis, fileName, len, sb, null, false);
+if (bytes != null) return bytes;
+}
+return null;
+}, "java.io.BufferedInputStream,~S,JU.SB");
+c$.getTarFile = Clazz_defineMethod(c$, "getTarFile", 
+function(bis, fileName, len, sb, cache, oneFile){
+var j = 124;
+while (JU.ZipTools.b512[j] == 48) j++;
+
+var isAll = (sb != null && fileName.equals("."));
+var nbytes = 0;
+while (j < 135) nbytes = (nbytes << 3) + (JU.ZipTools.b512[j++] - 48);
+
+if (nbytes == 0) return null;
+var fname =  String.instantialize(JU.ZipTools.b512, 0, 100).trim();
+var prefix =  String.instantialize(JU.ZipTools.b512, 345, 155).trim();
+var name = prefix + fname;
+var found = false;
+if (sb != null) {
+if (name.length == 0) return null;
+if (isAll || (oneFile ? name.equalsIgnoreCase(fileName) : name.startsWith(fileName))) {
+found = (cache != null);
+sb.append(name).appendC('\n');
+}len = -1;
+}var nul = (512 - (nbytes % 512)) % 512;
+if (!found && (len != name.length || !fileName.equals(name))) {
+var nBlocks = (nbytes + nul) >> 9;
+for (var i = nBlocks; --i >= 0; ) bis.read(JU.ZipTools.b512, 0, 512);
+
+return null;
+}var bytes = JU.Rdr.getLimitedStreamBytes(bis, nbytes);
+if (cache != null) {
+cache.put(name,  new JU.BArray(bytes));
+bis.read(JU.ZipTools.b512, 0, nul);
+}return bytes;
+}, "java.io.BufferedInputStream,~S,~N,JU.SB,java.util.Map,~B");
+Clazz_overrideMethod(c$, "getZipDirectoryAsStringAndClose", 
+function(bis){
+var sb =  new JU.SB();
+var s =  new Array(0);
+try {
+s = this.getZipDirectoryOrErrorAndClose(bis, null);
+bis.close();
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+System.out.println(e.toString());
+} else {
+throw e;
+}
+}
+for (var i = 0; i < s.length; i++) sb.append(s[i]).appendC('\n');
+
+return sb.toString();
+}, "java.io.BufferedInputStream");
+Clazz_overrideMethod(c$, "getZipDirectoryAndClose", 
+function(bis, manifestID){
+var s =  new Array(0);
+try {
+s = this.getZipDirectoryOrErrorAndClose(bis, manifestID);
+bis.close();
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+System.out.println(e.toString());
+} else {
+throw e;
+}
+}
+return s;
+}, "java.io.BufferedInputStream,~S");
+Clazz_defineMethod(c$, "getZipDirectoryOrErrorAndClose", 
+function(bis, manifestID){
+bis = JU.Rdr.getPngZipStream(bis, true);
+var v =  new JU.Lst();
+var zis = JU.ZipTools.newZIS(bis);
+var ze;
+var manifest = null;
+while ((ze = zis.getNextEntry()) != null) {
+var fileName = ze.getName();
+if (manifestID != null && fileName.startsWith(manifestID)) manifest = JU.ZipTools.getStreamAsString(zis);
+ else if (!fileName.startsWith("__MACOS")) v.addLast(fileName);
+}
+zis.close();
+if (manifestID != null) v.add(0, manifest == null ? "" : manifest + "\n############\n");
+return v.toArray( new Array(v.size()));
+}, "java.io.BufferedInputStream,~S");
+c$.getStreamAsString = Clazz_defineMethod(c$, "getStreamAsString", 
+function(is){
+return JU.Rdr.fixUTF(JU.Rdr.getLimitedStreamBytes(is, -1));
+}, "java.io.InputStream");
+Clazz_overrideMethod(c$, "newGZIPInputStream", 
+function(is){
+return  new java.io.BufferedInputStream( new java.util.zip.GZIPInputStream(is, 512));
+}, "java.io.InputStream");
+Clazz_overrideMethod(c$, "newBZip2InputStream", 
+function(is){
+return  new java.io.BufferedInputStream((javajs.api.Interface.getInterface("org.apache.tools.bzip2.CBZip2InputStreamFactory")).getStream(is));
+}, "java.io.InputStream");
+Clazz_overrideMethod(c$, "getUnGzippedInputStream", 
+function(bytes){
+try {
+return JU.Rdr.getUnzippedInputStream(this, JU.Rdr.getBIS(bytes));
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+return null;
+} else {
+throw e;
+}
+}
+}, "~A");
+Clazz_overrideMethod(c$, "addZipEntry", 
+function(zos, fileName){
+(zos).putNextEntry( new java.util.zip.ZipEntry(fileName));
+}, "~O,~S");
+Clazz_overrideMethod(c$, "closeZipEntry", 
+function(zos){
+(zos).closeEntry();
+}, "~O");
+Clazz_overrideMethod(c$, "getZipOutputStream", 
+function(bos){
+{
+return javajs.api.Interface.getInterface(
+"java.util.zip.ZipOutputStream").setZOS(bos);
+}}, "~O");
+Clazz_overrideMethod(c$, "getCrcValue", 
+function(bytes){
+var crc =  new java.util.zip.CRC32();
+crc.update(bytes, 0, bytes.length);
+return crc.getValue();
+}, "~A");
+Clazz_overrideMethod(c$, "readFileAsMap", 
+function(bis, bdata, name){
+JU.ZipTools.readFileAsMapStatic(bis, bdata, name);
+}, "java.io.BufferedInputStream,java.util.Map,~S");
+c$.readFileAsMapStatic = Clazz_defineMethod(c$, "readFileAsMapStatic", 
+function(bis, bdata, name){
+var pt = (name == null ? -1 : name.indexOf("|"));
+name = (pt >= 0 ? name.substring(pt + 1) : null);
+try {
+var isZip = false;
+if (JU.Rdr.isPngZipStream(bis)) {
+var isImage = "_IMAGE_".equals(name);
+if (name == null || isImage) bdata.put((isImage ? "_DATA_" : "_IMAGE_"),  new JU.BArray(JU.ZipTools.getPngImageBytes(bis)));
+isZip = !isImage;
+} else if (JU.Rdr.isZipS(bis)) {
+isZip = true;
+} else if (JU.Rdr.isTar(bis)) {
+JU.ZipTools.cacheTarContentsStatic(bis, name, bdata);
+} else if (name == null) {
+bdata.put("_DATA_",  new JU.BArray(JU.Rdr.getLimitedStreamBytes(bis, -1)));
+} else {
+throw  new java.io.IOException("ZIP file " + name + " not found");
+}if (isZip) JU.ZipTools.cacheZipContentsStatic(bis, name, bdata, true);
+bdata.put("$_BINARY_$", Boolean.TRUE);
+} catch (e) {
+if (Clazz_exceptionOf(e,"java.io.IOException")){
+bdata.clear();
+bdata.put("_ERROR_", e.getMessage());
+} else {
+throw e;
+}
+}
+}, "java.io.BufferedInputStream,java.util.Map,~S");
+c$.cacheTarContentsStatic = Clazz_defineMethod(c$, "cacheTarContentsStatic", 
+function(bis, fileName, cache){
+var listing =  new JU.SB();
+var n = 0;
+if (fileName != null && fileName.endsWith("/.")) fileName = fileName.substring(0, fileName.length - 1);
+var isPath = (fileName != null && fileName.endsWith("/"));
+var justOne = (fileName != null && !isPath);
+try {
+if (JU.ZipTools.b512 == null) JU.ZipTools.b512 =  Clazz_newByteArray (512, 0);
+while (bis.read(JU.ZipTools.b512, 0, 512) > 0) {
+var bytes = JU.ZipTools.getTarFile(bis, fileName == null ? "." : fileName, -1, listing, cache, justOne);
+if (bytes != null) {
+n += bytes.length;
+if (justOne) break;
+}}
+bis.close();
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+try {
+bis.close();
+} catch (e1) {
+if (Clazz_exceptionOf(e1,"java.io.IOException")){
+} else {
+throw e1;
+}
+}
+return null;
+} else {
+throw e;
+}
+}
+if (n == 0 || fileName == null) return null;
+System.out.println("ZipTools cached " + n + " bytes from " + fileName);
+return listing.toString();
+}, "java.io.BufferedInputStream,~S,java.util.Map");
+Clazz_overrideMethod(c$, "cacheZipContents", 
+function(bis, fileName, cache, asByteArray){
+return JU.ZipTools.cacheZipContentsStatic(bis, fileName, cache, asByteArray);
+}, "java.io.BufferedInputStream,~S,java.util.Map,~B");
+c$.cacheZipContentsStatic = Clazz_defineMethod(c$, "cacheZipContentsStatic", 
+function(bis, fileName, cache, asByteArray){
+var zis = JU.ZipTools.newZIS(bis);
+var ze;
+var listing =  new JU.SB();
+var n = 0;
+if (fileName != null && fileName.endsWith("/.")) fileName = fileName.substring(0, fileName.length - 1);
+var isPath = (fileName != null && fileName.endsWith("/"));
+var oneFile = (fileName != null && !isPath && asByteArray);
+var pt = (oneFile ? fileName.indexOf("|") : -1);
+var zipEntryRoot = (pt >= 0 ? fileName : null);
+if (pt >= 0) fileName = fileName.substring(0, pt);
+var prefix = (fileName == null || isPath ? "" : fileName + "|");
+try {
+while ((ze = zis.getNextEntry()) != null) {
+if (ze.isDirectory()) continue;
+var name = ze.getName();
+if (fileName != null) {
+if (oneFile) {
+if (!name.equalsIgnoreCase(fileName)) continue;
+} else {
+if (isPath && !name.startsWith(fileName)) continue;
+listing.append(name).appendC('\n');
+}}var nBytes = ze.getSize();
+var bytes = JU.Rdr.getLimitedStreamBytes(zis, nBytes);
+if (zipEntryRoot != null) {
+JU.ZipTools.readFileAsMapStatic(JU.Rdr.getBIS(bytes), cache, zipEntryRoot);
+return null;
+}n += bytes.length;
+var o = (asByteArray ?  new JU.BArray(bytes) : bytes);
+cache.put((oneFile ? "_DATA_" : prefix + name), o);
+if (oneFile) break;
+}
+zis.close();
+} catch (e) {
+if (Clazz_exceptionOf(e, Exception)){
+try {
+zis.close();
+} catch (e1) {
+if (Clazz_exceptionOf(e1,"java.io.IOException")){
+} else {
+throw e1;
+}
+}
+return null;
+} else {
+throw e;
+}
+}
+if (n == 0 || fileName == null) return null;
+System.out.println("ZipTools cached " + n + " bytes from " + fileName);
+return listing.toString();
+}, "java.io.BufferedInputStream,~S,java.util.Map,~B");
+c$.getPngImageBytes = Clazz_defineMethod(c$, "getPngImageBytes", 
+function(bis){
+try {
+if (JU.Rdr.isPngZipStream(bis)) {
+var pt_count =  Clazz_newIntArray (2, 0);
+JU.Rdr.getPngZipPointAndCount(bis, pt_count);
+if (pt_count[1] != 0) return JU.ZipTools.deActivatePngZipB(JU.Rdr.getLimitedStreamBytes(bis, pt_count[0]));
+}return JU.Rdr.getLimitedStreamBytes(bis, -1);
+} catch (e) {
+if (Clazz_exceptionOf(e,"java.io.IOException")){
+return null;
+} else {
+throw e;
+}
+}
+}, "java.io.BufferedInputStream");
+c$.deActivatePngZipB = Clazz_defineMethod(c$, "deActivatePngZipB", 
+function(bytes){
+if (JU.Rdr.isPngZipB(bytes)) bytes[51] = 32;
+return bytes;
+}, "~A");
+Clazz_overrideMethod(c$, "isZipStream", 
+function(br){
+return Clazz_instanceOf(br,"javajs.api.ZInputStream");
+}, "~O");
+c$.b512 = null;
+});
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_load(["java.io.FilterInputStream"], "java.io.PushbackInputStream", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.buf = null;
@@ -760,417 +1154,23 @@ Clazz_declarePackage("javajs.api");
 Clazz_load(["java.util.zip.ZipInputStream", "javajs.api.ZInputStream"], "javajs.api.GenericZipInputStream", null, function(){
 var c$ = Clazz_declareType(javajs.api, "GenericZipInputStream", java.util.zip.ZipInputStream, javajs.api.ZInputStream);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["javajs.api.GenericZipTools"], "JU.ZipTools", ["java.io.BufferedInputStream", "java.util.zip.CRC32", "$.GZIPInputStream", "$.ZipEntry", "javajs.api.GenericZipInputStream", "$.Interface", "JU.BArray", "$.Lst", "$.Rdr", "$.SB"], function(){
-var c$ = Clazz_declareType(JU, "ZipTools", null, javajs.api.GenericZipTools);
-/*LV!1824 unnec constructor*/Clazz_overrideMethod(c$, "newZipInputStream", 
-function(is){
-return JU.ZipTools.newZIS(is);
-}, "java.io.InputStream");
-c$.newZIS = Clazz_defineMethod(c$, "newZIS", 
-function(is){
-return (Clazz_instanceOf(is,"java.util.zip.ZipInputStream") ? is : Clazz_instanceOf(is,"java.io.BufferedInputStream") ?  new javajs.api.GenericZipInputStream(is) :  new javajs.api.GenericZipInputStream( new java.io.BufferedInputStream(is)));
-}, "java.io.InputStream");
-Clazz_overrideMethod(c$, "getAllZipData", 
-function(is, subfileList, name0, binaryFileList, exclude, fileData){
-}, "java.io.InputStream,~A,~S,~S,~S,java.util.Map");
-Clazz_overrideMethod(c$, "getZipFileDirectory", 
-function(bis, list, listPtr, asBufferedInputStream){
-var ret;
-var justDir = (list == null || listPtr >= list.length);
-var fileName = (justDir ? "." : list[listPtr]);
-if (JU.Rdr.isTar(bis)) return JU.ZipTools.getTarFileDirectory(bis, fileName, asBufferedInputStream);
-if (justDir) return this.getZipDirectoryAsStringAndClose(bis);
-bis = JU.Rdr.getPngZipStream(bis, true);
-var zis = JU.ZipTools.newZIS(bis);
-var ze;
-try {
-var isAll = (fileName.equals("."));
-if (isAll || fileName.lastIndexOf("/") == fileName.length - 1) {
-ret =  new JU.SB();
-while ((ze = zis.getNextEntry()) != null) {
-var name = ze.getName();
-if (isAll || name.startsWith(fileName)) ret.append(name).appendC('\n');
-}
-var str = ret.toString();
-return (asBufferedInputStream ? JU.Rdr.getBIS(str.getBytes()) : str);
-}var pt = fileName.indexOf(":asBinaryString");
-var asBinaryString = (pt > 0);
-if (asBinaryString) fileName = fileName.substring(0, pt);
-fileName = fileName.$replace('\\', '/');
-while ((ze = zis.getNextEntry()) != null && !fileName.equals(ze.getName())) {
-}
-var bytes = (ze == null ? null : JU.Rdr.getLimitedStreamBytes(zis, ze.getSize()));
-ze = null;
-zis.close();
-if (bytes == null) return "";
-if (JU.Rdr.isZipB(bytes) || JU.Rdr.isPngZipB(bytes)) return this.getZipFileDirectory(JU.Rdr.getBIS(bytes), list, ++listPtr, asBufferedInputStream);
-if (asBufferedInputStream) return JU.Rdr.getBIS(bytes);
-if (asBinaryString) {
-ret =  new JU.SB();
-for (var i = 0; i < bytes.length; i++) ret.append(Integer.toHexString(bytes[i] & 0xFF)).appendC(' ');
-
-return ret.toString();
-}if (JU.Rdr.isGzipB(bytes)) bytes = JU.Rdr.getLimitedStreamBytes(this.getUnGzippedInputStream(bytes), -1);
-return JU.Rdr.fixUTF(bytes);
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-return "";
-} else {
-throw e;
-}
-}
-}, "java.io.BufferedInputStream,~A,~N,~B");
-c$.getTarFileDirectory = Clazz_defineMethod(c$, "getTarFileDirectory", 
-function(bis, fileName, asBufferedInputStream){
-var ret;
-try {
-var isAll = (fileName.equals("."));
-if (isAll || fileName.lastIndexOf("/") == fileName.length - 1) {
-ret =  new JU.SB();
-JU.ZipTools.getTarContents(bis, fileName, ret);
-var str = ret.toString();
-return (asBufferedInputStream ? JU.Rdr.getBIS(str.getBytes()) : str);
-}fileName = fileName.$replace('\\', '/');
-var bytes = JU.ZipTools.getTarContents(bis, fileName, null);
-bis.close();
-return (bytes == null ? "" : asBufferedInputStream ? JU.Rdr.getBIS(bytes) : JU.Rdr.fixUTF(bytes));
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-return "";
-} else {
-throw e;
-}
-}
-}, "java.io.BufferedInputStream,~S,~B");
-Clazz_overrideMethod(c$, "getZipFileContentsAsBytes", 
-function(bis, list, listPtr){
-var ret =  Clazz_newByteArray (0, 0);
-var fileName = list[listPtr];
-if (fileName.lastIndexOf("/") == fileName.length - 1) return ret;
-try {
-if (JU.Rdr.isTar(bis)) return JU.ZipTools.getTarContents(bis, fileName, null);
-bis = JU.Rdr.getPngZipStream(bis, true);
-var zis = JU.ZipTools.newZIS(bis);
-var ze;
-while ((ze = zis.getNextEntry()) != null) {
-if (!fileName.equals(ze.getName())) continue;
-var bytes = JU.Rdr.getLimitedStreamBytes(zis, ze.getSize());
-return ((JU.Rdr.isZipB(bytes) || JU.Rdr.isPngZipB(bytes)) && ++listPtr < list.length ? this.getZipFileContentsAsBytes(JU.Rdr.getBIS(bytes), list, listPtr) : bytes);
-}
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-} else {
-throw e;
-}
-}
-return ret;
-}, "java.io.BufferedInputStream,~A,~N");
-c$.getTarContents = Clazz_defineMethod(c$, "getTarContents", 
-function(bis, fileName, sb){
-if (JU.ZipTools.b512 == null) JU.ZipTools.b512 =  Clazz_newByteArray (512, 0);
-var len = fileName.length;
-while (bis.read(JU.ZipTools.b512, 0, 512) > 0) {
-var bytes = JU.ZipTools.getTarFile(bis, fileName, len, sb, null, false);
-if (bytes != null) return bytes;
-}
-return null;
-}, "java.io.BufferedInputStream,~S,JU.SB");
-c$.getTarFile = Clazz_defineMethod(c$, "getTarFile", 
-function(bis, fileName, len, sb, cache, oneFile){
-var j = 124;
-while (JU.ZipTools.b512[j] == 48) j++;
-
-var isAll = (sb != null && fileName.equals("."));
-var nbytes = 0;
-while (j < 135) nbytes = (nbytes << 3) + (JU.ZipTools.b512[j++] - 48);
-
-if (nbytes == 0) return null;
-var fname =  String.instantialize(JU.ZipTools.b512, 0, 100).trim();
-var prefix =  String.instantialize(JU.ZipTools.b512, 345, 155).trim();
-var name = prefix + fname;
-var found = false;
-if (sb != null) {
-if (name.length == 0) return null;
-if (isAll || (oneFile ? name.equalsIgnoreCase(fileName) : name.startsWith(fileName))) {
-found = (cache != null);
-sb.append(name).appendC('\n');
-}len = -1;
-}var nul = (512 - (nbytes % 512)) % 512;
-if (!found && (len != name.length || !fileName.equals(name))) {
-var nBlocks = (nbytes + nul) >> 9;
-for (var i = nBlocks; --i >= 0; ) bis.read(JU.ZipTools.b512, 0, 512);
-
-return null;
-}var bytes = JU.Rdr.getLimitedStreamBytes(bis, nbytes);
-if (cache != null) {
-cache.put(name,  new JU.BArray(bytes));
-bis.read(JU.ZipTools.b512, 0, nul);
-}return bytes;
-}, "java.io.BufferedInputStream,~S,~N,JU.SB,java.util.Map,~B");
-Clazz_overrideMethod(c$, "getZipDirectoryAsStringAndClose", 
-function(bis){
-var sb =  new JU.SB();
-var s =  new Array(0);
-try {
-s = this.getZipDirectoryOrErrorAndClose(bis, null);
-bis.close();
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-System.out.println(e.toString());
-} else {
-throw e;
-}
-}
-for (var i = 0; i < s.length; i++) sb.append(s[i]).appendC('\n');
-
-return sb.toString();
-}, "java.io.BufferedInputStream");
-Clazz_overrideMethod(c$, "getZipDirectoryAndClose", 
-function(bis, manifestID){
-var s =  new Array(0);
-try {
-s = this.getZipDirectoryOrErrorAndClose(bis, manifestID);
-bis.close();
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-System.out.println(e.toString());
-} else {
-throw e;
-}
-}
-return s;
-}, "java.io.BufferedInputStream,~S");
-Clazz_defineMethod(c$, "getZipDirectoryOrErrorAndClose", 
-function(bis, manifestID){
-bis = JU.Rdr.getPngZipStream(bis, true);
-var v =  new JU.Lst();
-var zis = JU.ZipTools.newZIS(bis);
-var ze;
-var manifest = null;
-while ((ze = zis.getNextEntry()) != null) {
-var fileName = ze.getName();
-if (manifestID != null && fileName.startsWith(manifestID)) manifest = JU.ZipTools.getStreamAsString(zis);
- else if (!fileName.startsWith("__MACOS")) v.addLast(fileName);
-}
-zis.close();
-if (manifestID != null) v.add(0, manifest == null ? "" : manifest + "\n############\n");
-return v.toArray( new Array(v.size()));
-}, "java.io.BufferedInputStream,~S");
-c$.getStreamAsString = Clazz_defineMethod(c$, "getStreamAsString", 
-function(is){
-return JU.Rdr.fixUTF(JU.Rdr.getLimitedStreamBytes(is, -1));
-}, "java.io.InputStream");
-Clazz_overrideMethod(c$, "newGZIPInputStream", 
-function(is){
-return  new java.io.BufferedInputStream( new java.util.zip.GZIPInputStream(is, 512));
-}, "java.io.InputStream");
-Clazz_overrideMethod(c$, "newBZip2InputStream", 
-function(is){
-return  new java.io.BufferedInputStream((javajs.api.Interface.getInterface("org.apache.tools.bzip2.CBZip2InputStreamFactory")).getStream(is));
-}, "java.io.InputStream");
-Clazz_overrideMethod(c$, "getUnGzippedInputStream", 
-function(bytes){
-try {
-return JU.Rdr.getUnzippedInputStream(this, JU.Rdr.getBIS(bytes));
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-return null;
-} else {
-throw e;
-}
-}
-}, "~A");
-Clazz_overrideMethod(c$, "addZipEntry", 
-function(zos, fileName){
-(zos).putNextEntry( new java.util.zip.ZipEntry(fileName));
-}, "~O,~S");
-Clazz_overrideMethod(c$, "closeZipEntry", 
-function(zos){
-(zos).closeEntry();
-}, "~O");
-Clazz_overrideMethod(c$, "getZipOutputStream", 
-function(bos){
-{
-return javajs.api.Interface.getInterface(
-"java.util.zip.ZipOutputStream").setZOS(bos);
-}}, "~O");
-Clazz_overrideMethod(c$, "getCrcValue", 
-function(bytes){
-var crc =  new java.util.zip.CRC32();
-crc.update(bytes, 0, bytes.length);
-return crc.getValue();
-}, "~A");
-Clazz_overrideMethod(c$, "readFileAsMap", 
-function(bis, bdata, name){
-JU.ZipTools.readFileAsMapStatic(bis, bdata, name);
-}, "java.io.BufferedInputStream,java.util.Map,~S");
-c$.readFileAsMapStatic = Clazz_defineMethod(c$, "readFileAsMapStatic", 
-function(bis, bdata, name){
-var pt = (name == null ? -1 : name.indexOf("|"));
-name = (pt >= 0 ? name.substring(pt + 1) : null);
-try {
-var isZip = false;
-if (JU.Rdr.isPngZipStream(bis)) {
-var isImage = "_IMAGE_".equals(name);
-if (name == null || isImage) bdata.put((isImage ? "_DATA_" : "_IMAGE_"),  new JU.BArray(JU.ZipTools.getPngImageBytes(bis)));
-isZip = !isImage;
-} else if (JU.Rdr.isZipS(bis)) {
-isZip = true;
-} else if (JU.Rdr.isTar(bis)) {
-JU.ZipTools.cacheTarContentsStatic(bis, name, bdata);
-} else if (name == null) {
-bdata.put("_DATA_",  new JU.BArray(JU.Rdr.getLimitedStreamBytes(bis, -1)));
-} else {
-throw  new java.io.IOException("ZIP file " + name + " not found");
-}if (isZip) JU.ZipTools.cacheZipContentsStatic(bis, name, bdata, true);
-bdata.put("$_BINARY_$", Boolean.TRUE);
-} catch (e) {
-if (Clazz_exceptionOf(e,"java.io.IOException")){
-bdata.clear();
-bdata.put("_ERROR_", e.getMessage());
-} else {
-throw e;
-}
-}
-}, "java.io.BufferedInputStream,java.util.Map,~S");
-c$.cacheTarContentsStatic = Clazz_defineMethod(c$, "cacheTarContentsStatic", 
-function(bis, fileName, cache){
-var listing =  new JU.SB();
-var n = 0;
-if (fileName != null && fileName.endsWith("/.")) fileName = fileName.substring(0, fileName.length - 1);
-var isPath = (fileName != null && fileName.endsWith("/"));
-var justOne = (fileName != null && !isPath);
-try {
-if (JU.ZipTools.b512 == null) JU.ZipTools.b512 =  Clazz_newByteArray (512, 0);
-while (bis.read(JU.ZipTools.b512, 0, 512) > 0) {
-var bytes = JU.ZipTools.getTarFile(bis, fileName == null ? "." : fileName, -1, listing, cache, justOne);
-if (bytes != null) {
-n += bytes.length;
-if (justOne) break;
-}}
-bis.close();
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-try {
-bis.close();
-} catch (e1) {
-if (Clazz_exceptionOf(e1,"java.io.IOException")){
-} else {
-throw e1;
-}
-}
-return null;
-} else {
-throw e;
-}
-}
-if (n == 0 || fileName == null) return null;
-System.out.println("ZipTools cached " + n + " bytes from " + fileName);
-return listing.toString();
-}, "java.io.BufferedInputStream,~S,java.util.Map");
-Clazz_overrideMethod(c$, "cacheZipContents", 
-function(bis, fileName, cache, asByteArray){
-return JU.ZipTools.cacheZipContentsStatic(bis, fileName, cache, asByteArray);
-}, "java.io.BufferedInputStream,~S,java.util.Map,~B");
-c$.cacheZipContentsStatic = Clazz_defineMethod(c$, "cacheZipContentsStatic", 
-function(bis, fileName, cache, asByteArray){
-var zis = JU.ZipTools.newZIS(bis);
-var ze;
-var listing =  new JU.SB();
-var n = 0;
-if (fileName != null && fileName.endsWith("/.")) fileName = fileName.substring(0, fileName.length - 1);
-var isPath = (fileName != null && fileName.endsWith("/"));
-var oneFile = (fileName != null && !isPath && asByteArray);
-var pt = (oneFile ? fileName.indexOf("|") : -1);
-var zipEntryRoot = (pt >= 0 ? fileName : null);
-if (pt >= 0) fileName = fileName.substring(0, pt);
-var prefix = (fileName == null || isPath ? "" : fileName + "|");
-try {
-while ((ze = zis.getNextEntry()) != null) {
-if (ze.isDirectory()) continue;
-var name = ze.getName();
-if (fileName != null) {
-if (oneFile) {
-if (!name.equalsIgnoreCase(fileName)) continue;
-} else {
-if (isPath && !name.startsWith(fileName)) continue;
-listing.append(name).appendC('\n');
-}}var nBytes = ze.getSize();
-var bytes = JU.Rdr.getLimitedStreamBytes(zis, nBytes);
-if (zipEntryRoot != null) {
-JU.ZipTools.readFileAsMapStatic(JU.Rdr.getBIS(bytes), cache, zipEntryRoot);
-return null;
-}n += bytes.length;
-var o = (asByteArray ?  new JU.BArray(bytes) : bytes);
-cache.put((oneFile ? "_DATA_" : prefix + name), o);
-if (oneFile) break;
-}
-zis.close();
-} catch (e) {
-if (Clazz_exceptionOf(e, Exception)){
-try {
-zis.close();
-} catch (e1) {
-if (Clazz_exceptionOf(e1,"java.io.IOException")){
-} else {
-throw e1;
-}
-}
-return null;
-} else {
-throw e;
-}
-}
-if (n == 0 || fileName == null) return null;
-System.out.println("ZipTools cached " + n + " bytes from " + fileName);
-return listing.toString();
-}, "java.io.BufferedInputStream,~S,java.util.Map,~B");
-c$.getPngImageBytes = Clazz_defineMethod(c$, "getPngImageBytes", 
-function(bis){
-try {
-if (JU.Rdr.isPngZipStream(bis)) {
-var pt_count =  Clazz_newIntArray (2, 0);
-JU.Rdr.getPngZipPointAndCount(bis, pt_count);
-if (pt_count[1] != 0) return JU.ZipTools.deActivatePngZipB(JU.Rdr.getLimitedStreamBytes(bis, pt_count[0]));
-}return JU.Rdr.getLimitedStreamBytes(bis, -1);
-} catch (e) {
-if (Clazz_exceptionOf(e,"java.io.IOException")){
-return null;
-} else {
-throw e;
-}
-}
-}, "java.io.BufferedInputStream");
-c$.deActivatePngZipB = Clazz_defineMethod(c$, "deActivatePngZipB", 
-function(bytes){
-if (JU.Rdr.isPngZipB(bytes)) bytes[51] = 32;
-return bytes;
-}, "~A");
-Clazz_overrideMethod(c$, "isZipStream", 
-function(br){
-return Clazz_instanceOf(br,"javajs.api.ZInputStream");
-}, "~O");
-c$.b512 = null;
-});
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_declareInterface(JU, "Checksum");
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["JU.Checksum"], "JU.CRC32", null, function(){
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_declareInterface(com.jcraft.jzlib, "Checksum");
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["com.jcraft.jzlib.Checksum"], "com.jcraft.jzlib.CRC32", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.crc = 0;
 this.b1 = null;
-Clazz_instantialize(this, arguments);}, JU, "CRC32", null, JU.Checksum);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "CRC32", null, com.jcraft.jzlib.Checksum);
 Clazz_prepareFields (c$, function(){
 this.b1 =  Clazz_newByteArray (1, 0);
 });
 Clazz_overrideMethod(c$, "update", 
 function(buf, index, len){
 var c = ~this.crc;
-while (--len >= 0) c = JU.CRC32.crc_table[(c ^ buf[index++]) & 0xff] ^ (c >>> 8);
+while (--len >= 0) c = com.jcraft.jzlib.CRC32.crc_table[(c ^ buf[index++]) & 0xff] ^ (c >>> 8);
 
 this.crc = ~c;
 }, "~A,~N,~N");
@@ -1193,9 +1193,9 @@ this.update(this.b1, 0, 1);
 }, "~N");
 c$.crc_table =  Clazz_newIntArray(-1, [0, 1996959894, -301047508, -1727442502, 124634137, 1886057615, -379345611, -1637575261, 249268274, 2044508324, -522852066, -1747789432, 162941995, 2125561021, -407360249, -1866523247, 498536548, 1789927666, -205950648, -2067906082, 450548861, 1843258603, -187386543, -2083289657, 325883990, 1684777152, -43845254, -1973040660, 335633487, 1661365465, -99664541, -1928851979, 997073096, 1281953886, -715111964, -1570279054, 1006888145, 1258607687, -770865667, -1526024853, 901097722, 1119000684, -608450090, -1396901568, 853044451, 1172266101, -589951537, -1412350631, 651767980, 1373503546, -925412992, -1076862698, 565507253, 1454621731, -809855591, -1195530993, 671266974, 1594198024, -972236366, -1324619484, 795835527, 1483230225, -1050600021, -1234817731, 1994146192, 31158534, -1731059524, -271249366, 1907459465, 112637215, -1614814043, -390540237, 2013776290, 251722036, -1777751922, -519137256, 2137656763, 141376813, -1855689577, -429695999, 1802195444, 476864866, -2056965928, -228458418, 1812370925, 453092731, -2113342271, -183516073, 1706088902, 314042704, -1950435094, -54949764, 1658658271, 366619977, -1932296973, -69972891, 1303535960, 984961486, -1547960204, -725929758, 1256170817, 1037604311, -1529756563, -740887301, 1131014506, 879679996, -1385723834, -631195440, 1141124467, 855842277, -1442165665, -586318647, 1342533948, 654459306, -1106571248, -921952122, 1466479909, 544179635, -1184443383, -832445281, 1591671054, 702138776, -1328506846, -942167884, 1504918807, 783551873, -1212326853, -1061524307, -306674912, -1698712650, 62317068, 1957810842, -355121351, -1647151185, 81470997, 1943803523, -480048366, -1805370492, 225274430, 2053790376, -468791541, -1828061283, 167816743, 2097651377, -267414716, -2029476910, 503444072, 1762050814, -144550051, -2140837941, 426522225, 1852507879, -19653770, -1982649376, 282753626, 1742555852, -105259153, -1900089351, 397917763, 1622183637, -690576408, -1580100738, 953729732, 1340076626, -776247311, -1497606297, 1068828381, 1219638859, -670225446, -1358292148, 906185462, 1090812512, -547295293, -1469587627, 829329135, 1181335161, -882789492, -1134132454, 628085408, 1382605366, -871598187, -1156888829, 570562233, 1426400815, -977650754, -1296233688, 733239954, 1555261956, -1026031705, -1244606671, 752459403, 1541320221, -1687895376, -328994266, 1969922972, 40735498, -1677130071, -351390145, 1913087877, 83908371, -1782625662, -491226604, 2075208622, 213261112, -1831694693, -438977011, 2094854071, 198958881, -2032938284, -237706686, 1759359992, 534414190, -2118248755, -155638181, 1873836001, 414664567, -2012718362, -15766928, 1711684554, 285281116, -1889165569, -127750551, 1634467795, 376229701, -1609899400, -686959890, 1308918612, 956543938, -1486412191, -799009033, 1231636301, 1047427035, -1362007478, -640263460, 1088359270, 936918000, -1447252397, -558129467, 1202900863, 817233897, -1111625188, -893730166, 1404277552, 615818150, -1160759803, -841546093, 1423857449, 601450431, -1285129682, -1000256840, 1567103746, 711928724, -1274298825, -1022587231, 1510334235, 755167117]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["java.io.FilterInputStream"], "JU.InflaterInputStream", null, function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["java.io.FilterInputStream"], "com.jcraft.jzlib.InflaterInputStream", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.inflater = null;
 this.buf = null;
@@ -1206,25 +1206,25 @@ this.close_in = true;
 this.myinflater = false;
 this.byte1 = null;
 this.b = null;
-Clazz_instantialize(this, arguments);}, JU, "InflaterInputStream", java.io.FilterInputStream);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "InflaterInputStream", java.io.FilterInputStream);
 Clazz_prepareFields (c$, function(){
 this.byte1 =  Clazz_newByteArray (1, 0);
 this.b =  Clazz_newByteArray (512, 0);
 });
 Clazz_makeConstructor(c$, 
 function($in, inflater, size, close_in){
-Clazz_superConstructor(this, JU.InflaterInputStream, [$in]);
+Clazz_superConstructor(this, com.jcraft.jzlib.InflaterInputStream, [$in]);
 this.inflater = inflater;
 this.buf =  Clazz_newByteArray (size, 0);
 this.close_in = close_in;
-}, "java.io.InputStream,JU.Inflater,~N,~B");
-Clazz_defineMethod(c$, "readByteAsInt", 
+}, "java.io.InputStream,com.jcraft.jzlib.Inflater,~N,~B");
+Clazz_overrideMethod(c$, "readByteAsInt", 
 function(){
 if (this.closed) {
 throw  new java.io.IOException("Stream closed");
 }return this.read(this.byte1, 0, 1) == -1 ? -1 : this.byte1[0] & 0xff;
 });
-Clazz_defineMethod(c$, "read", 
+Clazz_overrideMethod(c$, "read", 
 function(b, off, len){
 return this.readInf(b, off, len);
 }, "~A,~N,~N");
@@ -1357,9 +1357,9 @@ function(){
 return this.inflater;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(null, "JU.ZStream", ["JU.Adler32"], function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(null, "com.jcraft.jzlib.ZStream", ["com.jcraft.jzlib.Adler32"], function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.next_in = null;
 this.next_in_index = 0;
@@ -1374,10 +1374,10 @@ this.dstate = null;
 this.istate = null;
 this.data_type = 0;
 this.checksum = null;
-Clazz_instantialize(this, arguments);}, JU, "ZStream", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "ZStream", null);
 Clazz_defineMethod(c$, "setAdler32", 
 function(){
-this.checksum =  new JU.Adler32();
+this.checksum =  new com.jcraft.jzlib.Adler32();
 });
 Clazz_defineMethod(c$, "inflate", 
 function(f){
@@ -1482,15 +1482,15 @@ x.push(0x3F); // '?'
 return (Int32Array != Array ? new Int32Array(x) : x);
 }}, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["JU.ZStream"], "JU.Inflater", ["JU.Inflate"], function(){
-var c$ = Clazz_declareType(JU, "Inflater", JU.ZStream);
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["com.jcraft.jzlib.ZStream"], "com.jcraft.jzlib.Inflater", ["com.jcraft.jzlib.Inflate"], function(){
+var c$ = Clazz_declareType(com.jcraft.jzlib, "Inflater", com.jcraft.jzlib.ZStream);
 Clazz_defineMethod(c$, "init", 
 function(w, nowrap){
 this.setAdler32();
 if (w == 0) w = 15;
-this.istate =  new JU.Inflate(this);
+this.istate =  new com.jcraft.jzlib.Inflate(this);
 this.istate.inflateInit(nowrap ? -w : w);
 return this;
 }, "~N,~B");
@@ -1531,14 +1531,14 @@ this.avail_in = 0;
 if (this.istate != null) this.istate.reset();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["JU.Checksum"], "JU.Adler32", null, function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["com.jcraft.jzlib.Checksum"], "com.jcraft.jzlib.Adler32", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.s1 = 1;
 this.s2 = 0;
 this.b1 = null;
-Clazz_instantialize(this, arguments);}, JU, "Adler32", null, JU.Checksum);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "Adler32", null, com.jcraft.jzlib.Checksum);
 Clazz_prepareFields (c$, function(){
 this.b1 =  Clazz_newByteArray (1, 0);
 });
@@ -1591,17 +1591,17 @@ this.b1[0] = b;
 this.update(this.b1, 0, 1);
 }, "~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.dyn_tree = null;
 this.max_code = 0;
 this.stat_desc = null;
-Clazz_instantialize(this, arguments);}, JU, "Tree", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "Tree", null);
 c$.d_code = Clazz_defineMethod(c$, "d_code", 
 function(dist){
-return ((dist) < 256 ? JU.Tree._dist_code[dist] : JU.Tree._dist_code[256 + ((dist) >>> 7)]);
+return ((dist) < 256 ? com.jcraft.jzlib.Tree._dist_code[dist] : com.jcraft.jzlib.Tree._dist_code[256 + ((dist) >>> 7)]);
 }, "~N");
 Clazz_defineMethod(c$, "gen_bitlen", 
 function(s){
@@ -1656,7 +1656,7 @@ tree[m * 2 + 1] = bits;
 }n--;
 }
 }
-}, "JU.Deflate");
+}, "com.jcraft.jzlib.Deflate");
 Clazz_defineMethod(c$, "build_tree", 
 function(s){
 var tree = this.dyn_tree;
@@ -1701,21 +1701,21 @@ s.pqdownheap(tree, 1);
 } while (s.heap_len >= 2);
 s.heap[--s.heap_max] = s.heap[1];
 this.gen_bitlen(s);
-JU.Tree.gen_codes(tree, max_code, s.bl_count);
-}, "JU.Deflate");
+com.jcraft.jzlib.Tree.gen_codes(tree, max_code, s.bl_count);
+}, "com.jcraft.jzlib.Deflate");
 c$.gen_codes = Clazz_defineMethod(c$, "gen_codes", 
 function(tree, max_code, bl_count){
 var code = 0;
 var bits;
 var n;
-JU.Tree.next_code[0] = 0;
+com.jcraft.jzlib.Tree.next_code[0] = 0;
 for (bits = 1; bits <= 15; bits++) {
-JU.Tree.next_code[bits] = code = ((code + bl_count[bits - 1]) << 1);
+com.jcraft.jzlib.Tree.next_code[bits] = code = ((code + bl_count[bits - 1]) << 1);
 }
 for (n = 0; n <= max_code; n++) {
 var len = tree[n * 2 + 1];
 if (len == 0) continue;
-tree[n * 2] = (JU.Tree.bi_reverse(JU.Tree.next_code[len]++, len));
+tree[n * 2] = (com.jcraft.jzlib.Tree.bi_reverse(com.jcraft.jzlib.Tree.next_code[len]++, len));
 }
 }, "~A,~N,~A");
 c$.bi_reverse = Clazz_defineMethod(c$, "bi_reverse", 
@@ -1738,16 +1738,16 @@ c$.base_length =  Clazz_newIntArray(-1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 
 c$.base_dist =  Clazz_newIntArray(-1, [0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576]);
 c$.next_code =  Clazz_newShortArray (16, 0);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["JU.Tree"], "JU.StaticTree", null, function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["com.jcraft.jzlib.Tree"], "com.jcraft.jzlib.StaticTree", null, function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.static_tree = null;
 this.extra_bits = null;
 this.extra_base = 0;
 this.elems = 0;
 this.max_length = 0;
-Clazz_instantialize(this, arguments);}, JU, "StaticTree", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "StaticTree", null);
 Clazz_makeConstructor(c$, 
 function(static_tree, extra_bits, extra_base, elems, max_length){
 this.static_tree = static_tree;
@@ -1758,13 +1758,13 @@ this.max_length = max_length;
 }, "~A,~A,~N,~N,~N");
 c$.static_ltree =  Clazz_newShortArray(-1, [12, 8, 140, 8, 76, 8, 204, 8, 44, 8, 172, 8, 108, 8, 236, 8, 28, 8, 156, 8, 92, 8, 220, 8, 60, 8, 188, 8, 124, 8, 252, 8, 2, 8, 130, 8, 66, 8, 194, 8, 34, 8, 162, 8, 98, 8, 226, 8, 18, 8, 146, 8, 82, 8, 210, 8, 50, 8, 178, 8, 114, 8, 242, 8, 10, 8, 138, 8, 74, 8, 202, 8, 42, 8, 170, 8, 106, 8, 234, 8, 26, 8, 154, 8, 90, 8, 218, 8, 58, 8, 186, 8, 122, 8, 250, 8, 6, 8, 134, 8, 70, 8, 198, 8, 38, 8, 166, 8, 102, 8, 230, 8, 22, 8, 150, 8, 86, 8, 214, 8, 54, 8, 182, 8, 118, 8, 246, 8, 14, 8, 142, 8, 78, 8, 206, 8, 46, 8, 174, 8, 110, 8, 238, 8, 30, 8, 158, 8, 94, 8, 222, 8, 62, 8, 190, 8, 126, 8, 254, 8, 1, 8, 129, 8, 65, 8, 193, 8, 33, 8, 161, 8, 97, 8, 225, 8, 17, 8, 145, 8, 81, 8, 209, 8, 49, 8, 177, 8, 113, 8, 241, 8, 9, 8, 137, 8, 73, 8, 201, 8, 41, 8, 169, 8, 105, 8, 233, 8, 25, 8, 153, 8, 89, 8, 217, 8, 57, 8, 185, 8, 121, 8, 249, 8, 5, 8, 133, 8, 69, 8, 197, 8, 37, 8, 165, 8, 101, 8, 229, 8, 21, 8, 149, 8, 85, 8, 213, 8, 53, 8, 181, 8, 117, 8, 245, 8, 13, 8, 141, 8, 77, 8, 205, 8, 45, 8, 173, 8, 109, 8, 237, 8, 29, 8, 157, 8, 93, 8, 221, 8, 61, 8, 189, 8, 125, 8, 253, 8, 19, 9, 275, 9, 147, 9, 403, 9, 83, 9, 339, 9, 211, 9, 467, 9, 51, 9, 307, 9, 179, 9, 435, 9, 115, 9, 371, 9, 243, 9, 499, 9, 11, 9, 267, 9, 139, 9, 395, 9, 75, 9, 331, 9, 203, 9, 459, 9, 43, 9, 299, 9, 171, 9, 427, 9, 107, 9, 363, 9, 235, 9, 491, 9, 27, 9, 283, 9, 155, 9, 411, 9, 91, 9, 347, 9, 219, 9, 475, 9, 59, 9, 315, 9, 187, 9, 443, 9, 123, 9, 379, 9, 251, 9, 507, 9, 7, 9, 263, 9, 135, 9, 391, 9, 71, 9, 327, 9, 199, 9, 455, 9, 39, 9, 295, 9, 167, 9, 423, 9, 103, 9, 359, 9, 231, 9, 487, 9, 23, 9, 279, 9, 151, 9, 407, 9, 87, 9, 343, 9, 215, 9, 471, 9, 55, 9, 311, 9, 183, 9, 439, 9, 119, 9, 375, 9, 247, 9, 503, 9, 15, 9, 271, 9, 143, 9, 399, 9, 79, 9, 335, 9, 207, 9, 463, 9, 47, 9, 303, 9, 175, 9, 431, 9, 111, 9, 367, 9, 239, 9, 495, 9, 31, 9, 287, 9, 159, 9, 415, 9, 95, 9, 351, 9, 223, 9, 479, 9, 63, 9, 319, 9, 191, 9, 447, 9, 127, 9, 383, 9, 255, 9, 511, 9, 0, 7, 64, 7, 32, 7, 96, 7, 16, 7, 80, 7, 48, 7, 112, 7, 8, 7, 72, 7, 40, 7, 104, 7, 24, 7, 88, 7, 56, 7, 120, 7, 4, 7, 68, 7, 36, 7, 100, 7, 20, 7, 84, 7, 52, 7, 116, 7, 3, 8, 131, 8, 67, 8, 195, 8, 35, 8, 163, 8, 99, 8, 227, 8]);
 c$.static_dtree =  Clazz_newShortArray(-1, [0, 5, 16, 5, 8, 5, 24, 5, 4, 5, 20, 5, 12, 5, 28, 5, 2, 5, 18, 5, 10, 5, 26, 5, 6, 5, 22, 5, 14, 5, 30, 5, 1, 5, 17, 5, 9, 5, 25, 5, 5, 5, 21, 5, 13, 5, 29, 5, 3, 5, 19, 5, 11, 5, 27, 5, 7, 5, 23, 5]);
-c$.static_l_desc =  new JU.StaticTree(JU.StaticTree.static_ltree, JU.Tree.extra_lbits, 257, 286, 15);
-c$.static_d_desc =  new JU.StaticTree(JU.StaticTree.static_dtree, JU.Tree.extra_dbits, 0, 30, 15);
-c$.static_bl_desc =  new JU.StaticTree(null, JU.Tree.extra_blbits, 0, 19, 7);
+c$.static_l_desc =  new com.jcraft.jzlib.StaticTree(com.jcraft.jzlib.StaticTree.static_ltree, com.jcraft.jzlib.Tree.extra_lbits, 257, 286, 15);
+c$.static_d_desc =  new com.jcraft.jzlib.StaticTree(com.jcraft.jzlib.StaticTree.static_dtree, com.jcraft.jzlib.Tree.extra_dbits, 0, 30, 15);
+c$.static_bl_desc =  new com.jcraft.jzlib.StaticTree(null, com.jcraft.jzlib.Tree.extra_blbits, 0, 19, 7);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(null, "JU.GZIPHeader", ["JU.ZStream"], function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(null, "com.jcraft.jzlib.GZIPHeader", ["com.jcraft.jzlib.ZStream"], function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.text = false;
 this.fhcrc = false;
@@ -1778,7 +1778,7 @@ this.hcrc = 0;
 this.crc = 0;
 this.done = false;
 this.mtime = 0;
-Clazz_instantialize(this, arguments);}, JU, "GZIPHeader", null, Cloneable);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "GZIPHeader", null, Cloneable);
 Clazz_defineMethod(c$, "setModifiedTime", 
 function(mtime){
 this.mtime = mtime;
@@ -1798,7 +1798,7 @@ return this.os;
 });
 Clazz_defineMethod(c$, "setName", 
 function(name){
-this.name = JU.ZStream.getBytes(name);
+this.name = com.jcraft.jzlib.ZStream.getBytes(name);
 }, "~S");
 Clazz_defineMethod(c$, "getName", 
 function(){
@@ -1815,7 +1815,7 @@ throw e;
 });
 Clazz_defineMethod(c$, "setComment", 
 function(comment){
-this.comment = JU.ZStream.getBytes(comment);
+this.comment = com.jcraft.jzlib.ZStream.getBytes(comment);
 }, "~S");
 Clazz_defineMethod(c$, "getComment", 
 function(){
@@ -1875,10 +1875,10 @@ d.put_byteB(0);
 }if (this.comment != null) {
 d.put_byte(this.comment, 0, this.comment.length);
 d.put_byteB(0);
-}}, "JU.Deflate");
+}}, "com.jcraft.jzlib.Deflate");
 Clazz_defineMethod(c$, "clone", 
 function(){
-var gheader = Clazz_superCall(this, JU.GZIPHeader, "clone", []);
+var gheader = Clazz_superCall(this, com.jcraft.jzlib.GZIPHeader, "clone", []);
 var tmp;
 if (gheader.extra != null) {
 tmp =  Clazz_newByteArray (gheader.extra.length, 0);
@@ -1895,9 +1895,9 @@ gheader.comment = tmp;
 }return gheader;
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["java.lang.Exception"], "JU.Inflate", ["JU.Adler32", "$.CRC32", "$.GZIPHeader", "$.InfBlocks", "java.io.ByteArrayOutputStream"], function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["java.lang.Exception"], "com.jcraft.jzlib.Inflate", ["com.jcraft.jzlib.Adler32", "$.CRC32", "$.GZIPHeader", "$.InfBlocks", "java.io.ByteArrayOutputStream"], function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.mode = 0;
 this.method = 0;
@@ -1912,18 +1912,18 @@ this.flags = 0;
 this.need_bytes = -1;
 this.crcbuf = null;
 this.gheader = null;
-if (!Clazz_isClassDefined("JU.Inflate.Return")) {
-JU.Inflate.$Inflate$Return$ ();
+if (!Clazz_isClassDefined("com.jcraft.jzlib.Inflate.Return")) {
+com.jcraft.jzlib.Inflate.$Inflate$Return$ ();
 }
 this.tmp_string = null;
-Clazz_instantialize(this, arguments);}, JU, "Inflate", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "Inflate", null);
 Clazz_prepareFields (c$, function(){
 this.crcbuf =  Clazz_newByteArray (4, 0);
 });
 Clazz_makeConstructor(c$, 
 function(z){
 this.z = z;
-}, "JU.ZStream");
+}, "com.jcraft.jzlib.ZStream");
 Clazz_defineMethod(c$, "reset", 
 function(){
 this.inflateReset();
@@ -1961,7 +1961,7 @@ return -2;
 this.blocks.free();
 this.blocks = null;
 }this.wbits = w;
-this.blocks =  new JU.InfBlocks(this.z, 1 << w);
+this.blocks =  new com.jcraft.jzlib.InfBlocks(this.z, 1 << w);
 this.inflateReset();
 return 0;
 }, "~N");
@@ -1983,16 +1983,16 @@ break;
 }try {
 r = this.readBytes(2, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
 }
 }
 if ((this.wrap & 2) != 0 && this.need == 0x8b1f) {
-this.z.checksum =  new JU.CRC32();
+this.z.checksum =  new com.jcraft.jzlib.CRC32();
 this.checksum(2, this.need);
-if (this.gheader == null) this.gheader =  new JU.GZIPHeader();
+if (this.gheader == null) this.gheader =  new com.jcraft.jzlib.GZIPHeader();
 this.mode = 23;
 break;
 }this.flags = 0;
@@ -2010,7 +2010,7 @@ break;
 this.mode = 13;
 this.z.msg = "invalid window size";
 break;
-}this.z.checksum =  new JU.Adler32();
+}this.z.checksum =  new com.jcraft.jzlib.Adler32();
 if ((b & 32) == 0) {
 this.mode = 7;
 break;
@@ -2106,7 +2106,7 @@ if (this.wrap != 0 && this.flags != 0) {
 try {
 r = this.readBytes(4, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2135,7 +2135,7 @@ case 23:
 try {
 r = this.readBytes(2, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2157,7 +2157,7 @@ case 16:
 try {
 r = this.readBytes(4, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2171,7 +2171,7 @@ case 17:
 try {
 r = this.readBytes(2, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2188,7 +2188,7 @@ if ((this.flags & 0x0400) != 0) {
 try {
 r = this.readBytes(2, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2215,7 +2215,7 @@ this.z.msg = "bad extra field length";
 this.mode = 13;
 break;
 }}} catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2232,7 +2232,7 @@ if (this.gheader != null) {
 this.gheader.name = this.tmp_string.toByteArray();
 }this.tmp_string = null;
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2249,7 +2249,7 @@ if (this.gheader != null) {
 this.gheader.comment = this.tmp_string.toByteArray();
 }this.tmp_string = null;
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2263,7 +2263,7 @@ if ((this.flags & 0x0200) != 0) {
 try {
 r = this.readBytes(2, r, f);
 } catch (e) {
-if (Clazz_exceptionOf(e,"JU.Inflate.Return")){
+if (Clazz_exceptionOf(e,"com.jcraft.jzlib.Inflate.Return")){
 return e.r;
 } else {
 throw e;
@@ -2276,7 +2276,7 @@ this.mode = 13;
 this.z.msg = "header crc mismatch";
 this.marker = 5;
 break;
-}}this.z.checksum =  new JU.CRC32();
+}}this.z.checksum =  new com.jcraft.jzlib.CRC32();
 this.mode = 7;
 break;
 default:
@@ -2319,7 +2319,7 @@ this.marker = 0;
 p = this.z.next_in_index;
 m = this.marker;
 while (n != 0 && m < 4) {
-if (this.z.next_in[p] == JU.Inflate.mark[m]) {
+if (this.z.next_in[p] == com.jcraft.jzlib.Inflate.mark[m]) {
 m++;
 } else if (this.z.next_in[p] != 0) {
 m = 0;
@@ -2354,7 +2354,7 @@ this.need_bytes = n;
 this.need = 0;
 }while (this.need_bytes > 0) {
 if (this.z.avail_in == 0) {
-throw Clazz_innerTypeInstance(JU.Inflate.Return, this, null, r);
+throw Clazz_innerTypeInstance(com.jcraft.jzlib.Inflate.Return, this, null, r);
 }r = f;
 this.z.avail_in--;
 this.z.total_in++;
@@ -2375,7 +2375,7 @@ this.tmp_string =  new java.io.ByteArrayOutputStream();
 }var b = 0;
 do {
 if (this.z.avail_in == 0) {
-throw Clazz_innerTypeInstance(JU.Inflate.Return, this, null, r);
+throw Clazz_innerTypeInstance(com.jcraft.jzlib.Inflate.Return, this, null, r);
 }r = f;
 this.z.avail_in--;
 this.z.total_in++;
@@ -2392,7 +2392,7 @@ if (this.tmp_string == null) {
 this.tmp_string =  new java.io.ByteArrayOutputStream();
 }while (this.need > 0) {
 if (this.z.avail_in == 0) {
-throw Clazz_innerTypeInstance(JU.Inflate.Return, this, null, r);
+throw Clazz_innerTypeInstance(com.jcraft.jzlib.Inflate.Return, this, null, r);
 }r = f;
 this.z.avail_in--;
 this.z.total_in++;
@@ -2441,18 +2441,18 @@ c$.$Inflate$Return$ = function(){
 var c$ = Clazz_decorateAsClass(function(){
 Clazz_prepareCallback(this, arguments);
 this.r = 0;
-Clazz_instantialize(this, arguments);}, JU.Inflate, "Return", Exception);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib.Inflate, "Return", Exception);
 Clazz_makeConstructor(c$, 
 function(r){
-Clazz_superConstructor (this, JU.Inflate.Return, []);
+Clazz_superConstructor (this, com.jcraft.jzlib.Inflate.Return, []);
 this.r = r;
 }, "~N");
 /*eoif4*/})();
 };
 c$.mark =  Clazz_newByteArray(-1, [0, 0, 0xff, 0xff]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.hn = null;
@@ -2461,7 +2461,7 @@ this.c = null;
 this.r = null;
 this.u = null;
 this.x = null;
-Clazz_instantialize(this, arguments);}, JU, "InfTree", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "InfTree", null);
 Clazz_defineMethod(c$, "huft_build", 
 function(b, bindex, n, s, d, e, t, m, hp, hn, v){
 var a;
@@ -2603,13 +2603,13 @@ z.msg = "oversubscribed dynamic bit lengths tree";
 z.msg = "incomplete dynamic bit lengths tree";
 result = -3;
 }return result;
-}, "~A,~A,~A,~A,JU.ZStream");
+}, "~A,~A,~A,~A,com.jcraft.jzlib.ZStream");
 Clazz_defineMethod(c$, "inflate_trees_dynamic", 
 function(nl, nd, c, bl, bd, tl, td, hp, z){
 var result;
 this.initWorkArea(288);
 this.hn[0] = 0;
-result = this.huft_build(c, 0, nl, 257, JU.InfTree.cplens, JU.InfTree.cplext, tl, bl, hp, this.hn, this.v);
+result = this.huft_build(c, 0, nl, 257, com.jcraft.jzlib.InfTree.cplens, com.jcraft.jzlib.InfTree.cplext, tl, bl, hp, this.hn, this.v);
 if (result != 0 || bl[0] == 0) {
 if (result == -3) {
 z.msg = "oversubscribed literal/length tree";
@@ -2618,7 +2618,7 @@ z.msg = "incomplete literal/length tree";
 result = -3;
 }return result;
 }this.initWorkArea(288);
-result = this.huft_build(c, nl, nd, 0, JU.InfTree.cpdist, JU.InfTree.cpdext, td, bd, hp, this.hn, this.v);
+result = this.huft_build(c, nl, nd, 0, com.jcraft.jzlib.InfTree.cpdist, com.jcraft.jzlib.InfTree.cpdext, td, bd, hp, this.hn, this.v);
 if (result != 0 || (bd[0] == 0 && nl > 257)) {
 if (result == -3) {
 z.msg = "oversubscribed distance tree";
@@ -2630,15 +2630,15 @@ z.msg = "empty distance tree with lengths";
 result = -3;
 }return result;
 }return 0;
-}, "~N,~N,~A,~A,~A,~A,~A,~A,JU.ZStream");
+}, "~N,~N,~A,~A,~A,~A,~A,~A,com.jcraft.jzlib.ZStream");
 c$.inflate_trees_fixed = Clazz_defineMethod(c$, "inflate_trees_fixed", 
 function(bl, bd, tl, td, z){
 bl[0] = 9;
 bd[0] = 5;
-tl[0] = JU.InfTree.fixed_tl;
-td[0] = JU.InfTree.fixed_td;
+tl[0] = com.jcraft.jzlib.InfTree.fixed_tl;
+td[0] = com.jcraft.jzlib.InfTree.fixed_td;
 return 0;
-}, "~A,~A,~A,~A,JU.ZStream");
+}, "~A,~A,~A,~A,com.jcraft.jzlib.ZStream");
 Clazz_defineMethod(c$, "initWorkArea", 
 function(vsize){
 if (this.hn == null) {
@@ -2669,9 +2669,9 @@ c$.cplext =  Clazz_newIntArray(-1, [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2,
 c$.cpdist =  Clazz_newIntArray(-1, [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577]);
 c$.cpdext =  Clazz_newIntArray(-1, [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13]);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
-Clazz_load(["JU.InfTree"], "JU.InfBlocks", ["JU.InfCodes"], function(){
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
+Clazz_load(["com.jcraft.jzlib.InfTree"], "com.jcraft.jzlib.InfBlocks", ["com.jcraft.jzlib.InfCodes"], function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.mode = 0;
 this.left = 0;
@@ -2698,7 +2698,7 @@ this.write = 0;
 this.check = false;
 this.inftree = null;
 this.z = null;
-Clazz_instantialize(this, arguments);}, JU, "InfBlocks", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "InfBlocks", null);
 Clazz_prepareFields (c$, function(){
 this.bb =  Clazz_newIntArray (1, 0);
 this.tb =  Clazz_newIntArray (1, 0);
@@ -2706,12 +2706,12 @@ this.bl =  Clazz_newIntArray (1, 0);
 this.bd =  Clazz_newIntArray (1, 0);
 this.tli =  Clazz_newIntArray (1, 0);
 this.tdi =  Clazz_newIntArray (1, 0);
-this.inftree =  new JU.InfTree();
+this.inftree =  new com.jcraft.jzlib.InfTree();
 });
 Clazz_makeConstructor(c$, 
 function(z, w){
 this.z = z;
-this.codes =  new JU.InfCodes(this.z, this);
+this.codes =  new com.jcraft.jzlib.InfCodes(this.z, this);
 this.hufts =  Clazz_newIntArray (4320, 0);
 this.window =  Clazz_newByteArray (w, 0);
 this.end = w;
@@ -2721,7 +2721,7 @@ this.mode = 0;
 this.tl = Clazz_newArray(1, null);
 this.td = Clazz_newArray(1, null);
 }this.reset();
-}, "JU.ZStream,~N");
+}, "com.jcraft.jzlib.ZStream,~N");
 Clazz_defineMethod(c$, "reset", 
 function(){
 if (this.mode == 6) {
@@ -2782,7 +2782,7 @@ k -= (t);
 }this.mode = 1;
 break;
 case 1:
-JU.InfTree.inflate_trees_fixed(this.bl, this.bd, this.tl, this.td, this.z);
+com.jcraft.jzlib.InfTree.inflate_trees_fixed(this.bl, this.bd, this.tl, this.td, this.z);
 this.codes.init(this.bl[0], this.bd[0], this.tl[0], 0, this.td[0], 0);
 {
 b >>>= (3);
@@ -2940,13 +2940,13 @@ return this.inflate_flush(r);
 b |= (this.z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-this.blens[JU.InfBlocks.border[this.index++]] = b & 7;
+this.blens[com.jcraft.jzlib.InfBlocks.border[this.index++]] = b & 7;
 {
 b >>>= (3);
 k -= (3);
 }}
 while (this.index < 19) {
-this.blens[JU.InfBlocks.border[this.index++]] = 0;
+this.blens[com.jcraft.jzlib.InfBlocks.border[this.index++]] = 0;
 }
 this.bb[0] = 7;
 t = this.inftree.inflate_trees_bits(this.blens, this.bb, this.tb, this.hufts, this.z);
@@ -2988,8 +2988,8 @@ return this.inflate_flush(r);
 b |= (this.z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-t = this.hufts[(this.tb[0] + (b & JU.InfBlocks.inflate_mask[t])) * 3 + 1];
-c = this.hufts[(this.tb[0] + (b & JU.InfBlocks.inflate_mask[t])) * 3 + 2];
+t = this.hufts[(this.tb[0] + (b & com.jcraft.jzlib.InfBlocks.inflate_mask[t])) * 3 + 1];
+c = this.hufts[(this.tb[0] + (b & com.jcraft.jzlib.InfBlocks.inflate_mask[t])) * 3 + 2];
 if (c < 16) {
 b >>>= (t);
 k -= (t);
@@ -3014,7 +3014,7 @@ k += 8;
 }
 b >>>= (t);
 k -= (t);
-j += (b & JU.InfBlocks.inflate_mask[i]);
+j += (b & com.jcraft.jzlib.InfBlocks.inflate_mask[i]);
 b >>>= (i);
 k -= (i);
 i = this.index;
@@ -3174,8 +3174,8 @@ return r;
 c$.inflate_mask =  Clazz_newIntArray(-1, [0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff]);
 c$.border =  Clazz_newIntArray(-1, [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
-Clazz_declarePackage("JU");
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
+Clazz_declarePackage("com.jcraft.jzlib");
 (function(){
 var c$ = Clazz_decorateAsClass(function(){
 this.mode = 0;
@@ -3194,12 +3194,12 @@ this.dtree = null;
 this.dtree_index = 0;
 this.z = null;
 this.s = null;
-Clazz_instantialize(this, arguments);}, JU, "InfCodes", null);
+Clazz_instantialize(this, arguments);}, com.jcraft.jzlib, "InfCodes", null);
 Clazz_makeConstructor(c$, 
 function(z, s){
 this.z = z;
 this.s = s;
-}, "JU.ZStream,JU.InfBlocks");
+}, "com.jcraft.jzlib.ZStream,com.jcraft.jzlib.InfBlocks");
 Clazz_defineMethod(c$, "init", 
 function(bl, bd, tl, tl_index, td, td_index){
 this.mode = 0;
@@ -3269,7 +3269,7 @@ return this.s.inflate_flush(r);
 b |= (this.z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-tindex = (this.tree_index + (b & JU.InfCodes.inflate_mask[j])) * 3;
+tindex = (this.tree_index + (b & com.jcraft.jzlib.InfCodes.inflate_mask[j])) * 3;
 b >>>= (this.tree[tindex + 1]);
 k -= (this.tree[tindex + 1]);
 e = this.tree[tindex];
@@ -3315,7 +3315,7 @@ return this.s.inflate_flush(r);
 b |= (this.z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-this.len += (b & JU.InfCodes.inflate_mask[j]);
+this.len += (b & com.jcraft.jzlib.InfCodes.inflate_mask[j]);
 b >>= j;
 k -= j;
 this.need = this.dbits;
@@ -3338,7 +3338,7 @@ return this.s.inflate_flush(r);
 b |= (this.z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-tindex = (this.tree_index + (b & JU.InfCodes.inflate_mask[j])) * 3;
+tindex = (this.tree_index + (b & com.jcraft.jzlib.InfCodes.inflate_mask[j])) * 3;
 b >>= this.tree[tindex + 1];
 k -= this.tree[tindex + 1];
 e = (this.tree[tindex]);
@@ -3377,7 +3377,7 @@ return this.s.inflate_flush(r);
 b |= (this.z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-this.dist += (b & JU.InfCodes.inflate_mask[j]);
+this.dist += (b & com.jcraft.jzlib.InfCodes.inflate_mask[j]);
 b >>= j;
 k -= j;
 this.mode = 5;
@@ -3490,7 +3490,7 @@ return this.s.inflate_flush(r);
 }, "~N");
 Clazz_defineMethod(c$, "free", 
 function(z){
-}, "JU.ZStream");
+}, "com.jcraft.jzlib.ZStream");
 Clazz_defineMethod(c$, "inflate_fast", 
 function(bl, bd, tl, tl_index, td, td_index, s, z){
 var t;
@@ -3515,8 +3515,8 @@ b = s.bitb;
 k = s.bitk;
 q = s.write;
 m = q < s.read ? s.read - q - 1 : s.end - q;
-ml = JU.InfCodes.inflate_mask[bl];
-md = JU.InfCodes.inflate_mask[bd];
+ml = com.jcraft.jzlib.InfCodes.inflate_mask[bl];
+md = com.jcraft.jzlib.InfCodes.inflate_mask[bd];
 do {
 while (k < (20)) {
 n--;
@@ -3538,7 +3538,7 @@ b >>= (tp[tp_index_t_3 + 1]);
 k -= (tp[tp_index_t_3 + 1]);
 if ((e & 16) != 0) {
 e &= 15;
-c = tp[tp_index_t_3 + 2] + (b & JU.InfCodes.inflate_mask[e]);
+c = tp[tp_index_t_3 + 2] + (b & com.jcraft.jzlib.InfCodes.inflate_mask[e]);
 b >>= e;
 k -= e;
 while (k < (15)) {
@@ -3561,7 +3561,7 @@ n--;
 b |= (z.next_in[p++] & 0xff) << k;
 k += 8;
 }
-d = tp[tp_index_t_3 + 2] + (b & JU.InfCodes.inflate_mask[e]);
+d = tp[tp_index_t_3 + 2] + (b & com.jcraft.jzlib.InfCodes.inflate_mask[e]);
 b >>= (e);
 k -= (e);
 m -= c;
@@ -3606,7 +3606,7 @@ c = 0;
 }break;
 } else if ((e & 64) == 0) {
 t += tp[tp_index_t_3 + 2];
-t += (b & JU.InfCodes.inflate_mask[e]);
+t += (b & com.jcraft.jzlib.InfCodes.inflate_mask[e]);
 tp_index_t_3 = (tp_index + t) * 3;
 e = tp[tp_index_t_3];
 } else {
@@ -3627,7 +3627,7 @@ return -3;
 break;
 }if ((e & 64) == 0) {
 t += tp[tp_index_t_3 + 2];
-t += (b & JU.InfCodes.inflate_mask[e]);
+t += (b & com.jcraft.jzlib.InfCodes.inflate_mask[e]);
 tp_index_t_3 = (tp_index + t) * 3;
 if ((e = tp[tp_index_t_3]) == 0) {
 b >>= (tp[tp_index_t_3 + 1]);
@@ -3676,10 +3676,10 @@ z.total_in += p - z.next_in_index;
 z.next_in_index = p;
 s.write = q;
 return 0;
-}, "~N,~N,~A,~N,~A,~N,JU.InfBlocks,JU.ZStream");
+}, "~N,~N,~A,~N,~A,~N,com.jcraft.jzlib.InfBlocks,com.jcraft.jzlib.ZStream");
 c$.inflate_mask =  Clazz_newIntArray(-1, [0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff]);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon May 12 23:42:45 CDT 2025
 Clazz_declarePackage("J.io");
 Clazz_load(null, "J.io.JmolUtil", ["java.net.URL", "java.util.Hashtable", "JU.AU", "$.Lst", "$.OC", "$.PT", "$.Rdr", "J.adapter.smarter.AtomSetCollection", "J.api.Interface", "JU.Logger", "JV.FileManager", "$.Viewer"], function(){
 var c$ = Clazz_declareType(J.io, "JmolUtil", null);
@@ -3930,7 +3930,7 @@ for (var i = 1; i < zipDirectory.length; i++) if (zipDirectory[i].endsWith(".spa
 return false;
 }, "~A");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 })(Clazz
 ,Clazz.getClassName
 ,Clazz.newLongArray

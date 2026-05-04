@@ -1,5 +1,5 @@
 Clazz.declarePackage("J.shape");
-Clazz.load(["J.shape.Shape"], "J.shape.MeshCollection", ["java.util.Hashtable", "JU.AU", "$.Lst", "$.P3", "$.PT", "$.SB", "JS.T", "J.shape.Mesh", "JU.C", "$.Escape", "$.Logger", "JV.StateManager"], function(){
+Clazz.load(["J.shape.Shape"], "J.shape.MeshCollection", ["java.util.Hashtable", "JU.AU", "$.Lst", "$.P3", "$.PT", "$.SB", "JS.T", "J.shape.Mesh", "JU.C", "$.Escape", "$.Logger"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.jvxlData = null;
 this.meshCount = 0;
@@ -101,9 +101,6 @@ this.currentMesh.symopColixes =  Clazz.newShortArray (n, 0);
 for (var i = n; --i >= 0; ) this.currentMesh.symopColixes[i] = JU.C.getColix(this.vwr.cm.ce.getArgbMinMax(i + 1, 1, n));
 
 }return;
-}if ("variables" === propertyName) {
-if (this.currentMesh != null && this.currentMesh.scriptCommand != null && !this.currentMesh.scriptCommand.startsWith("{")) this.currentMesh.scriptCommand = "{\n" + JV.StateManager.getVariableList(value, 0, false, false) + "\n" + this.currentMesh.scriptCommand;
-return;
 }if ("thisID" === propertyName) {
 var id = value;
 this.setMesh(id);
@@ -476,4 +473,4 @@ map.put("type", this.myType);
 }return map;
 }, "JU.T3,~N");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

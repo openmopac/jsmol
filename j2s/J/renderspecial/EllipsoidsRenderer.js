@@ -368,4 +368,4 @@ J.renderspecial.EllipsoidsRenderer.cossin[pt++] = Math.sin(i * 0.017453292519943
 c$.axisPoints =  Clazz.newIntArray(-1, [-1, 1, -2, 2, -3, 3]);
 c$.octants =  Clazz.newIntArray(-1, [5, 0, 3, 5, 2, 0, 4, 0, 2, 4, 3, 0, 5, 2, 1, 5, 1, 3, 4, 3, 1, 4, 1, 2]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

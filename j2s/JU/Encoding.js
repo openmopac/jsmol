@@ -8,4 +8,4 @@ Clazz.defineEnumConstant(c$, "UTF_16LE", 3, []);
 Clazz.defineEnumConstant(c$, "UTF_32BE", 4, []);
 Clazz.defineEnumConstant(c$, "UTF_32LE", 5, []);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -94,15 +94,15 @@ System.out.println(this.m2_rotate);
 this.zOffset = this.modelCenterOffset;
 });
 Clazz.overrideMethod(c$, "getScreenTemp", 
-function(ptXYZ){
+function(ptXYZ, fScrPt){
 if (this.doTransform4D && Clazz.instanceOf(ptXYZ,"JU.T4")) {
 this.p4.add2(ptXYZ, this.v1);
 this.m2_rotate.rotate(this.p4);
-this.fScrPt.setT(this.p4);
-this.m3_toScreen.rotTrans(this.fScrPt);
-this.fScrPt.z += this.zOffset;
+fScrPt.setT(this.p4);
+this.m3_toScreen.rotTrans(fScrPt);
+fScrPt.z += this.zOffset;
 } else {
-this.matrixTransform.rotTrans2(ptXYZ, this.fScrPt);
-}}, "JU.T3");
+this.matrixTransform.rotTrans2(ptXYZ, fScrPt);
+}}, "JU.T3,JU.P3");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

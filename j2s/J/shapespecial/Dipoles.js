@@ -17,6 +17,7 @@ this.colix = 0;
 this.calculatedDipole = null;
 this.wildID = null;
 this.mad = 0;
+this.calculationError = null;
 Clazz.instantialize(this, arguments);}, J.shapespecial, "Dipoles", J.shape.Shape);
 Clazz.prepareFields (c$, function(){
 this.dipoles =  new Array(4);
@@ -34,6 +35,7 @@ this.tempDipole.dipoleValue = 1;
 this.tempDipole.mad = 10;
 this.atomIndex1 = -1;
 this.tempDipole.modelIndex = -1;
+this.calculationError = null;
 this.dipoleValue = 0;
 this.calculatedDipole = null;
 this.mad = -1;
@@ -44,6 +46,7 @@ try {
 this.calculatedDipole = this.vwr.calculateMolecularDipole(value);
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
+if (Clazz.instanceOf(e, RuntimeException)) this.calculationError = e.getMessage();
 } else {
 throw e;
 }
@@ -181,7 +184,7 @@ if (this.tempDipole.offsetPercent != 0) this.tempDipole.offsetAngstroms = this.t
 return;
 }if ("set" === propertyName) {
 if (this.isBond || !this.iHaveTwoEnds && this.tempDipole.bsMolecule == null) return;
-this.setDipole();
+this.setDipole(this.calculationError);
 this.setModelIndex();
 return;
 }if (propertyName === "deleteModelAtoms") {
@@ -202,10 +205,12 @@ var v = (bsMolecule == null ? this.calculatedDipole : null);
 if (v == null && bsMolecule == null) {
 v = this.vwr.getModelDipole();
 JU.Logger.info("file molecular dipole = " + v + " " + (v != null ? "" + v.length() : ""));
-}if (v == null) try {
+}var err = null;
+if (v == null) try {
 this.calculatedDipole = v = this.vwr.calculateMolecularDipole(bsMolecule);
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
+if (Clazz.instanceOf(e, RuntimeException)) err = e.getMessage();
 } else {
 throw e;
 }
@@ -219,7 +224,7 @@ if (this.tempDipole.lstDipoles != null) {
 this.getAllMolecularDipoles(bsMolecule);
 }this.tempDipole.type = 4;
 if (this.currentDipole == null || this.currentDipole.thisID == null || bsMolecule == null) this.tempDipole.thisID = "molecular";
-this.setDipole();
+this.setDipole(err);
 }, "JU.BS");
 Clazz.defineMethod(c$, "getAllMolecularDipoles", 
 function(bsAtoms){
@@ -334,12 +339,13 @@ if (d != null) d.colix = colix;
 }
 }, "~N,~N,JU.BS");
 Clazz.defineMethod(c$, "setDipole", 
-function(){
+function(err){
 if (this.currentDipole == null) this.currentDipole = this.allocDipole("", "");
 this.currentDipole.set(this.tempDipole);
 this.currentDipole.isUserValue = this.isUserValue;
 this.currentDipole.modelIndex = this.vwr.am.cmi;
-});
+this.currentDipole.error = err;
+}, "~S");
 Clazz.defineMethod(c$, "setDipoleAtoms", 
 function(atom1, atom2, c1, c2){
 var dipole = this.findAtomDipole(atom1, atom2, true);
@@ -496,4 +502,4 @@ J.shape.Shape.appendCmd(s, J.shape.Shape.getColorCommandUnk("dipole", dipole.col
 return s.toString();
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

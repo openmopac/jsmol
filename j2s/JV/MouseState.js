@@ -5,6 +5,7 @@ this.x = -1000;
 this.y = -1000;
 this.modifiers = 0;
 this.time = -1;
+this.modelIndex = 0;
 this.name = null;
 this.keybuf = 0;
 Clazz.instantialize(this, arguments);}, JV, "MouseState", null);
@@ -12,6 +13,10 @@ Clazz.makeConstructor(c$,
 function(name){
 this.name = name;
 }, "~S");
+Clazz.defineMethod(c$, "setModelIndex", 
+function(modelIndex){
+this.modelIndex = modelIndex;
+}, "~N");
 Clazz.defineMethod(c$, "set", 
 function(time, x, y, modifiers){
 this.time = time;
@@ -40,4 +45,4 @@ function(current){
 return (current.x == this.x && current.y == this.y && current.time == this.time);
 }, "JV.MouseState");
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

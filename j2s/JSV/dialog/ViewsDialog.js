@@ -60,7 +60,7 @@ n++;
 System.out.println("viewsdialog n=" + n);
 this.dialog.setEnabled(this.closeSelectedButton, n > 0);
 this.dialog.setEnabled(this.combineSelectedButton, n > 1);
-this.dialog.setEnabled(this.viewSelectedButton, n == 1);
+this.dialog.setEnabled(this.viewSelectedButton, n >= 1);
 });
 Clazz.defineMethod(c$, "check", 
 function(name){
@@ -165,4 +165,4 @@ this.apply( Clazz.newArray(-1, [this.dialog.getText(this.txt2)]));
 });
 c$.posXY =  Clazz.newIntArray(-1, [-2147483648, 0]);
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

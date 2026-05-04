@@ -3,6 +3,13 @@ Clazz.load(["javajs.api.GenericColor"], "JS.Color", null, function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.argb = 0;
 Clazz.instantialize(this, arguments);}, JS, "Color", null, javajs.api.GenericColor);
+Clazz.overrideMethod(c$, "addAlpha", 
+function(a){
+if (this.getOpacity255() != 0xFF) return this;
+var c =  new JS.Color();
+c.argb = (this.argb & 0xFFFFFF) | (a << 24);
+return c;
+}, "~N");
 Clazz.overrideMethod(c$, "getRGB", 
 function(){
 return this.argb & 0x00FFFFFF;
@@ -11,10 +18,6 @@ Clazz.overrideMethod(c$, "getOpacity255",
 function(){
 return ((this.argb >> 24) & 0xFF);
 });
-Clazz.overrideMethod(c$, "setOpacity255", 
-function(a){
-this.argb = this.argb & 0xFFFFFF | ((a & 0xFF) << 24);
-}, "~N");
 c$.get1 = Clazz.defineMethod(c$, "get1", 
 function(rgb){
 var c =  new JS.Color();
@@ -40,4 +43,4 @@ var s = ("00000000" + Integer.toHexString(this.argb));
 return "[0x" + s.substring(s.length - 8, s.length) + "]";
 });
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -931,7 +931,7 @@ return JU.PT.sprintf(strFormat, "IFDspq", of);
 }, "~S,JS.SV,~A,~A,~A,~A,~B,~B,~B");
 c$.getFormatType = Clazz.defineMethod(c$, "getFormatType", 
 function(format){
-return (format.indexOf(";") >= 0 ? -1 : ";json;base64;bytearray;array;xyz;abc;uvw;string;".indexOf(";" + format.toLowerCase() + ";"));
+return (format.indexOf(";") >= 0 ? -1 : ";json;base64;bytearray;array;string;xyz;abc;uvw;rxyz;".indexOf(";" + format.toLowerCase() + ";"));
 }, "~S");
 c$.format = Clazz.defineMethod(c$, "format", 
 function(args, pt){
@@ -971,7 +971,7 @@ return o;
 case 5:
 case 12:
 case 22:
-case 40:
+case 28:
 var bytes;
 switch (sv.tok) {
 case 15:
@@ -994,7 +994,9 @@ if (s.startsWith(JV.JC.BASE64_TAG)) {
 if (pt == 5) return s;
 bytes = JU.Base64.decodeBase64(s);
 } else {
-bytes = s.getBytes();
+if (pt >= 28) {
+return s;
+}bytes = s.getBytes();
 }}
 switch (pt) {
 case 12:
@@ -1003,7 +1005,7 @@ case 5:
 return JV.JC.BASE64_TAG + JU.Base64.getBase64(bytes).toString();
 case 22:
 return JS.SV.getVariable(bytes);
-case 40:
+case 28:
 return  String.instantialize(bytes);
 }
 }
@@ -1245,7 +1247,11 @@ Clazz.defineMethod(c$, "mapValue",
 function(key){
 switch (this.tok) {
 case 6:
-return (this.value).get(key);
+var sv = (this.value).get(key);
+if (sv == null && key.equals("length") && (this.value).containsKey("_DATA_")) {
+sv = (this.value).get("_DATA_");
+return JS.SV.newI((sv.value).data.length);
+}return sv;
 case 14:
 var sc = (this.value);
 return (key.equals("_path") ? JS.SV.newS(sc.contextPath) : sc.getVariable(key));
@@ -1418,7 +1424,7 @@ return "{" + (Clazz.instanceOf(property,"JS.SV") ? JU.PT.esc(key) + " : " + JS.S
 }, "~S,~O");
 Clazz.defineMethod(c$, "isNaN", 
 function(){
-return (this.value === "NaN" || this === JS.SV.vNaN);
+return (this === JS.SV.vNaN || "NaN".equals(this.value));
 });
 c$.$SV$Sort$ = function(){
 /*if4*/;(function(){
@@ -1469,4 +1475,4 @@ c$.vF = JS.SV.newSV(1073742334, 0, "false");
 c$.vNaN = JS.SV.newSV(3, 2147483647, Float.$valueOf(NaN));
 c$.pt0 =  new JU.P3();
 });
-;//5.0.1-v7 Mon Jul 28 06:27:30 CDT 2025
+;//5.0.1-v7 Wed Mar 25 10:27:00 CDT 2026

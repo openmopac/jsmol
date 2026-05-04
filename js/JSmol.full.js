@@ -10718,6 +10718,8 @@ return jQuery;
 // 9/2/2013 7:43:12 AM BH Opera/Safari fix for binary file reading
 // 3/11/2014 6:31:01 AM BH fix for MSIE not working locally
 
+;window.getClientRects = function(){return []};
+
 ;(function($) {
 
 	function createXHR(isMSIE) {
@@ -11012,6 +11014,8 @@ return jQuery;
 
 // see JSmolApi.js for public user-interface. All these are private functions
 
+// BH 2026.02.05 fixes issue allowing only one Jmol/JSV pair per page
+// BH 2025.09.04 enables contentType application/json in getFileData
 // BH 2024.02.20 fixes dragging should not stop when mouse leaves applet
 // BH 2024.02.07 adding binary types BCIF 
 // BH 2023.01.19 Jmol._allowKeyboardFocus = true; can be set to false if page jumping is a problem.
@@ -11230,6 +11234,7 @@ Jmol = (function(document) {
         "rruff.geo.arizona.edu": null, 
         ".rcsb.org": null, 
         		"chemapps.stolaf.edu/jmol/jsmol/": null,
+        		"zakodium.com":null,
 				"ftp.wwpdb.org": null,
 				"pdbe.org": null, 
 				"materialsproject.org": null, 
@@ -12016,8 +12021,7 @@ Jmol = (function(document) {
 		var isMyHost = (fileName.indexOf("://") < 0 || fileName.indexOf(document.location.protocol) == 0 && fileName.indexOf(document.location.host) >= 0);
     var isHttps2Http = (Jmol._httpProto == "https://" && fileName.indexOf("http://") == 0);
 		var isDirectCall = Jmol._isDirectCall(fileName);
-    if (!isDirectCall && fileName.indexOf("?ALLOWSORIGIN?") >= 0) {
-      isDirectCall = true;
+    if (fileName.indexOf("?ALLOWSORIGIN?") >= 0) {
 			fileName = fileName.replace(/\?ALLOWSORIGIN\?/,"");
     }
 		//if (fileName.indexOf("http://pubchem.ncbi.nlm.nih.gov/") == 0)isDirectCall = false;
@@ -12033,6 +12037,10 @@ Jmol = (function(document) {
 				info.type = "POST";
 				info.url = fileName.split("?POST?")[0]
 				info.data = fileName.split("?POST?")[1]
+				if (info.data.startsWith('{"')) {
+					info.contentType = "application/json";
+					info.data = info.data.replaceAll("\n", "\\\\n");
+				}
 			} else {
 				info.type = "GET";
 				info.url = fileName;
@@ -12572,6 +12580,14 @@ Jmol = (function(document) {
 
 	Jmol._setSyncReady = function() {
 		Jmol._syncReady = true;
+		if (Jmol._isJmolJSVSync) {
+			// pairs of Jmol and JSV applets here
+			var applets = Jmol._syncedApplets;
+			for (var i = 0; i < applets.length - 1; i += 2) {
+				applets[i]._linkedApplet = applets[i + 1];
+				applets[i + 1]._linkedApplet = applets[i];
+			}
+		}
 		var s = ""
 		for (var i = 0; i < Jmol._syncedApplets.length; i++)
 			if (Jmol._syncedCommands[i])
@@ -12589,6 +12605,11 @@ Jmol = (function(document) {
 		}
 		if(!Jmol._syncReady || !Jmol._isJmolJSVSync)
 			return 1; // continue processing and ignore me
+		
+		if (app._linkedApplet && msg.indexOf(app._linkedApplet._syncKeyword) >= 0)
+			app._linkedApplet._syncScript(msg);
+		return 0 // prevents further Jmol sync processing 
+
 		for (var i = 0; i < Jmol._syncedApplets.length; i++) {
 			if (msg.indexOf(Jmol._syncedApplets[i]._syncKeyword) >= 0)
 				Jmol._syncedApplets[i]._syncScript(msg);
@@ -13493,6 +13514,7 @@ Jmol._debugCode = (document && document.location && document.location.href.index
 // author: Bob Hanson, hansonr@stolaf.edu	4/16/2012
 // author: Takanori Nakane biochem_fan 6/12/2012
 
+// BH 2025.06.09 adjusing Math.round(container.width()) to not allow 0 return
 // BH 2022.12.16 adds key press listener for ModelKit
 // BH 2021.04.09 fix _cover(false) script in getAppletHtml() to be img onerror
 // BH 12/17/2015 4:43:05 PM adding Jmol._requestRepaint to allow for MSIE9 not having 3imationFrame
@@ -13736,8 +13758,8 @@ Jmol._debugCode = (document && document.location && document.location.href.index
 			Jmol._jsUnsetMouse(this._mouseInterface);
 			} catch (e) {}
 			//}
-			var w = Math.round(container.width());
-			var h = Math.round(container.height());
+			var w = Math.round(container.width()) || 100;
+			var h = Math.round(container.height()) || 100;
 			var canvas = document.createElement( 'canvas' );
 			canvas.tabIndex = 1;
 			canvas.outline = "none";
@@ -20683,6 +20705,6 @@ Sys.err.write = function(buf, offset, len) {
 })(Clazz, Jmol); // requires JSmolCore.js
 
 }; // called by external application 
-Jmol.___JmolDate="$Date: 2025-08-08 04:46:51 -0500 (Fri, 08 Aug 2025) $"
+Jmol.___JmolDate="$Date: 2026-03-20 10:03:31 -0500 (Fri, 20 Mar 2026) $"
 Jmol.___fullJmolProperties="src/org/jmol/viewer/Jmol.properties"
-Jmol.___JmolVersion="16.3.33" // (legacy) also 16.3.34 (swingJS) 
+Jmol.___JmolVersion="16.3.53" // (legacy) also 16.3.54 (swingJS) 

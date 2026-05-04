@@ -28,26 +28,19 @@ this.skipTo("</" + name + ">");
 }, "~S");
 Clazz.defineMethod(c$, "getXmlData", 
 function(name, data, withTag, allowSelfCloseOption){
-return this.getXmlDataLF(name, data, withTag, allowSelfCloseOption, false);
+return this.getXmlDataLF(name, data, withTag, allowSelfCloseOption, false, null);
 }, "~S,~S,~B,~B");
 Clazz.defineMethod(c$, "getXmlDataLF", 
-function(name, data, withTag, allowSelfCloseOption, addLF){
+function(name, data, withTag, allowSelfCloseOption, addLF, ptr){
 var closer = "</" + name + ">";
 var tag = "<" + name;
 if (data == null) {
 var sb =  new JU.SB();
-try {
 if (this.line == null) this.line = this.br.readLine();
-while (this.line.indexOf(tag) < 0) {
+while (this.line != null && this.line.indexOf(tag) < 0) {
 this.line = this.br.readLine();
 }
-} catch (e) {
-if (Clazz.exceptionOf(e, Exception)){
-return null;
-} else {
-throw e;
-}
-}
+if (this.line == null) return null;
 sb.append(this.line);
 if (addLF) sb.append("\n");
 var selfClosed = false;
@@ -59,23 +52,26 @@ sb.append(this.line = this.br.readLine());
 if (addLF) sb.append("\n");
 }
 data = sb.toString();
-}return J.jvxl.readers.XmlReader.extractTag(data, tag, closer, withTag);
-}, "~S,~S,~B,~B,~B");
+}return J.jvxl.readers.XmlReader.extractTag(data, tag, closer, withTag, ptr);
+}, "~S,~S,~B,~B,~B,~A");
 c$.extractTagOnly = Clazz.defineMethod(c$, "extractTagOnly", 
 function(data, tag){
-return J.jvxl.readers.XmlReader.extractTag(data, "<" + tag + ">", "</" + tag + ">", false);
+return J.jvxl.readers.XmlReader.extractTag(data, "<" + tag + ">", "</" + tag + ">", false, null);
 }, "~S,~S");
 c$.extractTag = Clazz.defineMethod(c$, "extractTag", 
-function(data, tag, closer, withTag){
-var pt1 = data.indexOf(tag);
+function(data, tag, closer, withTag, ptr){
+var pt1 = data.indexOf(tag, ptr == null ? 0 : ptr[0]);
+if (ptr != null) ptr[0] = data.length;
 if (pt1 < 0) return "";
 var pt2 = data.indexOf(closer, pt1);
 if (pt2 < 0) {
 pt2 = data.indexOf("/>", pt1);
 closer = "/>";
-}if (pt2 < 0) return "";
-if (withTag) {
+}if (pt2 < 0) {
+return "";
+}if (withTag) {
 pt2 += closer.length;
+if (ptr != null) ptr[0] = pt2;
 return data.substring(pt1, pt2);
 }var quoted = false;
 for (; pt1 < pt2; pt1++) {
@@ -87,8 +83,9 @@ if ((ch = data.charAt(pt1)) == '"') quoted = !quoted;
 if (pt1 >= pt2) return "";
 while (JU.PT.isWhitespace(data.charAt(++pt1))) {
 }
+if (ptr != null) ptr[0] = pt2;
 return J.jvxl.readers.XmlReader.unwrapCdata(data.substring(pt1, pt2));
-}, "~S,~S,~S,~B");
+}, "~S,~S,~S,~B,~A");
 c$.unwrapCdata = Clazz.defineMethod(c$, "unwrapCdata", 
 function(s){
 return (s.startsWith("<![CDATA[") && s.endsWith("]]>") ? JU.PT.rep(s.substring(9, s.length - 3), "]]]]><![CDATA[>", "]]>") : s);
@@ -129,4 +126,4 @@ if (this.line == null || this.line.indexOf("</") >= 0 && this.line.indexOf("</")
 return (this.line.indexOf("<" + name) >= 0);
 }, "~S");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

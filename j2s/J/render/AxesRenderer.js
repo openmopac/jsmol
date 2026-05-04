@@ -4,6 +4,8 @@ var c$ = Clazz.decorateAsClass(function(){
 this.originScreen = null;
 this.colixes = null;
 this.pt000 = null;
+this.modelIndex = 0;
+this.isDataSpin = false;
 this.ptTemp = null;
 Clazz.instantialize(this, arguments);}, J.render, "AxesRenderer", J.render.CageRenderer);
 Clazz.prepareFields (c$, function(){
@@ -18,18 +20,32 @@ this.draw000 = false;
 });
 Clazz.overrideMethod(c$, "render", 
 function(){
+if (this.vwr.ms !== this.ms) return false;
 var axes = this.shape;
 var mad10 = this.vwr.getObjectMad10(1);
 var isXY = (axes.axisXY.z != 0);
 if (mad10 == 0 || !this.g3d.checkTranslucent(false)) return false;
 if (isXY ? this.exportType == 1 : this.tm.isNavigating() && this.vwr.getBoolean(603979890)) return false;
-var modelIndex = this.vwr.am.cmi;
-if (this.ms.isJmolDataFrameForModel(modelIndex) && !this.ms.getJmolFrameType(modelIndex).equals("plot data")) return false;
+this.modelIndex = this.vwr.am.cmi;
+var m = null;
+this.isDataSpin = false;
 var isUnitCell = (this.vwr.g.axesMode == 603979808);
-var unitcell = (isUnitCell ? this.vwr.getCurrentUnitCell() : null);
-if (isUnitCell && (unitcell == null || modelIndex < 0)) return false;
+if (this.ms.isJmolDataFrame(this.modelIndex)) {
+switch (this.ms.getJmolFrameTypeInt(this.modelIndex)) {
+case 1095241729:
+m = this.ms.am[this.modelIndex];
+this.isDataSpin = (m.uvw != null);
+isUnitCell = true;
+break;
+case 134221834:
+break;
+default:
+return false;
+}
+}var unitcell = (isUnitCell ? this.vwr.getCurrentUnitCell() : null);
+if (!this.isDataSpin && isUnitCell && (unitcell == null || this.modelIndex < 0)) return false;
 this.imageFontScaling = this.vwr.imageFontScaling;
-if (this.vwr.areAxesTainted()) axes.reinitShape();
+if (!this.isDataSpin && this.vwr.areAxesTainted()) axes.reinitShape();
 this.font3d = this.vwr.gdata.getFont3DScaled(axes.font3d, this.imageFontScaling);
 isUnitCell = isUnitCell && (unitcell != null && this.ms.unitCells != null);
 var axisType = (isUnitCell ? axes.axisType : null);
@@ -41,31 +57,34 @@ this.periodicity = (isUnitCell ? unitcell.getPeriodicity() : 0x7);
 this.setShifts();
 var scale = axes.scale;
 if (isabcxyz) {
-if ("xyzabc".equals(axes.axes2)) this.render1(axes, mad10, false, axisType, isUnitCell, 2, null);
+if ("xyzabc".equals(axes.axes2)) this.render1(axes, mad10, false, axisType, isUnitCell, 2, null, null);
 if (!"abc".equals(axes.axes2)) this.vwr.setBooleanProperty("axesmolecular", true);
 axes.reinitShape();
-this.render1(axes, mad10, true, null, false, scale, axes.axes2);
+this.render1(axes, mad10, true, null, false, scale, axes.axes2, null);
 this.vwr.setBooleanProperty("axesunitcell", true);
+} else if (this.isDataSpin) {
+this.pt0.set(0, 0, 0);
+this.render1(null, 25000, false, null, true, 1, null, m.uvw);
 } else {
-this.render1(axes, mad10, isXY, axisType, isUnitCell, scale, null);
+this.render1(axes, mad10, isXY, axisType, isUnitCell, scale, null, null);
 }return true;
 });
 Clazz.defineMethod(c$, "render1", 
-function(axes, mad10, isXY, axisType, isUnitCell, scale, labels2){
+function(axes, mad10, isXY, axisType, isUnitCell, scale, labels2, pts){
 var isDataFrame = this.vwr.isJmolDataFrame();
 this.pt000 = (isDataFrame ? this.pt0 : axes.originPoint);
 var nPoints = 6;
 var labelPtr = 0;
 if (isUnitCell) {
 nPoints = 3;
-labelPtr = 6;
+labelPtr = (this.isDataSpin ? 21 : 6);
 } else if (isXY) {
 nPoints = 3;
 labelPtr = 9;
 } else if (this.vwr.g.axesMode == 603979809) {
 nPoints = 6;
 labelPtr = (this.vwr.getBoolean(603979806) ? 15 : 9);
-}if (axes.labels != null) {
+}if (axes != null && axes.labels != null) {
 if (nPoints != 3) nPoints = (axes.labels.length < 6 ? 3 : 6);
 labelPtr = -1;
 }var slab = this.vwr.gdata.slab;
@@ -105,14 +124,14 @@ pt.z *= -1;
 pt.scaleAdd2(scaleFactor, pt, this.ptTemp);
 }
 } else {
-drawTicks = (axes.tickInfos != null);
+drawTicks = (axes != null && axes.tickInfos != null);
 if (drawTicks) {
 this.checkTickTemps();
 this.tickA.setT(this.pt000);
 }this.tm.transformPtNoClip(this.pt000, this.ptTemp);
 diameter = this.getDiameter(Clazz.floatToInt(this.ptTemp.z), mad10);
 for (var i = nPoints; --i >= 0; ) {
-var p = axes.getAxisPoint(i, !isDataFrame, this.pointT);
+var p = (pts == null ? axes.getAxisPoint(i, !isDataFrame, this.pointT) : pts[i]);
 this.tm.transformPtNoClip(p, this.p3Screens[i]);
 }
 if (this.shifting) {
@@ -129,14 +148,14 @@ var yCenter = this.ptTemp.y;
 this.colixes[0] = this.vwr.getObjectColix(1);
 this.colixes[1] = this.vwr.getObjectColix(2);
 this.colixes[2] = this.vwr.getObjectColix(3);
-var showOrigin = (this.nDims == 3 && !isXY && nPoints == 3 && (scale == 2 || isUnitCell));
+var showOrigin = (this.nDims == 3 && !isXY && nPoints == 3 && (scale == 2 || isUnitCell && !this.isDataSpin));
 if (this.nDims == 2) nPoints = 2;
 for (var i = nPoints; --i >= 0; ) {
 if (labels2 != null && i >= labels2.length || checkAxisType && !axisType.contains(JV.JC.axesTypes[i]) || this.exportType != 1 && (Math.abs(xCenter - this.p3Screens[i].x) + Math.abs(yCenter - this.p3Screens[i].y) <= 2) && (!(showOrigin = false))) {
 continue;
 }this.colix = this.colixes[i % 3];
 this.g3d.setC(this.colix);
-var label = (labels2 != null ? labels2.substring(i, i + 1) : axes.labels == null ? JV.JC.axisLabels[i + labelPtr] : i < axes.labels.length ? axes.labels[i] : null);
+var label = (labels2 != null ? labels2.substring(i, i + 1) : axes == null || axes.labels == null ? JV.JC.axisLabels[i + labelPtr] : i < axes.labels.length ? axes.labels[i] : null);
 if (label != null && label.length > 0) {
 var p = (i == 0 && this.shiftA ? this.vvert[1] : i == 1 && this.shiftB ? this.vvert[3] : i == 2 && this.shiftC ? this.vvert[5] : this.p3Screens[i]);
 this.renderLabel(label, p.x, p.y, p.z, xCenter, yCenter);
@@ -168,7 +187,7 @@ this.colix = this.vwr.cm.colixBackgroundContrast;
 this.g3d.setC(this.colix);
 this.renderLabel(label0, xCenter, yCenter, this.ptTemp.z, xCenter, yCenter);
 }}if (isXY) this.g3d.setSlab(slab);
-}, "J.shape.Axes,~N,~B,~S,~B,~N,~S");
+}, "J.shape.Axes,~N,~B,~S,~B,~N,~S,~A");
 Clazz.defineMethod(c$, "setVVert", 
 function(axes, i){
 var vpt = i * 2;
@@ -196,4 +215,4 @@ var yStrBaseline = Math.floor(y + strAscent / 2);
 this.g3d.drawString(str, this.font3d, Clazz.doubleToInt(xStrBaseline), Clazz.doubleToInt(yStrBaseline), Clazz.floatToInt(z), Clazz.floatToInt(z), 0);
 }, "~S,~N,~N,~N,~N,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

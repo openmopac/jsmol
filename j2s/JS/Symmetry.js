@@ -1,17 +1,18 @@
 Clazz.declarePackage("JS");
-Clazz.load(["J.api.SymmetryInterface"], "JS.Symmetry", ["java.util.Hashtable", "$.Stack", "JU.AU", "$.BS", "$.JSJSONParser", "$.Lst", "$.M4", "$.P3", "$.PT", "$.Quat", "$.Rdr", "$.SB", "J.api.Interface", "J.bspt.Bspt", "JS.PointGroup", "$.SpaceGroup", "$.SymmetryInfo", "$.SymmetryOperation", "$.UnitCell", "JU.BSUtil", "$.Escape", "$.Logger", "$.SimpleUnitCell", "JV.FileManager"], function(){
+Clazz.load(["J.api.SymmetryInterface"], "JS.Symmetry", ["java.util.Hashtable", "JU.AU", "$.BS", "$.JSJSONParser", "$.Lst", "$.M4", "$.P3", "$.PT", "$.Quat", "$.Rdr", "$.SB", "J.api.Interface", "J.bspt.Bspt", "JS.PointGroup", "$.SpaceGroup", "$.SymmetryInfo", "$.SymmetryOperation", "$.UnitCell", "JU.BSUtil", "$.Escape", "$.Logger", "$.SimpleUnitCell", "JV.FileManager"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.spaceGroup = null;
 this.unitCell = null;
 this.$isBio = false;
+this.id = null;
+this.vwr = null;
+this.spinSym = null;
 this.pointGroup = null;
 this.cip = null;
 this.symmetryInfo = null;
 this.desc = null;
 this.transformMatrix = null;
-this.vwr = null;
-this.spinList = null;
-this.id = null;
+this.spinFrameToCartXYZ = null;
 Clazz.instantialize(this, arguments);}, JS, "Symmetry", null, J.api.SymmetryInterface);
 /*LV!1824 unnec constructor*/Clazz.overrideMethod(c$, "getSymopList", 
 function(doNormalize){
@@ -36,14 +37,10 @@ return this.pointGroup.getName();
 });
 Clazz.overrideMethod(c$, "getPointGroupInfo", 
 function(modelIndex, drawID, asInfo, type, index, scale){
-if (drawID == null && !asInfo && this.pointGroup.textInfo != null) return this.pointGroup.textInfo;
- else if (drawID == null && this.pointGroup.isDrawType(type, index, scale)) return this.pointGroup.drawInfo;
- else if (asInfo && this.pointGroup.info != null) return this.pointGroup.info;
-return this.pointGroup.getInfo(modelIndex, drawID, asInfo, type, index, scale);
+return this.pointGroup.getInfo(modelIndex, null, null, drawID, asInfo, type, index, scale);
 }, "~N,~S,~B,~S,~N,~N");
 Clazz.overrideMethod(c$, "setSpaceGroup", 
 function(doNormalize){
-this.clearSymmetryInfo();
 if (this.spaceGroup == null) this.spaceGroup = JS.SpaceGroup.getNull(true, doNormalize, false);
 }, "~B");
 Clazz.overrideMethod(c$, "addSpaceGroupOperation", 
@@ -246,7 +243,7 @@ Clazz.overrideMethod(c$, "getSymmetryInfoStr",
 function(){
 if (this.symmetryInfo != null) return this.symmetryInfo.infoStr;
 if (this.spaceGroup == null) return "";
-(this.symmetryInfo =  new JS.SymmetryInfo()).setSymmetryInfoFromModelkit(this.spaceGroup);
+(this.symmetryInfo =  new JS.SymmetryInfo(this.spaceGroup)).setSymmetryInfoFromModelkit(this.spaceGroup);
 return this.symmetryInfo.infoStr;
 });
 Clazz.overrideMethod(c$, "getSpaceGroupOperationCount", 
@@ -323,7 +320,7 @@ Clazz.overrideMethod(c$, "toSupercell",
 function(fpt){
 return this.unitCell.toSupercell(fpt);
 }, "JU.P3");
-Clazz.overrideMethod(c$, "toFractional", 
+Clazz.defineMethod(c$, "toFractional", 
 function(pt, ignoreOffset){
 if (!this.$isBio) this.unitCell.toFractional(pt, ignoreOffset);
 }, "JU.T3,~B");
@@ -370,7 +367,9 @@ Clazz.overrideMethod(c$, "getUnitCellMultiplied",
 function(){
 var uc = this.unitCell.getUnitCellMultiplied();
 if (uc === this.unitCell) return this;
-return  new JS.Symmetry().setViewer(this.vwr, "getUCM");
+var sym =  new JS.Symmetry().setViewer(this.vwr, "getUCM");
+sym.unitCell = uc;
+return sym;
 });
 Clazz.overrideMethod(c$, "getCanonicalCopy", 
 function(scale, withOffset){
@@ -380,6 +379,10 @@ Clazz.overrideMethod(c$, "getUnitCellInfoType",
 function(infoType){
 return this.unitCell.getInfo(infoType);
 }, "~N");
+Clazz.overrideMethod(c$, "getUnitCellInfoStr", 
+function(type){
+return this.unitCell.getInfoStr(type);
+}, "~S");
 Clazz.overrideMethod(c$, "getUnitCellInfo", 
 function(scaled){
 return (this.unitCell == null ? null : this.unitCell.dumpInfo(false, scaled));
@@ -612,9 +615,9 @@ function(uc){
 this.unitCell = JS.UnitCell.cloneUnitCell((uc).unitCell);
 }, "J.api.SymmetryInterface");
 Clazz.overrideMethod(c$, "findSpaceGroup", 
-function(vwr, atoms, xyzList, unitCellParams, origin, oabc, flags){
-return (J.api.Interface.getInterface("JS.SpaceGroupFinder", vwr, "eval")).findSpaceGroup(vwr, atoms, xyzList, unitCellParams, origin, oabc, this, flags);
-}, "JV.Viewer,JU.BS,~S,~A,JU.T3,~A,~N");
+function(atoms, xyzList, unitCellParams, origin, oabc, flags){
+return (J.api.Interface.getInterface("JS.SpaceGroupFinder", this.vwr, "eval")).findSpaceGroup(this.vwr, atoms, xyzList, unitCellParams, origin, oabc, this, flags);
+}, "JU.BS,~S,~A,JU.T3,~A,~N");
 Clazz.overrideMethod(c$, "setSpaceGroupName", 
 function(name){
 this.clearSymmetryInfo();
@@ -622,12 +625,16 @@ if (this.spaceGroup != null) this.spaceGroup.setName(name);
 }, "~S");
 Clazz.overrideMethod(c$, "setSpaceGroupTo", 
 function(sg){
-this.clearSymmetryInfo();
-if (Clazz.instanceOf(sg,"JS.SpaceGroup")) {
+if (Clazz.instanceOf(sg,"JS.Symmetry")) {
+this.spaceGroup = (sg).spaceGroup;
+this.symmetryInfo = (sg).symmetryInfo;
+if (this.spaceGroup == null && this.symmetryInfo != null) this.spaceGroup = this.symmetryInfo.fileSpaceGroup;
+} else if (Clazz.instanceOf(sg,"JS.SpaceGroup")) {
 this.spaceGroup = sg;
 } else {
 this.spaceGroup = JS.SpaceGroup.getSpaceGroupFromJmolClegOrITA(this.vwr, sg.toString());
-}}, "~O");
+}this.clearSymmetryInfo();
+}, "~O");
 Clazz.defineMethod(c$, "clearSymmetryInfo", 
 function(){
 if (this.symmetryInfo != null) {
@@ -661,11 +668,6 @@ bs.clear(j);
 }
 return bs;
 }, "JM.ModelSet,JU.BS,~B");
-Clazz.overrideMethod(c$, "getEquivPoints", 
-function(pts, pt, flags){
-var ops = this.getSymmetryOperations();
-return (ops == null || this.unitCell == null ? null : this.unitCell.getEquivPoints(pt, flags, ops, pts == null ?  new JU.Lst() : pts, 0, 0, 0, this.getPeriodicity()));
-}, "JU.Lst,JU.P3,~S");
 Clazz.overrideMethod(c$, "getPeriodicity", 
 function(){
 return (this.spaceGroup == null ? 0x7 : this.spaceGroup.periodicity);
@@ -678,8 +680,13 @@ Clazz.overrideMethod(c$, "getGroupType",
 function(){
 return (this.spaceGroup == null ? 0 : this.spaceGroup.groupType);
 });
+Clazz.overrideMethod(c$, "getEquivPoints", 
+function(pt, flags, packing){
+var ops = this.getSymmetryOperations();
+return (ops == null || this.unitCell == null ? null : this.unitCell.getEquivalentPoints(pt, flags, ops,  new JU.Lst(), 0, 0, 0, this.getPeriodicity(), packing));
+}, "JU.Point3fi,~S,~N");
 Clazz.overrideMethod(c$, "getEquivPointList", 
-function(pts, nInitial, flags, opsCtr){
+function(nInitial, flags, opsCtr, packing, pts, uc){
 var ops = (opsCtr == null ? this.getSymmetryOperations() : opsCtr);
 var newPt = (flags.indexOf("newpt") >= 0);
 var zapped = (flags.indexOf("zapped") >= 0);
@@ -702,15 +709,27 @@ var dup0 = (opsCtr == null ? n0 : check0);
 if (ops != null || this.unitCell != null) {
 var per = this.getPeriodicity();
 for (var i = nInitial; i < n; i++) {
-this.unitCell.getEquivPoints(pts.get(i), flags, ops, pts, check0, n0, dup0, per);
+this.unitCell.getEquivalentPoints(pts.get(i), flags, ops, pts, check0, n0, dup0, per, packing);
 }
 }if (!zapped && (pts.size() == nInitial || pts.get(nInitial) !== p0 || allPoints || newPt)) n--;
 for (var i = n - nInitial; --i >= 0; ) pts.removeItemAt(nInitial);
 
 if (!tofractional) {
-for (var i = pts.size(); --i >= nInitial; ) this.toCartesian(pts.get(i), false);
-
-}}, "JU.Lst,~N,~S,~A");
+var pt = (uc == null ? null :  new JU.P3());
+for (var i = pts.size(); --i >= nInitial; ) {
+var p = pts.get(i);
+this.toCartesian(p, false);
+if (uc != null) {
+uc.toFractional(pt.setP(p), false);
+if (!uc.isWithinUnitCell(pt, 1, 1, 1, packing)) {
+pts.removeItemAt(i);
+continue;
+}}}
+}}, "~N,~S,~A,~N,JU.Lst,J.api.SymmetryInterface");
+Clazz.overrideMethod(c$, "adjustRangeMinMax", 
+function(oabc, packingRange, minXYZ, maxXYZ, rmin, rmax, newMin, newMax){
+this.unitCell.adjustRangeMinMax(oabc, packingRange, minXYZ, maxXYZ, rmin, rmax, newMin, newMax);
+}, "~A,~N,JU.P3i,JU.P3i,JU.P3,JU.P3,JU.P3i,JU.P3i");
 Clazz.overrideMethod(c$, "getInvariantSymops", 
 function(pt, v0){
 var ops = this.getSymmetryOperations();
@@ -740,7 +759,7 @@ ret[k++] = i + 1;
 return ret;
 }, "JU.P3,~A");
 Clazz.overrideMethod(c$, "getWyckoffPosition", 
-function(vwr, p, letter){
+function(p, letter){
 if (this.unitCell == null) return "";
 var sg = this.spaceGroup;
 if (sg == null && this.symmetryInfo != null) {
@@ -748,7 +767,7 @@ sg = JS.SpaceGroup.determineSpaceGroupN(this.symmetryInfo.sgName);
 if (sg == null) {
 var id = this.getSpaceGroupJmolId();
 if (id == null) id = this.getSpaceGroupClegId();
-sg = JS.SpaceGroup.getSpaceGroupFromJmolClegOrITA(vwr, id);
+sg = JS.SpaceGroup.getSpaceGroupFromJmolClegOrITA(this.vwr, id);
 }}if (sg == null || sg.itaNumber == null) {
 return "?";
 }if (p == null) {
@@ -758,13 +777,13 @@ p = JU.P3.newP(p);
 this.unitCell.toFractional(p, false);
 this.unitCell.unitize(p);
 }try {
-var w = this.getWyckoffFinder().getWyckoffFinder(vwr, sg);
+var w = this.getWyckoffFinder().getWyckoffFinder(this.vwr, sg);
 var withMult = (letter != null && letter.charAt(0) == 'M');
 if (withMult) {
 letter = (letter.length == 1 ? null : letter.substring(1));
 }var mode = (letter == null ? -1 : "L".equals(letter) ? -4 : letter.equalsIgnoreCase("coord") ? -2 : letter.equalsIgnoreCase("coords") ? -3 : letter.endsWith("*") ? (letter.charAt(0)).charCodeAt(0) : 0);
 if (mode != 0) {
-return (w == null ? "?" : w.getInfo(this.unitCell, p, mode, withMult, vwr.is2D()));
+return (w == null ? "?" : w.getInfo(this.unitCell, p, mode, withMult, this.vwr.is2D()));
 }if (w.findPositionFor(p, letter) == null) return null;
 this.unitCell.toCartesian(p, false);
 return p;
@@ -776,7 +795,7 @@ return (letter == null ? "?" : null);
 throw e;
 }
 }
-}, "JV.Viewer,JU.P3,~S");
+}, "JU.P3,~S");
 Clazz.defineMethod(c$, "getWyckoffFinder", 
 function(){
 if (JS.Symmetry.wyckoffFinder == null) {
@@ -787,18 +806,18 @@ Clazz.overrideMethod(c$, "getTransform",
 function(fracA, fracB, best){
 return this.getDesc(null).getTransform(this.unitCell, this.getSymmetryOperations(), fracA, fracB, best);
 }, "JU.P3,JU.P3,~B");
-Clazz.overrideMethod(c$, "isWithinUnitCell", 
-function(pt, x, y, z){
-return this.unitCell.isWithinUnitCell(x, y, z, pt);
-}, "JU.P3,~N,~N,~N");
+Clazz.defineMethod(c$, "isWithinUnitCell", 
+function(pt, x, y, z, packing){
+return this.unitCell.isWithinUnitCell(x, y, z, packing, pt);
+}, "JU.P3,~N,~N,~N,~N");
 Clazz.overrideMethod(c$, "checkPeriodic", 
-function(pt){
-return this.unitCell.checkPeriodic(pt);
-}, "JU.P3");
+function(pt, packing, packing2){
+return this.unitCell.checkPeriodic(pt, packing, packing2);
+}, "JU.P3,~N,~N");
 Clazz.overrideMethod(c$, "staticConvertOperation", 
 function(xyz, matrix, labels){
 return JS.SymmetryOperation.staticConvertOperation(xyz, matrix, labels);
-}, "~S,JU.M4,~S");
+}, "~S,JU.M34,~S");
 Clazz.overrideMethod(c$, "getSubgroupJSON", 
 function(nameFrom, nameTo, i1, i2, flags, retMap, retLst){
 if (nameFrom.startsWith("ITA/")) nameFrom = nameFrom.substring(4);
@@ -820,7 +839,7 @@ var depthMax = (flags >> 8) & 0xFF;
 var depthMin = flags & 0xFF;
 var data = this.getSubgroupIndexData(groupType1);
 var lstAll = (retLst == null ? null :  new JU.Lst());
-var stack =  new java.util.Stack();
+var stack =  new JU.Lst();
 var indexPath = this.findSubTransform(itaFrom, itaTo, indexMax, indexMin, depthMax, depthMin, data, 1, 1, 1, JU.BSUtil.newAndSetBit(itaFrom), stack, lstAll);
 if (indexPath == null ? lstAll == null : indexPath.endsWith("!")) return indexPath;
 var trm = indexPath;
@@ -978,16 +997,17 @@ case 2:
 if (group != itaTo && !bs.get(group)) {
 var bsNew = JU.BSUtil.copy(bs);
 bsNew.set(group);
-stack.push( Clazz.newIntArray(-1, [itaFrom, index]));
+var last = stack.size();
+stack.addLast( Clazz.newIntArray(-1, [itaFrom, index]));
 var s = this.findSubTransform(group, itaTo, indexMax, indexMin, depthMax, depthMin, data, depth + 1, index, indexNew, bsNew, stack, retAll);
-stack.pop();
+stack.removeItemAt(last);
 if (s != null && retAll == null) return s;
 }break;
 }
 }
 }
 return null;
-}, "~N,~N,~N,~N,~N,~N,~A,~N,~N,~N,JU.BS,java.util.Stack,JU.Lst");
+}, "~N,~N,~N,~N,~N,~N,~A,~N,~N,~N,JU.BS,JU.Lst,JU.Lst");
 Clazz.overrideMethod(c$, "getSpaceGroupJSON", 
 function(name, data, index){
 var index0 = index;
@@ -1280,22 +1300,25 @@ return this.spaceGroup.createCompatibleUnitCell(params, null, true);
 Clazz.overrideMethod(c$, "staticGetTransformABC", 
 function(transform, normalize){
 return JS.SymmetryOperation.getTransformABC(transform, normalize);
-}, "~O,~B");
+}, "JU.M4,~B");
 Clazz.defineMethod(c$, "setCartesianOffset", 
 function(origin){
 this.unitCell.setCartesianOffset(origin);
 }, "JU.T3");
 Clazz.defineMethod(c$, "setSymmetryInfoFromFile", 
 function(ms, modelIndex, unitCellParams){
-var modelAuxiliaryInfo = ms.getModelAuxiliaryInfo(modelIndex);
-this.symmetryInfo =  new JS.SymmetryInfo();
-var params = this.symmetryInfo.setSymmetryInfoFromFile(modelAuxiliaryInfo, unitCellParams);
-if (params != null) {
-this.setUnitCellFromParams(params, modelAuxiliaryInfo.containsKey("jmolData"), this.symmetryInfo.slop);
-this.unitCell.setMoreInfo(modelAuxiliaryInfo.get("moreUnitCellInfo"));
-modelAuxiliaryInfo.put("infoUnitCell", this.getUnitCellAsArray(false));
-this.setOffsetPt(modelAuxiliaryInfo.get("unitCellOffset"));
-var matUnitCellOrientation = modelAuxiliaryInfo.get("matUnitCellOrientation");
+var info = ms.getModelAuxiliaryInfo(modelIndex);
+var fileSymmetry = info.get("fileSymmetry");
+this.symmetryInfo =  new JS.SymmetryInfo(fileSymmetry == null ? null : fileSymmetry.spaceGroup);
+var params = this.symmetryInfo.setSymmetryInfoFromFile(info, unitCellParams);
+if (params == null) return;
+this.setUnitCellFromParams(params, info.containsKey("jmolData"), this.symmetryInfo.slop);
+this.unitCell.spinFrameToCartXYZ = (fileSymmetry == null ? null : fileSymmetry.spinFrameToCartXYZ);
+this.setSpinSym();
+this.unitCell.setMoreInfo(info.get("moreUnitCellInfo"));
+info.put("infoUnitCell", this.getUnitCellAsArray(false));
+this.setOffsetPt(info.get("unitCellOffset"));
+var matUnitCellOrientation = info.get("matUnitCellOrientation");
 if (matUnitCellOrientation != null) this.initializeOrientation(matUnitCellOrientation);
 var s = this.symmetryInfo.strSUPERCELL;
 if (s != null) {
@@ -1303,7 +1326,7 @@ var oabc = this.unitCell.getUnitCellVectors();
 oabc[0] =  new JU.P3();
 ms.setModelCagePts(modelIndex, oabc, "conventional");
 }if (JU.Logger.debugging) JU.Logger.debug("symmetryInfos[" + modelIndex + "]:\n" + this.unitCell.dumpInfo(true, true));
-}}, "JM.ModelSet,~N,~A");
+}, "JM.ModelSet,~N,~A");
 Clazz.defineMethod(c$, "transformUnitCell", 
 function(trm){
 if (trm == null) {
@@ -1433,14 +1456,32 @@ if (this.unitCell != null) this.unitCell.setSpinAxisAngle(aa);
 Clazz.overrideMethod(c$, "getSpinIndex", 
 function(op){
 var ops = this.getSymmetryOperations();
-var spinIndex = (ops == null || op > ops.length ? -1 : ops[op].spinIndex);
-System.out.println("SYM " + spinIndex);
-return spinIndex;
+var id = (ops == null || op >= ops.length ? -1 : ops[op].spinIndex);
+return id;
 }, "~N");
-Clazz.overrideMethod(c$, "getSpinList", 
+Clazz.defineMethod(c$, "setSpinSym", 
 function(){
-return (this.spaceGroup == null ? null : this.spaceGroup.spinList);
+if (this.spinSym == null) {
+this.spinSym =  new JS.Symmetry();
+this.spinSym.spaceGroup = this.spaceGroup;
+this.spinSym.unitCell = this.unitCell;
+}});
+Clazz.overrideMethod(c$, "getSpinSym", 
+function(){
+return (this.spinSym == null ? this : this.spinSym);
 });
+Clazz.overrideMethod(c$, "updatePointGroup", 
+function(){
+return (this.pointGroup == null ? null : this.pointGroup.updateDraw());
+});
+Clazz.overrideMethod(c$, "toFractionalSpin", 
+function(v){
+this.unitCell.toFractionalSpin(v);
+}, "JU.T3");
+Clazz.overrideMethod(c$, "toCartesianSpin", 
+function(v){
+this.unitCell.toCartesianSpin(v);
+}, "JU.T3");
 c$.nullDesc = null;
 c$.aflowStructures = null;
 c$.itaData = null;
@@ -1467,4 +1508,4 @@ c$.wyckoffFinder = null;
 c$.clegInstance = null;
 c$.groupFactory = null;
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Wed Mar 25 10:28:40 CDT 2026

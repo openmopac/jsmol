@@ -195,4 +195,4 @@ return this.writeForm(type + (this.datatype.contains("NMR") ? "_nmr" : "_tmp") +
 }, "~S");
 c$.params =  Clazz.newArray(-1, ["##STATE", "##RESOLUTION", "##SPECTROMETER", "##$MANUFACTURER", "##MOLFORM", "##CASREGISTRYNO", "##CASNAME", "##MP", "##BP", "##.OBSERVENUCLEUS", "##.SOLVENTNAME", "##.SOLVENTREFERENCE"]);
 });
-;//5.0.1-v7 Wed Jul 30 21:44:39 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

@@ -195,7 +195,7 @@ if (this.tokAt(i + 1) == 268437504) {
 index = (this).parameterExpressionList(-i - 1, -1, true).get(0).asInt();
 if (this.getToken(--this.iToken).tok != 268437505) this.invArg();
 }if (this.chk) return  new JU.P3();
-if (this.tokAt(i + 1) == 1073742336 && (this.tokAt(i + 2) == 1140850691 || this.tokAt(i + 2) == 1140850694)) {
+if (this.tokAt(i + 1) == 1073742336 && (this.tokAt(i + 2) == 1275068435 || this.tokAt(i + 2) == 1140850694)) {
 index = 2147483647;
 this.iToken = i + 2;
 }if ((center = (this).getObjectCenter(id, index, modelIndex)) == null) this.errorStr(12, id);
@@ -1204,4 +1204,4 @@ if (throwError) this.invArg();
 return null;
 }, "~N,~N,~B");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026

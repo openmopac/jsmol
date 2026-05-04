@@ -1,5 +1,5 @@
 Clazz.declarePackage("JV");
-Clazz.load(["javajs.api.BytePoster", "java.util.Hashtable"], "JV.FileManager", ["java.net.URL", "$.URLEncoder", "JU.AU", "$.Base64", "$.LimitedLineReader", "$.Lst", "$.OC", "$.PT", "$.Rdr", "$.SB", "J.adapter.smarter.Resolver", "J.api.Interface", "J.io.FileReader", "JU.Escape", "$.Logger", "JV.JC", "$.JmolAsyncException", "$.Viewer"], function(){
+Clazz.load(["javajs.api.BytePoster", "java.util.Hashtable"], "JV.FileManager", ["java.net.URL", "$.URLEncoder", "JU.AU", "$.Base64", "$.LimitedLineReader", "$.Lst", "$.OC", "$.PT", "$.Rdr", "$.SB", "J.adapter.smarter.Resolver", "J.api.Interface", "J.i18n.GT", "J.io.FileReader", "JU.Escape", "$.Logger", "JV.JC", "$.JmolAsyncException", "$.Viewer"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.vwr = null;
 this.spartanDoc = null;
@@ -16,6 +16,7 @@ this.appletProxy = null;
 this.cache = null;
 this.pngjCache = null;
 this.spardirCache = null;
+this.staticJmolDataReader = null;
 Clazz.instantialize(this, arguments);}, JV, "FileManager", null, javajs.api.BytePoster);
 Clazz.prepareFields (c$, function(){
 this.cache =  new java.util.Hashtable();
@@ -80,7 +81,7 @@ return this.lastFileType;
 });
 Clazz.defineMethod(c$, "setFileType", 
 function(fileType){
-this.lastFileType = fileType;
+if (!"JmolData".equals(fileType)) this.lastFileType = fileType;
 }, "~S");
 Clazz.defineMethod(c$, "getFileName", 
 function(){
@@ -112,9 +113,8 @@ function(name, htParams, isAppend){
 if (htParams.get("atomDataOnly") == null) this.setLoadState(htParams);
 var name0 = name;
 var pt = name.indexOf("::");
-if (pt < 0) {
-name = this.vwr.resolveDatabaseFormat(name);
-}if (!name0.equals(name) && name0.indexOf("/") < 0 && JV.Viewer.hasDatabasePrefix(name0)) {
+if (pt < 0) name = this.vwr.resolveDatabaseFormat(name);
+if (!name0.equals(name) && name0.indexOf("/") < 0 && JV.Viewer.hasDatabasePrefix(name0)) {
 htParams.put("dbName", name0);
 }if (name.endsWith("%2D%")) {
 var filter = htParams.get("filter");
@@ -127,6 +127,7 @@ var names = this.getClassifiedName(nameAsGiven, true);
 if (names.length == 1) return names[0];
 var fullPathName = names[0];
 var fileName = names[1];
+this.setFileType(fileType);
 htParams.put("fullPathName", (fileType == null ? "" : fileType + "::") + JV.FileManager.fixDOSName(fullPathName));
 if (this.vwr.getBoolean(603979879) && this.vwr.getBoolean(603979825)) this.vwr.getChimeMessenger().update(fullPathName);
 var fileReader =  new J.io.FileReader(this.vwr, fileName, fullPathName, nameAsGiven, fileType, null, htParams, isAppend);
@@ -558,7 +559,7 @@ names[1] = JV.FileManager.stripPath(names[0]);
 return names;
 }name = this.vwr.resolveDatabaseFormat(name);
 if (name == null) return  Clazz.newArray(-1, [null]);
-if (name.indexOf(":") < 0 && name.indexOf('/') != 0 && name.indexOf('\\') != 0) if (name.startsWith("file:///") && name.indexOf('|') == 9) name = name.substring(0, 9) + ':' + name.substring(10);
+if (name.startsWith("file:///") && name.indexOf('|') == 9) name = name.substring(0, 9) + ':' + name.substring(10);
 if (name.indexOf(":") < 0 && name.indexOf('/') != 0 && name.indexOf('\\') != 0) name = JV.FileManager.addDirectory(this.vwr.getDefaultDirectory(), name);
 if (this.appletDocumentBaseURL == null) {
 if (JU.OC.urlTypeIndex(name) >= 0 || this.vwr.haveAccess(JV.Viewer.ACCESS.NONE) || this.vwr.haveAccess(JV.Viewer.ACCESS.READSPT) && !name.endsWith(".spt") && !name.endsWith("/") || !this.vwr.haveAccessInternal(name)) {
@@ -1013,7 +1014,130 @@ Clazz.defineMethod(c$, "isZipStream",
 function(br){
 return this.vwr.getJzt().isZipStream(br);
 }, "~O");
+Clazz.defineMethod(c$, "openFileAsync", 
+function(fname, flags, type){
+var scriptOnly = ((flags & 32) != 0);
+if (!scriptOnly && (flags & 64) != 0 && JV.FileManager.isEmbeddable(fname)) this.checkResize(fname);
+var noScript = ((flags & 2) != 0);
+var noAutoPlay = ((flags & 8) != 0);
+var cmd = null;
+fname = fname.trim().$replace('\\', '/');
+var isCached = fname.startsWith("cache://");
+if (this.vwr.isApplet && fname.indexOf("://") < 0) fname = "file://" + (fname.startsWith("/") ? "" : "/") + fname;
+try {
+if (scriptOnly) {
+cmd = "script " + JU.PT.esc(fname);
+return;
+}if (fname.endsWith(".pse")) {
+cmd = (isCached ? "" : "zap;") + "load SYNC " + JU.PT.esc(fname) + (this.vwr.isApplet ? "" : " filter 'DORESIZE'");
+return;
+}if (fname.endsWith("jvxl")) {
+cmd = "isosurface ";
+} else if (!fname.toLowerCase().endsWith(".spt")) {
+if (type == null) type = this.getDragDropFileTypeName(fname);
+ else if (!type.endsWith("::")) type += "::";
+if (type == null) {
+try {
+var bis = this.vwr.getBufferedInputStream(fname);
+type = JV.FileManager.determineSurfaceFileType(JU.Rdr.getBufferedReader(bis, "ISO-8859-1"));
+if (type == null) {
+cmd = "script " + JU.PT.esc(fname);
+return;
+}} catch (e) {
+if (Clazz.exceptionOf(e,"java.io.IOException")){
+return;
+} else {
+throw e;
+}
+}
+if (type === "MENU") {
+cmd = "load MENU " + JU.PT.esc(fname);
+} else {
+cmd = "if (_filetype == 'Pdb') { isosurface sigma 1.0 within 2.0 {*} " + JU.PT.esc(fname) + " mesh nofill }; else; { isosurface " + JU.PT.esc(fname) + "}";
+}return;
+}if (type.equals("spt::")) {
+cmd = "script " + JU.PT.esc((fname.startsWith("spt::") ? fname.substring(5) : fname));
+return;
+}if (type.equals("dssr")) {
+cmd = "model {visible} property dssr ";
+} else if (type.equals("Jmol")) {
+cmd = "script ";
+} else if (type.equals("Cube::")) {
+cmd = (this.vwr.ms.ac == 0 ? "load " + JU.PT.esc(fname) + ";" : "");
+cmd += "isosurface sign red blue ";
+} else if (!type.equals("spt")) {
+if (flags == 16) {
+flags = 1;
+switch (this.vwr.ms.ac == 0 ? 0 : this.vwr.confirm(J.i18n.GT.$("Would you like to replace the current model with the selected model?"), J.i18n.GT.$("Would you like to append?"))) {
+case 2:
+return;
+case 0:
+break;
+default:
+flags |= 4;
+break;
+}
+}var isAppend = ((flags & 4) != 0);
+var pdbCartoons = ((flags & 1) != 0 && !isAppend);
+if (type.endsWith("::")) {
+var pt = type.indexOf("|");
+if (pt >= 0) {
+fname += type.substring(pt, type.length - 2);
+type = "";
+}fname = type + fname;
+}cmd = this.vwr.g.defaultDropScript;
+if (cmd.equals("zap; load SYNC \"%FILE\";if (%ALLOWCARTOONS && _loadScript == \'\' && defaultLoadScript == \'\' && _filetype == \'Pdb\') {if ({(protein or nucleic)&*/1.1} && {*/1.1}[1].groupindex != {*/1.1}[0].groupindex){select protein or nucleic;cartoons only;}if ({visible && cartoons > 0}){color structure}else{wireframe -0.1};if (!{visible}){spacefill 23%};select *}")) {
+if (!JV.JC.isLikelyPDB(type) || !pdbCartoons) {
+var pt = cmd.indexOf("if (");
+if (pt >= 0) {
+cmd = cmd.substring(0, pt).trim();
+}}}cmd = JU.PT.rep(cmd, "%FILE", fname);
+cmd = JU.PT.rep(cmd, "%ALLOWCARTOONS", "" + pdbCartoons);
+if (cmd.toLowerCase().startsWith("zap") && (isCached || isAppend)) cmd = cmd.substring(3);
+if (isAppend) {
+cmd = JU.PT.rep(cmd, "load SYNC", "load append");
+}return;
+}}if (cmd == null && !noScript && this.vwr.scriptEditorVisible) this.vwr.showEditor( Clazz.newArray(-1, [fname, this.vwr.getFileAsString3(fname, true, null)]));
+ else cmd = (cmd == null ? "script " : cmd) + JU.PT.esc(fname);
+} finally {
+if (cmd != null) this.vwr.evalString(cmd + (noAutoPlay ? "#!NOAUTOPLAY" : ""));
+}
+}, "~S,~N,~S");
+Clazz.defineMethod(c$, "getDragDropFileTypeName", 
+function(fileName){
+var pt = fileName.indexOf("::");
+if (pt >= 0) return fileName.substring(0, pt + 2);
+if (fileName.startsWith("=")) return "pdb";
+if (fileName.endsWith(".dssr")) return "dssr";
+var br = this.getUnzippedReaderOrStreamFromName(fileName, null, true, false, true, true, null);
+var modelType = null;
+if (this.isZipStream(br)) {
+var zipDirectory = this.vwr.getZipDirectoryAsString(fileName);
+if (zipDirectory.indexOf("JmolManifest") >= 0) return "Jmol";
+modelType = this.vwr.getModelAdapter().getFileTypeName(JU.Rdr.getBR(zipDirectory));
+} else if (Clazz.instanceOf(br,"java.io.BufferedReader") || Clazz.instanceOf(br,"java.io.BufferedInputStream")) {
+modelType = this.vwr.getModelAdapter().getFileTypeName(br);
+}if (modelType != null) return modelType + "::";
+if (JU.AU.isAS(br)) {
+return (br)[0];
+}return null;
+}, "~S");
+Clazz.defineMethod(c$, "checkResize", 
+function(fname){
+try {
+var data = this.getEmbeddedFileState(fname, false, "state.spt");
+if (data.indexOf("preferredWidthHeight") >= 0) this.vwr.sm.resizeInnerPanelString(data);
+} catch (e) {
+}
+}, "~S");
+Clazz.defineMethod(c$, "getJmolDataReader", 
+function(){
+if (this.staticJmolDataReader == null) {
+this.staticJmolDataReader = J.adapter.smarter.Resolver.getReader("JmolData", null);
+this.staticJmolDataReader.vwr = this.vwr;
+}return this.staticJmolDataReader;
+});
 c$.SIMULATION_PROTOCOL = "http://SIMULATION/";
 c$.scriptFilePrefixes =  Clazz.newArray(-1, ["/*file*/\"", "FILE0=\"", "FILE1=\""]);
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

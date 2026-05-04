@@ -47,7 +47,9 @@ len = out.getByteCount();
 }}
 var pt = fileName.indexOf("?POST?");
 if (pt >= 0) fileName = fileName.substring(0, pt);
-return (len < 0 ? "Creation of " + fileName + " failed: " + (ret == null ? this.vwr.getErrorMessageUn() : ret) : "OK " + type + " " + (len > 0 ? len + " " : "") + fileName + (quality == -2147483648 ? "" : "; quality=" + quality));
+var qualityActual = params.get("qualityActual");
+var dpi = params.get("DPI");
+return (len < 0 ? "Creation of " + fileName + " failed: " + (ret == null ? this.vwr.getErrorMessageUn() : ret) : "OK " + type + " " + (len > 0 ? len + " " : "") + fileName + (qualityActual == null || qualityActual.intValue() == -2147483648 ? "" : "; quality=" + qualityActual + (dpi == null ? null : "; DPI=" + dpi)));
 }, "java.util.Map");
 Clazz.defineMethod(c$, "getOrSaveImage", 
 function(params){
@@ -233,12 +235,13 @@ return this.handleOutputToFile(params, true);
 }, "java.util.Map");
 Clazz.defineMethod(c$, "getOutputChannel", 
 function(fileName, fullPath){
-if (!this.vwr.haveAccess(JV.Viewer.ACCESS.ALL)) return null;
 var isRemote = JU.OC.isRemote(fileName);
-if (fileName != null && !isRemote && !fileName.startsWith("cache://")) {
+if (fileName != null) {
+if (!this.vwr.haveAccess(JV.Viewer.ACCESS.ALL)) return null;
+if (!isRemote && !fileName.startsWith("cache://")) {
 fileName = this.getOutputFileNameFromDialog(fileName, -2147483648, null);
 if (fileName == null) return null;
-}if (fullPath != null) fullPath[0] = fileName;
+}}if (fullPath != null) fullPath[0] = fileName;
 try {
 return this.openOutputChannel(this.privateKey, fileName, false, false);
 } catch (e) {
@@ -472,7 +475,7 @@ if (params.containsKey("captureRootExt")) {
 imode = 0;
 } else {
 if (out != null) localName = out.getFileName();
-params.put("captureFileName", localName);
+if (localName != null) params.put("captureFileName", localName);
 if (streaming) {
 captureMsg = type + "_STREAM_OPEN " + localName;
 params.put("captureMode", "movie");
@@ -783,4 +786,4 @@ this.f$.out.closeChannel();
 /*eoif5*/})();
 };
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

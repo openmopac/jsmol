@@ -63,7 +63,7 @@ for (var pt = 0, j = baseGroupIndex; j < groupCount; ++j, pt++) {
 var g = groups[j];
 var model = g.getModel();
 if (!model.isBioModel || !(Clazz.instanceOf(g,"JM.Monomer")) || g.getLeadAtom() == null) continue;
-var doCheck = checkConnections && !this.ms.isJmolDataFrameForModel(this.ms.at[g.getLeadAtom().i].mi);
+var doCheck = checkConnections && !this.ms.isJmolDataFrame(this.ms.at[g.getLeadAtom().i].mi);
 var bp = ((g).bioPolymer == null ? JM.BioResolver.allocateBioPolymer(groups, j, doCheck, pt) : null);
 if (bp == null || bp.monomerCount == 0) continue;
 var n = (model).addBioPolymer(bp);
@@ -639,7 +639,7 @@ var i0 = (isAll ? this.ms.ac - 1 : bsAtoms.nextSetBit(0));
 for (var i = i0; i >= 0; i = (isAll ? i - 1 : bsAtoms.nextSetBit(i + 1))) {
 if (this.ms.at[i] == null) continue;
 var modelIndex = this.ms.am[this.ms.at[i].mi].trajectoryBaseIndex;
-if (this.ms.isJmolDataFrameForModel(modelIndex)) continue;
+if (this.ms.isJmolDataFrame(modelIndex)) continue;
 bsModels.set(modelIndex);
 bsAtomsRet.set(i);
 }
@@ -657,4 +657,4 @@ function(s, atomName, aaRet){
 return this.getBioExt().getAminoAcidValenceAndCharge(s, atomName, aaRet);
 }, "~S,~S,~A");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 28 10:50:06 CST 2026

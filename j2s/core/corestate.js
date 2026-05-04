@@ -65,7 +65,7 @@ Clazz_declarePackage("JV");
 (function(){
 var c$ = Clazz_declareType(JV, "JmolStateCreator", null);
 })();
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
 Clazz_declarePackage("JV");
 Clazz_load(["JV.JmolStateCreator", "java.util.Hashtable"], "JV.StateCreator", ["java.util.Arrays", "$.Date", "JU.BS", "$.Lst", "$.P3", "$.PT", "$.SB", "J.c.PAL", "$.STR", "$.VDW", "JM.AtomCollection", "$.Bond", "$.BondSet", "JS.T", "J.shape.Shape", "JU.BSUtil", "$.C", "$.ColorEncoder", "$.Edge", "$.Escape", "$.Font", "$.Logger", "JV.GlobalSettings", "$.JC", "$.StateManager", "$.Viewer"], function(){
 var c$ = Clazz_decorateAsClass(function(){
@@ -327,7 +327,7 @@ var ms = this.vwr.ms;
 var models = ms.am;
 var modelCount = ms.mc;
 for (var i = 0; i < modelCount; i++) {
-if (ms.isJmolDataFrameForModel(i) || ms.isTrajectorySubFrame(i)) continue;
+if (ms.isJmolDataFrame(i) || ms.isTrajectorySubFrame(i)) continue;
 var m = models[i];
 var pt = commands.indexOf(m.loadState);
 if (pt < 0 || pt != commands.lastIndexOf(m.loadState)) commands.append(models[i].loadState);
@@ -409,7 +409,9 @@ var s = am.getModelSpecial(0);
 this.app(commands, s.equals("0") ? "frame *" : "model " + s);
 }this.app(commands, "animation " + (!am.animationOn ? "OFF" : am.currentDirection == 1 ? "PLAY" : "PLAYREV"));
 if (am.animationOn && am.animationPaused) this.app(commands, "animation PAUSE");
-if (sfunc != null) commands.append("}\n\n");
+if (am.splitFrame) {
+this.app(commands, "frame " + this.vwr.getModelNumberDotted(am.getSplitFrameModelIndex(0)) + " " + this.vwr.getModelNumberDotted(am.getSplitFrameModelIndex(1)) + " split");
+}if (sfunc != null) commands.append("}\n\n");
 return commands.toString();
 }, "JV.AnimationManager,JU.SB");
 Clazz_defineMethod(c$, "getParameterState", 
@@ -650,7 +652,7 @@ if (tickInfo != null) JV.StateCreator.addTickInfo(sb, tickInfo, true);
 for (var j = 1; j <= count; j++) sb.append(" ").append(m.getLabel(j, true, true));
 
 if (isProperty) {
-sb.append(" " + m.property + " value " + (Double.isNaN(m.value) ? 0 : m.value)).append(" " + JU.PT.esc(m.getString()));
+sb.append(" " + m.property + " value " + (Float.isNaN(m.value) ? 0 : m.value)).append(" " + JU.PT.esc(m.getString()));
 } else if (count == 2) {
 var s = m.getDistanceFormatForState();
 if (s != null) sb.append(" ").append(JU.PT.esc(s));
@@ -895,8 +897,11 @@ this.clearTemp();
 var type = JV.JC.shapeClassBases[shape.shapeID];
 var isVector = (shape.shapeID == 18);
 var mad;
-if (shape.bsSizeSet != null) for (var i = shape.bsSizeSet.nextSetBit(0); i >= 0; i = shape.bsSizeSet.nextSetBit(i + 1)) JU.BSUtil.setMapBitSet(this.temp, i, i, type + " " + ((mad = shape.mads[i]) < 0 ? (isVector && mad < -1 ? "" + -mad : "on") : JU.PT.escF(mad / 2000)));
-
+var bs = this.vwr.getAllAtoms();
+if (shape.bsSizeSet != null) for (var i = shape.bsSizeSet.nextSetBit(0); i >= 0; i = shape.bsSizeSet.nextSetBit(i + 1)) {
+if (!bs.get(i)) continue;
+JU.BSUtil.setMapBitSet(this.temp, i, i, type + " " + ((mad = shape.mads[i]) < 0 ? (isVector && mad < -1 ? "" + -mad : "on") : JU.PT.escF(mad / 2000)));
+}
 if (shape.bsColixSet != null) for (var i = shape.bsColixSet.nextSetBit(0); i >= 0; i = shape.bsColixSet.nextSetBit(i + 1)) JU.BSUtil.setMapBitSet(this.temp2, i, i, J.shape.Shape.getColorCommand(type, shape.paletteIDs[i], shape.colixes[i], shape.translucentAllowed));
 
 var s = this.getCommands(this.temp, this.temp2, "select");
@@ -1046,7 +1051,7 @@ var isDefault = (type == 2);
 var atoms = this.vwr.ms.at;
 var tainted = this.vwr.ms.tainted;
 if (bs != null) for (var i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i + 1)) {
-if (JM.AtomCollection.isDeleted(atoms[i])) continue;
+if (i >= atoms.length || JM.AtomCollection.isDeleted(atoms[i])) continue;
 s.appendI(i + 1).append(" ").append(atoms[i].getElementSymbol()).append(" ").append(atoms[i].getInfo().$replace(' ', '_')).append(" ");
 switch (type) {
 case 18:
@@ -1076,10 +1081,17 @@ s.appendF(atoms[i].x).append(" ").appendF(atoms[i].y).append(" ").appendF(atoms[
 break;
 case 12:
 var v = atoms[i].getVibrationVector();
-if (v == null) s.append("0 0 0");
- else if (Float.isNaN(v.modScale)) s.appendF(v.x).append(" ").appendF(v.y).append(" ").appendF(v.z);
- else s.appendF(1.4E-45).append(" ").appendF(1.4E-45).append(" ").appendF(v.modScale);
-break;
+if (v == null) {
+s.append("0 0 0");
+} else if (Float.isNaN(v.modScale)) {
+switch (v.modDim) {
+case -3:
+continue;
+}
+s.appendF(v.x).append(" ").appendF(v.y).append(" ").appendD(v.z).append(" ").appendD(v.modDim).append(" ").appendF(v.magMoment);
+} else {
+s.appendF(1.4E-45).append(" ").appendD(1.4E-45).append(" ").appendD(v.modScale);
+}break;
 case 17:
 s.appendI(atoms[i].getAtomSite());
 break;
@@ -1208,7 +1220,7 @@ this.actionStates.removeItemAt(99);
 this.undoWorking = !clearRedo;
 }, "~N,~N,~B");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Mon Mar 16 22:19:28 CDT 2026
 })(Clazz
 ,Clazz.getClassName
 ,Clazz.newLongArray

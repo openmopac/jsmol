@@ -1,5 +1,5 @@
 Clazz.declarePackage("JSV.source");
-Clazz.load(["J.api.JmolJDXMOLReader"], "JSV.source.JDXReader", ["java.io.BufferedReader", "$.StringReader", "java.util.Hashtable", "$.LinkedHashMap", "$.StringTokenizer", "javajs.api.Interface", "JU.AU", "$.Lst", "$.PT", "$.Rdr", "$.SB", "JSV.common.Coordinate", "$.JSVFileManager", "$.JSViewer", "$.PeakInfo", "$.Spectrum", "JSV.exception.JSVException", "JSV.source.JDXDecompressor", "$.JDXHeader", "$.JDXSource", "$.JDXSourceStreamTokenizer", "JU.Logger"], function(){
+Clazz.load(["J.api.JmolJDXMOLReader"], "JSV.source.JDXReader", ["java.io.BufferedReader", "$.FileInputStream", "$.StringReader", "java.util.Hashtable", "$.LinkedHashMap", "$.StringTokenizer", "javajs.api.Interface", "JU.AU", "$.Lst", "$.PT", "$.Rdr", "$.SB", "JSV.common.Coordinate", "$.JSVFileManager", "$.JSViewer", "$.PeakInfo", "$.Spectrum", "JSV.exception.JSVException", "JSV.source.JDXDecompressor", "$.JDXHeader", "$.JDXSource", "$.JDXSourceStreamTokenizer", "JU.Logger"], function(){
 var c$ = Clazz.decorateAsClass(function(){
 this.mnovaParamValue = null;
 this.nmrMaxY = NaN;
@@ -32,7 +32,7 @@ function(filePath, obscure, loadImaginary, iSpecFirst, iSpecLast, nmrNormalizati
 filePath = JU.PT.trimQuotes(filePath);
 this.isSimulation = (filePath != null && filePath.startsWith("http://SIMULATION/"));
 if (this.isSimulation) {
-this.nmrMaxY = (Float.isNaN(nmrNormalization) ? 10000 : nmrNormalization);
+this.nmrMaxY = (Double.isNaN(nmrNormalization) ? 10000 : nmrNormalization);
 }this.filePath = filePath;
 this.obscure = obscure;
 this.firstSpec = iSpecFirst;
@@ -203,7 +203,7 @@ this.lastErrPath = this.filePath;
 Clazz.defineMethod(c$, "setVenderSpecificValues", 
 function(rawLine){
 if (rawLine.indexOf("JEOL") >= 0) {
-System.out.println("Skipping ##SHIFTREFERENCE for JEOL " + rawLine);
+System.out.println("Skipping ##.SHIFTREFERENCE for JEOL " + rawLine);
 this.ignoreShiftReference = true;
 }if (rawLine.indexOf("MestReNova") >= 0) {
 this.ignorePeakTables = true;
@@ -459,7 +459,7 @@ if (!spectrum.isShiftTypeSpecified()) {
 spectrum.setShiftReference(this.parseAFFN(label, value), 1, 1);
 }return false;
 default:
-if (label.length < 17) return true;
+if (label.length < 17 || isHeaderOnly && value.indexOf(",") >= 0) return !isHeaderOnly;
 if (label.equals("##.OBSERVEFREQUENCY ")) {
 spectrum.setObservedFreq(this.parseAFFN(label, value));
 return false;
@@ -679,8 +679,8 @@ break;
 case 40:
 case 50:
 case 60:
-this.acdAssignments = this.mpr.readACDAssignments((spectrum).fileNPoints, pt == 40);
-break;
+this.acdAssignments =  new JU.Lst();
+return this.mpr.readACDAssignments((spectrum).fileNPoints, pt == 40, this.acdAssignments);
 }
 } catch (e) {
 if (Clazz.exceptionOf(e, Exception)){
@@ -735,6 +735,26 @@ while ((line = this.rd()) != null && line.trim().length == 0) {
 }
 return line;
 });
+c$.main = Clazz.defineMethod(c$, "main", 
+function(args){
+try {
+var map = JSV.source.JDXReader.getHeaderMap( new java.io.FileInputStream("c:/temp/t6.jdx"), null);
+for (var k, $k = map.keySet().iterator (); $k.hasNext()&& ((k = $k.next ()) || true);) {
+if (k.startsWith("##")) continue;
+var s = map.get(k);
+if (s.length > 30) {
+s = s.substring(0, 30) + "...";
+}System.out.println(k + "=" + s);
+}
+} catch (e) {
+if (Clazz.exceptionOf(e, Exception)){
+e.printStackTrace();
+} else {
+throw e;
+}
+}
+System.out.println("done");
+}, "~A");
 c$.VAR_LIST_TABLE =  Clazz.newArray(-1, ["PEAKTABLE   XYDATA      XYPOINTS", " (XY..XY)    (X++(Y..Y)) (XY..XY)    "]);
 });
-;//5.0.1-v7 Wed Jul 30 21:51:19 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

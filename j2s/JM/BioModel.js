@@ -18,7 +18,7 @@ this.clearBioPolymers();
 modelSet.am[modelIndex] = this;
 this.pdbID = auxiliaryInfo.get("name");
 return this;
-}, "JM.ModelSet,~N,~N,~S,java.util.Properties,java.util.Map");
+}, "JM.ModelSet,~N,~N,java.util.Map,java.util.Properties,java.util.Map");
 Clazz.defineMethod(c$, "addBioPolymer", 
 function(polymer){
 if (this.bioPolymers.length == 0) this.clearBioPolymers();
@@ -298,4 +298,4 @@ function(dssrData, dataType){
 if (this.auxiliaryInfo.containsKey("dssr")) this.vwr.getAnnotationParser(true).getAtomicDSSRData(this.ms, this.modelIndex, dssrData, dataType);
 }, "~A,~S");
 });
-;//5.0.1-v7 Mon Jul 28 06:27:19 CDT 2025
+;//5.0.1-v7 Sat Feb 28 09:57:54 CST 2026

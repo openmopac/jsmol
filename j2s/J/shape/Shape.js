@@ -112,7 +112,7 @@ return false;
 }, "~N,~N,~N,~N,~N,JU.BS");
 Clazz.defineMethod(c$, "coordinateInRange", 
 function(x, y, vertex, dmin2, ptXY){
-this.vwr.tm.transformPtScr(vertex, ptXY);
+this.vwr.tm.transformPtScrSafe(vertex, ptXY);
 var d2 = (x - ptXY.x) * (x - ptXY.x) + (y - ptXY.y) * (y - ptXY.y);
 return (d2 <= dmin2 ? d2 : -1);
 }, "~N,~N,JU.T3,~N,JU.P3i");
@@ -180,4 +180,4 @@ this.setProperty((data[i][0]).intern(), data[i][1], bsSelected);
 }
 }}, "~O");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026

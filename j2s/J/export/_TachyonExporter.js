@@ -156,7 +156,7 @@ function(screenA, screenB, radius1, radius2, colix){
 }, "JU.P3,JU.P3,~N,~N,~N");
 Clazz.overrideMethod(c$, "outputEllipsoid", 
 function(center, radius, coef, colix){
-this.tm.transformPt3f(center, this.tempP1);
+this.tm.transformPt3fSafe(center, this.tempP1);
 this.outputSphere(this.tempP1.x, this.tempP1.y, this.tempP1.z, radius, colix);
 }, "JU.P3,~N,~A,~N");
 Clazz.overrideMethod(c$, "outputSurface", 
@@ -168,9 +168,9 @@ for (var i = i0; i >= 0; i = (isAll ? i - 1 : bsPolygons.nextSetBit(i + 1))) {
 J["export"].___Exporter.setTempVertex(vertices[indices[i][0]], offset, this.tempP1);
 J["export"].___Exporter.setTempVertex(vertices[indices[i][1]], offset, this.tempP2);
 J["export"].___Exporter.setTempVertex(vertices[indices[i][2]], offset, this.tempP3);
-this.tm.transformPt3f(this.tempP1, this.tempP1);
-this.tm.transformPt3f(this.tempP2, this.tempP2);
-this.tm.transformPt3f(this.tempP3, this.tempP3);
+this.tm.transformPt3fSafe(this.tempP1, this.tempP1);
+this.tm.transformPt3fSafe(this.tempP2, this.tempP2);
+this.tm.transformPt3fSafe(this.tempP3, this.tempP3);
 this.outputTriangle(this.tempP1, this.tempP2, this.tempP3, colix);
 }
 return;
@@ -224,4 +224,4 @@ this.output(" V2 " + this.triad(ptC));
 this.outputTextureCode();
 }, "JU.T3,JU.T3,JU.T3,~N");
 });
-;//5.0.1-v7 Tue Jul 22 18:14:29 CDT 2025
+;//5.0.1-v7 Sat Feb 21 18:17:38 CST 2026
